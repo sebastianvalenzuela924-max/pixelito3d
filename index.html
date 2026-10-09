@@ -94,7 +94,7 @@
   input[type="number"] { width: 110px; }
   input[type="text"] { width: 170px; text-align: left; font-weight: 500; }
   select {
-    width: auto; max-width: 200px; text-align: right; font-size: 13.5px;
+    width: auto; max-width: 220px; text-align: right; font-size: 13.5px;
     font-weight: 600; color: var(--ink); cursor: pointer;
     background: var(--bg-soft); padding: 5px 8px; border-radius: var(--radius-sm);
     border: 1px solid var(--line);
@@ -113,8 +113,8 @@
 
   .seg-row { display: flex; gap: 8px; margin-top: 4px; }
   .seg-btn {
-    flex: 1; padding: 10px 8px; border: 1.5px solid var(--line); background: transparent;
-    color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    flex: 1; padding: 9px 8px; border: 1.5px solid var(--line); background: transparent;
+    color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600;
     border-radius: var(--radius-sm); cursor: pointer; text-align: center; transition: all 0.15s ease;
   }
   .seg-btn.active { background: var(--blue-soft); color: var(--blue-dark); border-color: var(--blue); }
@@ -168,26 +168,37 @@
     color: var(--ink-soft); font-size: 12.5px; text-decoration: underline; cursor: pointer;
   }
 
+  /* Círculo de color redondo con borde sutil */
+  .color-dot {
+    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    border: 1.5px solid rgba(15, 23, 42, 0.15); box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    vertical-align: middle; flex-shrink: 0;
+  }
+  .color-dots-group {
+    display: inline-flex; align-items: center; gap: 3px; vertical-align: middle;
+  }
+  .color-dot-lg { width: 22px; height: 22px; }
+
   .prod-card {
     border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px;
     margin-bottom: 12px; background: var(--bg-soft);
   }
   .prod-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
   .prod-name { font-size: 14.5px; font-weight: 700; }
-  .prod-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .prod-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; align-items: center; }
   .prod-actions { display: flex; gap: 10px; flex-shrink: 0; }
   .prod-actions button { background: none; border: none; font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 4px; }
   .prod-actions .edit { color: var(--blue); }
   .prod-actions .del { color: var(--red); }
   
   .badge {
-    display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 700; padding: 2px 8px;
-    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.02em;
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 999px; letter-spacing: 0.01em;
   }
-  .badge.pintado { background: var(--blue-soft); color: var(--blue-dark); }
-  .badge.sinpintar { background: var(--line); color: var(--ink-soft); }
-  .badge.pendiente { background: var(--amber-soft); color: var(--amber); }
-  .badge.color-tag { background: var(--purple-soft); color: var(--purple); text-transform: none; font-size: 11px; }
+  .badge.pintado { background: var(--blue-soft); color: var(--blue-dark); text-transform: uppercase; font-size: 10px; }
+  .badge.sinpintar { background: var(--line); color: var(--ink-soft); text-transform: uppercase; font-size: 10px; }
+  .badge.pendiente { background: var(--amber-soft); color: var(--amber); text-transform: uppercase; font-size: 10px; }
+  .badge.color-tag { background: #fff; border: 1px solid var(--line); color: var(--ink); }
   
   .prod-color-bar {
     display: flex; align-items: center; justify-content: space-between;
@@ -268,8 +279,7 @@
     padding: 10px 12px; background: var(--bg-soft); border: 1px solid var(--line);
     border-radius: var(--radius-sm); margin-bottom: 8px;
   }
-  .color-card-info { display: flex; align-items: center; gap: 8px; }
-  .color-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--purple); }
+  .color-card-info { display: flex; align-items: center; gap: 10px; }
   .color-name { font-size: 13.5px; font-weight: 600; }
   .color-price { font-size: 13px; font-weight: 700; color: var(--blue-dark); }
   .color-actions { display: flex; gap: 8px; }
@@ -284,17 +294,63 @@
     border: 1.5px dashed var(--line); border-radius: var(--radius-sm);
   }
   .add-color-grid {
-    display: grid; grid-template-columns: 1fr 100px auto; gap: 8px; align-items: center;
+    display: grid; grid-template-columns: 36px 1fr 90px auto; gap: 8px; align-items: center;
   }
-  .add-color-grid input {
+  .add-color-grid input[type="text"] {
     background: #fff; border: 1px solid var(--line); border-radius: 6px;
-    padding: 8px 10px; font-size: 13px; text-align: left;
+    padding: 8px 10px; font-size: 13px; text-align: left; width: 100%;
   }
-  .add-color-grid input[type="number"] { text-align: right; width: 100%; }
+  .add-color-grid input[type="number"] {
+    background: #fff; border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 6px; font-size: 13px; text-align: right; width: 100%;
+  }
+  .add-color-grid input[type="color"] {
+    width: 36px; height: 36px; padding: 0; border: 1.5px solid var(--line);
+    border-radius: 50%; cursor: pointer; background: transparent; overflow: hidden;
+  }
+  .add-color-grid input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  .add-color-grid input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
   .add-color-grid button {
     padding: 8px 12px; background: var(--blue); color: #fff; border: none;
     border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer;
   }
+
+  /* Sección multicolor en costos */
+  .multi-color-wrap {
+    margin-top: 10px; padding: 12px; background: var(--bg-soft);
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+  }
+  .multi-color-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .multi-color-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line);
+  }
+  .multi-color-item .info { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; flex: 1; }
+  .multi-color-item .pct-input { display: flex; align-items: center; gap: 4px; }
+  .multi-color-item input[type="number"] {
+    width: 60px; text-align: right; background: var(--bg-soft); border: 1px solid var(--line);
+    border-radius: 4px; padding: 3px 6px; font-size: 13px;
+  }
+  .multi-color-item .remove-btn {
+    background: none; border: none; color: var(--red); font-weight: 700; font-size: 16px; cursor: pointer; padding: 0 4px;
+  }
+  .color-picker-chips {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+  }
+  .color-chip-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px;
+    background: #fff; border: 1.5px solid var(--line); border-radius: 999px;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s ease;
+  }
+  .color-chip-btn:hover { border-color: var(--blue); }
+  .color-chip-btn.selected { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-dark); }
+  
+  .pct-sum-bar {
+    display: flex; justify-content: space-between; align-items: center; margin-top: 8px;
+    font-size: 12px; font-weight: 600; padding: 4px 6px; border-radius: 4px;
+  }
+  .pct-sum-bar.valid { color: var(--green-dark); background: var(--green-soft); }
+  .pct-sum-bar.invalid { color: var(--red); background: var(--red-soft); }
 </style>
 </head>
 <body>
@@ -319,7 +375,7 @@
   <div class="view active" id="view-caja">
     <div class="panel">
       <p class="panel-title">Caja rápida</p>
-      <p class="panel-sub">Busca un producto, elige su color si deseas y usa +/– para sumar unidades.</p>
+      <p class="panel-sub">Busca un producto, selecciona el color y usa +/– para registrar la venta.</p>
       <div class="search-box">
         <span class="ic">🔍</span>
         <input type="text" id="caja-buscar" placeholder="Buscar por producto o color...">
@@ -374,17 +430,47 @@
     <div class="subview active" id="costmode-produccion">
       <div class="panel">
         <p class="panel-title">Costo de producción</p>
-        <p class="panel-sub">Elige el color de filamento y calcula material, luz y máquina.</p>
+        <p class="panel-sub">Calcula material (1 color o multicolor), luz y máquina.</p>
         <div class="field">
           <label for="cp-nombre">Nombre del producto</label>
           <div class="input-group"><input type="text" id="cp-nombre" placeholder="Ej: llavero"></div>
         </div>
-        <div class="field">
-          <label for="cp-color">Color de filamento</label>
-          <div class="input-group">
-            <select id="cp-color"></select>
+
+        <!-- SELECCIÓN DE COLOR EN CP -->
+        <div style="margin-top:10px;">
+          <label class="eyebrow">Color o mezcla de filamento</label>
+          <div class="seg-row" style="margin-bottom:8px;">
+            <button class="seg-btn active" id="cp-tab-single">1 Solo Color</button>
+            <button class="seg-btn" id="cp-tab-multi">🌈 Varios Colores (Multicolor)</button>
+          </div>
+
+          <!-- MODO 1 COLOR -->
+          <div id="cp-single-wrap" class="field" style="border-top:1px solid var(--line);">
+            <label for="cp-color">Color</label>
+            <div class="input-group">
+              <span id="cp-single-dot" class="color-dot"></span>
+              <select id="cp-color"></select>
+            </div>
+          </div>
+
+          <!-- MODO MULTICOLOR -->
+          <div id="cp-multi-wrap" class="multi-color-wrap" style="display:none;">
+            <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
+            <div class="seg-row">
+              <button class="seg-btn active" id="cp-method-promedio">📊 Promedio de los colores</button>
+              <button class="seg-btn" id="cp-method-pct">🎚️ Porcentajes (%)</button>
+            </div>
+            
+            <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
+            <div id="cp-color-chips" class="color-picker-chips"></div>
+
+            <div id="cp-multi-items-list" class="multi-color-list"></div>
+            <div id="cp-pct-bar" class="pct-sum-bar valid" style="display:none;">
+              <span>Total porcentaje:</span><span id="cp-pct-total">100%</span>
+            </div>
           </div>
         </div>
+
         <div class="field">
           <label for="cp-gramos">Gramos de filamento</label>
           <div class="input-group"><input type="number" id="cp-gramos" step="1" placeholder="0"><span class="unit">g</span></div>
@@ -394,13 +480,17 @@
           <div class="input-group"><input type="number" id="cp-horas" step="0.1" placeholder="0"><span class="unit">h</span></div>
         </div>
       </div>
+
       <div class="panel">
         <p class="eyebrow">Desglose de costo</p>
-        <div class="r-line"><span>Costo material (<span id="cp-colorPriceTag">$0/kg</span>)</span><span class="val" id="cp-outMaterial">$0</span></div>
-        <div class="r-line"><span>Costo luz</span><span class="val" id="cp-outLuz">$0</span></div>
+        <div class="r-line">
+          <span>Costo material (<span id="cp-colorPriceTag">$0/kg</span>)</span>
+          <span class="val" id="cp-outMaterial">$0</span>
+        </div>
+        <div class="r-line"><span>Costo luz (<span id="cp-luzPriceTag">$260/kWh</span>)</span><span class="val" id="cp-outLuz">$0</span></div>
         <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="cp-outMaquina">$0</span></div>
         <div class="r-line r-total"><span>Costo total</span><span class="val" id="cp-outTotal">$0</span></div>
-        <p class="unit" style="margin-top:2px;">↑ costo de producción según el color seleccionado</p>
+        <p class="unit" id="cp-colorDesc" style="margin-top:2px;">↑ costo de producción según el color seleccionado</p>
       </div>
 
       <div class="panel">
@@ -426,17 +516,47 @@
     <div class="subview" id="costmode-producto">
       <div class="panel">
         <p class="panel-title" id="cd-titulo">Nuevo producto</p>
-        <p class="panel-sub">Calcula precio, color, pintura y reparto, luego guárdalo.</p>
+        <p class="panel-sub">Calcula precio, color (1 o varios), pintura y reparto, luego guárdalo.</p>
         <div class="field">
           <label for="r-nombre">Nombre del producto</label>
           <div class="input-group"><input type="text" id="r-nombre" placeholder="Ej: llavero"></div>
         </div>
-        <div class="field">
-          <label for="r-color">Color de filamento</label>
-          <div class="input-group">
-            <select id="r-color"></select>
+
+        <!-- SELECCIÓN DE COLOR EN MODO B -->
+        <div style="margin-top:10px;">
+          <label class="eyebrow">Color o mezcla de filamento</label>
+          <div class="seg-row" style="margin-bottom:8px;">
+            <button class="seg-btn active" id="r-tab-single">1 Solo Color</button>
+            <button class="seg-btn" id="r-tab-multi">🌈 Varios Colores (Multicolor)</button>
+          </div>
+
+          <!-- MODO 1 COLOR -->
+          <div id="r-single-wrap" class="field" style="border-top:1px solid var(--line);">
+            <label for="r-color">Color</label>
+            <div class="input-group">
+              <span id="r-single-dot" class="color-dot"></span>
+              <select id="r-color"></select>
+            </div>
+          </div>
+
+          <!-- MODO MULTICOLOR -->
+          <div id="r-multi-wrap" class="multi-color-wrap" style="display:none;">
+            <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
+            <div class="seg-row">
+              <button class="seg-btn active" id="r-method-promedio">📊 Promedio de los colores</button>
+              <button class="seg-btn" id="r-method-pct">🎚️ Porcentajes (%)</button>
+            </div>
+            
+            <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
+            <div id="r-color-chips" class="color-picker-chips"></div>
+
+            <div id="r-multi-items-list" class="multi-color-list"></div>
+            <div id="r-pct-bar" class="pct-sum-bar valid" style="display:none;">
+              <span>Total porcentaje:</span><span id="r-pct-total">100%</span>
+            </div>
           </div>
         </div>
+
         <div class="field">
           <label for="r-precio">Precio de venta (opcional)</label>
           <div class="input-group"><span class="unit">$</span><input type="number" id="r-precio" step="100" placeholder="pendiente"></div>
@@ -475,7 +595,7 @@
         <p class="eyebrow">Cálculo de resultado</p>
         <div class="r-line"><span>Precio de venta</span><span class="val" id="r-outPrecio">$0</span></div>
         <div class="r-line"><span>Costo material (<span id="r-colorPriceTag">$0/kg</span>)</span><span class="val" id="r-outMaterial">–$0</span></div>
-        <div class="r-line"><span>Costo luz</span><span class="val" id="r-outLuz">–$0</span></div>
+        <div class="r-line"><span>Costo luz (<span id="r-luzPriceTag">$260/kWh</span>)</span><span class="val" id="r-outLuz">–$0</span></div>
         <div class="r-line" id="r-linePintura" style="display:none;"><span>Costo pintura</span><span class="val" id="r-outPintura">–$0</span></div>
         <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="r-outMaquina">–$0</span></div>
         <div class="r-line r-total"><span>Costo de producción total</span><span class="val" id="r-outProduccion">–$0</span></div>
@@ -496,10 +616,10 @@
   <div class="view" id="view-productos">
     <div class="panel">
       <p class="panel-title">Catálogo de productos</p>
-      <p class="panel-sub">Puedes cambiar el color en cada tarjeta para ver cómo varían los costos y ganancias en tiempo real.</p>
+      <p class="panel-sub">Productos guardados con desglose exacto de colores individuales o mezclas multicolor.</p>
       <div class="search-box">
         <span class="ic">🔍</span>
-        <input type="text" id="prod-buscar" placeholder="Buscar por nombre...">
+        <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
       </div>
       <div id="productosList"></div>
     </div>
@@ -510,13 +630,14 @@
     <!-- COLORES DE FILAMENTO -->
     <div class="panel">
       <p class="panel-title">🎨 Colores y precios de filamento</p>
-      <p class="panel-sub">Define el precio del kilo para cada color. Así tus productos calcularán su costo exacto.</p>
+      <p class="panel-sub">Define cada color con su icono visual y precio por kilo. Así cada pieza calculará su costo exacto.</p>
       
       <div id="coloresList"></div>
 
       <div class="add-color-box">
         <p class="eyebrow" style="margin-bottom:8px;">Agregar nuevo color</p>
         <div class="add-color-grid">
+          <input type="color" id="nc-hex" value="#2563eb" title="Elegir tono">
           <input type="text" id="nc-nombre" placeholder="Nombre (ej: Azul, Rojo)">
           <input type="number" id="nc-precio" step="100" placeholder="$/kg (ej: 13000)">
           <button id="nc-btnAgregar">+ Agregar</button>
@@ -574,7 +695,7 @@
         <div class="input-group"><span class="val" id="a-pinturaCalc" style="font-weight:700;">$0</span></div>
       </div>
     </div>
-    <footer>Todos los datos se guardan y sincronizan automáticamente en Supabase. Si cambias los precios de los colores, los costos de los productos se actualizarán inmediatamente.</footer>
+    <footer>Todos los datos se guardan y sincronizan automáticamente en Supabase. Si cambias los precios de los colores o de la luz ($260/kWh), los costos de los productos se actualizarán inmediatamente.</footer>
   </div>
 
 </div>
@@ -589,6 +710,32 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b2Nid25mZ2dsZmtzYnprbmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjgzMzgsImV4cCI6MjEwNjY0NDMzOH0.p7k4v4q4ZRHOQBvc_eEQoq7bfKcEP3_HYzxNyhAHJbI';
   const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // ---------- Detección inteligente de color ----------
+  function getSmartHex(nombre, customHex) {
+    if (customHex && customHex.startsWith('#') && customHex.length >= 4) return customHex;
+    const n = (nombre || '').toLowerCase();
+    if (n.includes('azul') || n.includes('blue') || n.includes('cyan') || n.includes('celeste')) return '#2563eb';
+    if (n.includes('rojo') || n.includes('red') || n.includes('crimson') || n.includes('cereza')) return '#dc2626';
+    if (n.includes('negro') || n.includes('black') || n.includes('carb') || n.includes('antracita')) return '#1e293b';
+    if (n.includes('blanco') || n.includes('white')) return '#f8fafc';
+    if (n.includes('verde') || n.includes('green') || n.includes('lima')) return '#10b981';
+    if (n.includes('amarillo') || n.includes('yellow')) return '#f59e0b';
+    if (n.includes('naranja') || n.includes('orange')) return '#f97316';
+    if (n.includes('morado') || n.includes('purple') || n.includes('violeta') || n.includes('lila')) return '#8b5cf6';
+    if (n.includes('rosa') || n.includes('pink') || n.includes('fucsia')) return '#ec4899';
+    if (n.includes('gris') || n.includes('grey') || n.includes('gray')) return '#64748b';
+    if (n.includes('plata') || n.includes('silver')) return '#94a3b8';
+    if (n.includes('dorado') || n.includes('gold') || n.includes('oro')) return '#d97706';
+    if (n.includes('caf') || n.includes('brown') || n.includes('marron') || n.includes('madera')) return '#78350f';
+    return '#7c3aed';
+  }
+
+  // Auto-ajustar selector de color al tipear el nombre
+  $('nc-nombre')?.addEventListener('input', () => {
+    const hex = getSmartHex($('nc-nombre').value);
+    $('nc-hex').value = hex;
+  });
+
   // ---------- Colores State & DB ----------
   let coloresCache = [];
 
@@ -599,19 +746,21 @@
         coloresCache = data.map(c => ({
           id: Number(c.id),
           nombre: c.nombre,
-          precioKg: Number(c.precio_kg) || 0
+          precioKg: Number(c.precio_kg) || 0,
+          hex: getSmartHex(c.nombre, c.hex)
         }));
       }
     } catch (e) {
       coloresCache = [];
     }
     renderColoresAjustes();
-    populateColorSelects();
+    populateColorControls();
   }
 
   function getColores() { return coloresCache; }
 
   function getColorById(id) {
+    if (!id) return null;
     return coloresCache.find(c => c.id === Number(id)) || null;
   }
 
@@ -621,28 +770,30 @@
     return ajustes.precioKg || 13000;
   }
 
-  async function insertColor(nombre, precioKg) {
-    const newColor = { id: Date.now(), nombre, precio_kg: precioKg };
+  async function insertColor(nombre, precioKg, hex) {
+    const cleanHex = hex || getSmartHex(nombre);
+    const newColor = { id: Date.now(), nombre, precio_kg: precioKg, hex: cleanHex };
     try {
       await db.from('colores').insert(newColor);
     } catch (e) { console.error('Error insertando color', e); }
-    coloresCache.push({ id: newColor.id, nombre, precioKg });
+    coloresCache.push({ id: newColor.id, nombre, precioKg, hex: cleanHex });
     coloresCache.sort((a,b) => a.nombre.localeCompare(b.nombre));
     renderColoresAjustes();
-    populateColorSelects();
+    populateColorControls();
     calcProduccion();
     calcReparto();
   }
 
-  async function updateColor(id, nombre, precioKg) {
+  async function updateColor(id, nombre, precioKg, hex) {
+    const cleanHex = hex || getSmartHex(nombre);
     try {
-      await db.from('colores').update({ nombre, precio_kg: precioKg }).eq('id', id);
+      await db.from('colores').update({ nombre, precio_kg: precioKg, hex: cleanHex }).eq('id', id);
     } catch (e) { console.error('Error actualizando color', e); }
     const c = getColorById(id);
-    if (c) { c.nombre = nombre; c.precioKg = precioKg; }
+    if (c) { c.nombre = nombre; c.precioKg = precioKg; c.hex = cleanHex; }
     coloresCache.sort((a,b) => a.nombre.localeCompare(b.nombre));
     renderColoresAjustes();
-    populateColorSelects();
+    populateColorControls();
     calcProduccion();
     calcReparto();
   }
@@ -653,7 +804,7 @@
     } catch (e) { console.error('Error eliminando color', e); }
     coloresCache = coloresCache.filter(c => c.id !== Number(id));
     renderColoresAjustes();
-    populateColorSelects();
+    populateColorControls();
     calcProduccion();
     calcReparto();
   }
@@ -671,7 +822,7 @@
       card.className = 'color-card';
       card.innerHTML = `
         <div class="color-card-info">
-          <div class="color-dot"></div>
+          <span class="color-dot color-dot-lg" style="background:${c.hex}"></span>
           <div>
             <span class="color-name">${c.nombre}</span>
             <div class="color-price">${fmt(c.precioKg)} / kg</div>
@@ -692,7 +843,7 @@
         if (!c) return;
         const nuevoPrecio = prompt(`Nuevo precio por kilo para "${c.nombre}":`, c.precioKg);
         if (nuevoPrecio !== null && !isNaN(parseFloat(nuevoPrecio))) {
-          await updateColor(id, c.nombre, parseFloat(nuevoPrecio));
+          await updateColor(id, c.nombre, parseFloat(nuevoPrecio), c.hex);
         }
       });
     });
@@ -708,41 +859,19 @@
     });
   }
 
-  $('nc-btnAgregar').addEventListener('click', async () => {
+  $('nc-btnAgregar')?.addEventListener('click', async () => {
     const nombre = $('nc-nombre').value.trim();
     const precio = parseFloat($('nc-precio').value);
+    const hex = $('nc-hex').value || getSmartHex(nombre);
     if (!nombre) { alert('Por favor ingresa un nombre para el color.'); return; }
     if (isNaN(precio) || precio <= 0) { alert('Por favor ingresa un precio por kilo válido.'); return; }
-    await insertColor(nombre, precio);
+    await insertColor(nombre, precio, hex);
     $('nc-nombre').value = '';
     $('nc-precio').value = '';
   });
 
-  function populateColorSelects() {
-    const selects = [$('cp-color'), $('r-color')];
-    selects.forEach(sel => {
-      if (!sel) return;
-      const currentVal = sel.value;
-      sel.innerHTML = '';
-      const defOpt = document.createElement('option');
-      defOpt.value = '';
-      defOpt.textContent = `Base general (${fmt(ajustes.precioKg)}/kg)`;
-      sel.appendChild(defOpt);
-
-      coloresCache.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = `${c.nombre} (${fmt(c.precioKg)}/kg)`;
-        sel.appendChild(opt);
-      });
-      if (currentVal && [...sel.options].some(o => o.value === currentVal)) {
-        sel.value = currentVal;
-      }
-    });
-  }
-
-  // ---------- Ajustes Generales ----------
-  const defaultAjustes = { precioKg: 13000, consumo: 0.3, precioKwh: 150, inversion: 540000, vidaUtil: 2500, costoSetPintura: 0, piezasPorSet: 0 };
+  // ---------- Ajustes Generales (Luz a $260 CLP/kWh) ----------
+  const defaultAjustes = { precioKg: 13000, consumo: 0.3, precioKwh: 260, inversion: 540000, vidaUtil: 2500, costoSetPintura: 0, piezasPorSet: 0 };
   let ajustes = Object.assign({}, defaultAjustes);
 
   async function loadAjustesFromDB() {
@@ -752,7 +881,7 @@
         ajustes = {
           precioKg: Number(data.precio_kg) || 13000,
           consumo: Number(data.consumo) || 0.3,
-          precioKwh: Number(data.precio_kwh) || 150,
+          precioKwh: Number(data.precio_kwh) || 260,
           inversion: Number(data.inversion) || 540000,
           vidaUtil: Number(data.vida_util) || 2500,
           costoSetPintura: Number(data.costo_set_pintura) || 0,
@@ -785,17 +914,19 @@
     $('a-costoSetPintura').value = ajustes.costoSetPintura || '';
     $('a-piezasPorSet').value = ajustes.piezasPorSet || '';
     updateAjustesCalc();
-    populateColorSelects();
+    populateColorControls();
   }
 
   function updateAjustesCalc() {
     $('a-tarifaCalc').textContent = fmt(ajustes.inversion / (ajustes.vidaUtil || 1)) + '/h';
     const pintura = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
     $('a-pinturaCalc').textContent = fmt(pintura);
+    if ($('cp-luzPriceTag')) $('cp-luzPriceTag').textContent = fmt(ajustes.precioKwh) + '/kWh';
+    if ($('r-luzPriceTag')) $('r-luzPriceTag').textContent = fmt(ajustes.precioKwh) + '/kWh';
   }
 
   ['a-precioKg','a-consumo','a-precioKwh','a-inversion','a-vidaUtil','a-costoSetPintura','a-piezasPorSet'].forEach(id => {
-    $(id).addEventListener('input', () => {
+    $(id)?.addEventListener('input', () => {
       ajustes.precioKg = parseFloat($('a-precioKg').value) || 0;
       ajustes.consumo = parseFloat($('a-consumo').value) || 0;
       ajustes.precioKwh = parseFloat($('a-precioKwh').value) || 0;
@@ -805,11 +936,243 @@
       ajustes.piezasPorSet = parseFloat($('a-piezasPorSet').value) || 0;
       saveAjustesToDB();
       updateAjustesCalc();
-      populateColorSelects();
+      populateColorControls();
       calcProduccion();
       calcReparto();
     });
   });
+
+  // ---------- Control de Colores & Multicolor en Formularios de Costo ----------
+  let cpConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
+  let rConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
+
+  function setupColorModeToggles(prefix, configObj, calcFn) {
+    $(`${prefix}-tab-single`).addEventListener('click', () => {
+      $(`${prefix}-tab-single`).classList.add('active');
+      $(`${prefix}-tab-multi`).classList.remove('active');
+      $(`${prefix}-single-wrap`).style.display = 'flex';
+      $(`${prefix}-multi-wrap`).style.display = 'none';
+      configObj.tipo = 'single';
+      calcFn();
+    });
+    $(`${prefix}-tab-multi`).addEventListener('click', () => {
+      $(`${prefix}-tab-multi`).classList.add('active');
+      $(`${prefix}-tab-single`).classList.remove('active');
+      $(`${prefix}-single-wrap`).style.display = 'none';
+      $(`${prefix}-multi-wrap`).style.display = 'block';
+      configObj.tipo = 'multi';
+      // Si no hay items seleccionados, agregamos el color actual
+      if (configObj.items.length === 0 && configObj.colorId) {
+        configObj.items.push({ colorId: configObj.colorId, pct: 100 });
+      }
+      renderMultiColorUI(prefix, configObj, calcFn);
+      calcFn();
+    });
+
+    $(`${prefix}-method-promedio`).addEventListener('click', () => {
+      $(`${prefix}-method-promedio`).classList.add('active');
+      $(`${prefix}-method-pct`).classList.remove('active');
+      configObj.multiModo = 'promedio';
+      $(`${prefix}-pct-bar`).style.display = 'none';
+      renderMultiColorUI(prefix, configObj, calcFn);
+      calcFn();
+    });
+
+    $(`${prefix}-method-pct`).addEventListener('click', () => {
+      $(`${prefix}-method-pct`).classList.add('active');
+      $(`${prefix}-method-promedio`).classList.remove('active');
+      configObj.multiModo = 'porcentajes';
+      $(`${prefix}-pct-bar`).style.display = 'flex';
+      renderMultiColorUI(prefix, configObj, calcFn);
+      calcFn();
+    });
+  }
+
+  function renderMultiColorUI(prefix, configObj, calcFn) {
+    const chipsEl = $(`${prefix}-color-chips`);
+    const listEl = $(`${prefix}-multi-items-list`);
+    if (!chipsEl || !listEl) return;
+
+    // Render chips para activar/desactivar colores
+    chipsEl.innerHTML = '';
+    coloresCache.forEach(c => {
+      const isSel = configObj.items.some(it => it.colorId === c.id);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'color-chip-btn' + (isSel ? ' selected' : '');
+      btn.innerHTML = `<span class="color-dot" style="background:${c.hex}"></span> ${c.nombre} (${fmt(c.precioKg)})`;
+      btn.addEventListener('click', () => {
+        if (isSel) {
+          configObj.items = configObj.items.filter(it => it.colorId !== c.id);
+        } else {
+          configObj.items.push({ colorId: c.id, pct: Math.round(100 / (configObj.items.length + 1)) });
+        }
+        // Auto distribuir porcentajes equitativamente si estamos en modo porcentajes o si se agregaron
+        if (configObj.items.length > 0) {
+          const equalPct = Math.floor(100 / configObj.items.length);
+          let rem = 100 - (equalPct * configObj.items.length);
+          configObj.items.forEach((it, idx) => {
+            it.pct = equalPct + (idx === 0 ? rem : 0);
+          });
+        }
+        renderMultiColorUI(prefix, configObj, calcFn);
+        calcFn();
+      });
+      chipsEl.appendChild(btn);
+    });
+
+    // Render lista de colores seleccionados
+    listEl.innerHTML = '';
+    if (configObj.items.length === 0) {
+      listEl.innerHTML = '<div class="empty" style="padding:10px 0;">Selecciona arriba al menos 2 colores para calcular.</div>';
+      return;
+    }
+
+    let sumPct = 0;
+    configObj.items.forEach(it => {
+      const c = getColorById(it.colorId);
+      if (!c) return;
+      sumPct += (Number(it.pct) || 0);
+
+      const row = document.createElement('div');
+      row.className = 'multi-color-item';
+      row.innerHTML = `
+        <div class="info">
+          <span class="color-dot" style="background:${c.hex}"></span>
+          <span>${c.nombre}</span>
+          <span style="font-size:11.5px; color:var(--ink-soft);">(${fmt(c.precioKg)}/kg)</span>
+        </div>
+        ${configObj.multiModo === 'porcentajes' ? `
+          <div class="pct-input">
+            <input type="number" min="0" max="100" step="5" value="${it.pct}" data-cid="${c.id}">
+            <span class="unit">%</span>
+          </div>
+        ` : `
+          <span style="font-size:12px; font-weight:600; color:var(--blue-dark);">Promedio</span>
+        `}
+        <button type="button" class="remove-btn" data-cid="${c.id}" title="Quitar">×</button>
+      `;
+      listEl.appendChild(row);
+    });
+
+    listEl.querySelectorAll('.pct-input input').forEach(input => {
+      input.addEventListener('input', () => {
+        const cid = Number(input.dataset.cid);
+        const item = configObj.items.find(x => x.colorId === cid);
+        if (item) {
+          item.pct = parseFloat(input.value) || 0;
+          updatePctSumBar(prefix, configObj);
+          calcFn();
+        }
+      });
+    });
+
+    listEl.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cid = Number(btn.dataset.cid);
+        configObj.items = configObj.items.filter(x => x.colorId !== cid);
+        renderMultiColorUI(prefix, configObj, calcFn);
+        calcFn();
+      });
+    });
+
+    updatePctSumBar(prefix, configObj);
+  }
+
+  function updatePctSumBar(prefix, configObj) {
+    if (configObj.multiModo !== 'porcentajes') return;
+    const total = configObj.items.reduce((s, it) => s + (Number(it.pct) || 0), 0);
+    const bar = $(`${prefix}-pct-bar`);
+    const totLabel = $(`${prefix}-pct-total`);
+    if (bar && totLabel) {
+      totLabel.textContent = `${total}%`;
+      bar.className = 'pct-sum-bar ' + (total === 100 ? 'valid' : 'invalid');
+    }
+  }
+
+  // Cálculo de precio/kg efectivo según config (1 color o multicolor)
+  function computeEffectivePrecioKg(configObj) {
+    if (configObj.tipo === 'multi' && configObj.items && configObj.items.length > 0) {
+      const validItems = configObj.items
+        .map(it => ({ col: getColorById(it.colorId), pct: Number(it.pct) || 0 }))
+        .filter(it => it.col !== null);
+
+      if (validItems.length === 0) return { precioKg: ajustes.precioKg, desc: 'Base general' };
+
+      if (configObj.multiModo === 'promedio') {
+        const sum = validItems.reduce((acc, it) => acc + it.col.precioKg, 0);
+        const avg = sum / validItems.length;
+        const names = validItems.map(it => it.col.nombre).join(' + ');
+        return {
+          precioKg: avg,
+          desc: `Promedio de ${validItems.length} colores (${names})`,
+          dots: validItems.map(it => it.col.hex)
+        };
+      } else {
+        const tot = validItems.reduce((acc, it) => acc + it.pct, 0) || 100;
+        const weighted = validItems.reduce((acc, it) => acc + (it.pct / tot) * it.col.precioKg, 0);
+        const desc = validItems.map(it => `${Math.round((it.pct/tot)*100)}% ${it.col.nombre}`).join(' · ');
+        return {
+          precioKg: weighted,
+          desc: `Multicolor ponderado (${desc})`,
+          dots: validItems.map(it => it.col.hex)
+        };
+      }
+    }
+
+    // 1 Solo color
+    const col = getColorById(configObj.colorId);
+    if (col) {
+      return { precioKg: col.precioKg, desc: col.nombre, dots: [col.hex] };
+    }
+    return { precioKg: ajustes.precioKg, desc: 'Base general', dots: ['#64748b'] };
+  }
+
+  function populateColorControls() {
+    ['cp', 'r'].forEach(prefix => {
+      const sel = $(`${prefix}-color`);
+      if (!sel) return;
+      const curVal = sel.value;
+      sel.innerHTML = '';
+      const defOpt = document.createElement('option');
+      defOpt.value = '';
+      defOpt.textContent = `Base general (${fmt(ajustes.precioKg)}/kg)`;
+      sel.appendChild(defOpt);
+
+      coloresCache.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.nombre} (${fmt(c.precioKg)}/kg)`;
+        sel.appendChild(opt);
+      });
+      if (curVal && [...sel.options].some(o => o.value === curVal)) {
+        sel.value = curVal;
+      }
+      updateSingleDot(prefix);
+    });
+  }
+
+  function updateSingleDot(prefix) {
+    const sel = $(`${prefix}-color`);
+    const dot = $(`${prefix}-single-dot`);
+    if (!sel || !dot) return;
+    const col = getColorById(sel.value);
+    dot.style.background = col ? col.hex : '#64748b';
+  }
+
+  $('cp-color')?.addEventListener('change', () => {
+    cpConfig.colorId = $('cp-color').value ? Number($('cp-color').value) : null;
+    updateSingleDot('cp');
+    calcProduccion();
+  });
+  $('r-color')?.addEventListener('change', () => {
+    rConfig.colorId = $('r-color').value ? Number($('r-color').value) : null;
+    updateSingleDot('r');
+    calcReparto();
+  });
+
+  setupColorModeToggles('cp', cpConfig, calcProduccion);
+  setupColorModeToggles('r', rConfig, calcReparto);
 
   // ---------- Tabs ----------
   document.querySelectorAll('nav.tabs button').forEach(btn => {
@@ -839,15 +1202,15 @@
   const PRESET_MARGENES = [20, 30, 40, 50, 60, 70];
 
   function calcProduccion() {
-    const gramos = parseFloat($('cp-gramos').value) || 0;
-    const horas = parseFloat($('cp-horas').value) || 0;
-    const colorId = $('cp-color').value;
-    const precioKg = getPrecioKgForColor(colorId);
+    const gramos = parseFloat($('cp-gramos')?.value) || 0;
+    const horas = parseFloat($('cp-horas')?.value) || 0;
+    const eff = computeEffectivePrecioKg(cpConfig);
 
-    $('cp-colorPriceTag').textContent = fmt(precioKg) + '/kg';
+    $('cp-colorPriceTag').textContent = fmt(eff.precioKg) + '/kg';
+    if ($('cp-colorDesc')) $('cp-colorDesc').textContent = `↑ ${eff.desc}`;
 
     const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
-    const costoMaterial = (gramos / 1000) * precioKg;
+    const costoMaterial = (gramos / 1000) * eff.precioKg;
     const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
     const costoMaquina = horas * tarifaHora;
     cpCostoTotal = costoMaterial + costoLuz + costoMaquina;
@@ -858,7 +1221,7 @@
     $('cp-outTotal').textContent = fmt(cpCostoTotal);
     updateSugerenciaPrecio();
   }
-  ['cp-gramos','cp-horas','cp-color'].forEach(id => $(id).addEventListener('input', calcProduccion));
+  ['cp-gramos','cp-horas'].forEach(id => $(id)?.addEventListener('input', calcProduccion));
 
   function precioParaMargen(margenPct) {
     const f = 1 - (margenPct / 100);
@@ -867,7 +1230,7 @@
   }
 
   function updateSugerenciaPrecio() {
-    const margen = parseInt($('cp-margenSlider').value, 10);
+    const margen = parseInt($('cp-margenSlider')?.value || 50, 10);
     $('cp-margenLabel').textContent = margen + '%';
     const precio = precioParaMargen(margen);
     const ganancia = precio - cpCostoTotal;
@@ -875,6 +1238,7 @@
     $('cp-gananciaSugerida').textContent = fmt(ganancia);
 
     const el = $('cp-presets');
+    if (!el) return;
     el.innerHTML = '';
     PRESET_MARGENES.forEach(m => {
       const p = precioParaMargen(m);
@@ -888,18 +1252,20 @@
       el.appendChild(chip);
     });
   }
-  $('cp-margenSlider').addEventListener('input', updateSugerenciaPrecio);
+  $('cp-margenSlider')?.addEventListener('input', updateSugerenciaPrecio);
 
   async function guardarProductoDesdeCosto(conPrecio) {
     const nombre = $('cp-nombre').value.trim() || 'Producto sin nombre';
     const gramos = parseFloat($('cp-gramos').value) || 0;
     const horas = parseFloat($('cp-horas').value) || 0;
-    const colorId = $('cp-color').value ? Number($('cp-color').value) : null;
     const precioVenta = conPrecio ? Math.round(precioParaMargen(parseInt($('cp-margenSlider').value, 10))) : null;
+
+    const savedConfig = JSON.parse(JSON.stringify(cpConfig));
 
     await insertProducto({
       id: Date.now(), nombre, gramos, horas,
-      colorId,
+      colorId: cpConfig.tipo === 'single' ? cpConfig.colorId : null,
+      coloresConfig: savedConfig,
       pintura: false, pinturaManual: null,
       precioVenta, splitMine: 60,
       fecha: new Date().toLocaleDateString('es-CL')
@@ -908,8 +1274,8 @@
     calcProduccion();
     document.querySelector('nav.tabs button[data-tab="productos"]').click();
   }
-  $('cp-guardarConPrecio').addEventListener('click', () => guardarProductoDesdeCosto(true));
-  $('cp-guardarSinPrecio').addEventListener('click', () => guardarProductoDesdeCosto(false));
+  $('cp-guardarConPrecio')?.addEventListener('click', () => guardarProductoDesdeCosto(true));
+  $('cp-guardarSinPrecio')?.addEventListener('click', () => guardarProductoDesdeCosto(false));
 
   // ---------- Costo del producto (Modo B) ----------
   let splitMine = 60;
@@ -937,23 +1303,22 @@
   });
 
   function calcReparto() {
-    const precioRaw = $('r-precio').value;
+    const precioRaw = $('r-precio')?.value || '';
     const precio = parseFloat(precioRaw) || 0;
     const tienePrecio = precioRaw !== '' && precio > 0;
-    const gramos = parseFloat($('r-gramos').value) || 0;
-    const horas = parseFloat($('r-horas').value) || 0;
-    const colorId = $('r-color').value;
-    const precioKg = getPrecioKgForColor(colorId);
+    const gramos = parseFloat($('r-gramos')?.value) || 0;
+    const horas = parseFloat($('r-horas')?.value) || 0;
+    const eff = computeEffectivePrecioKg(rConfig);
 
-    $('r-colorPriceTag').textContent = fmt(precioKg) + '/kg';
+    $('r-colorPriceTag').textContent = fmt(eff.precioKg) + '/kg';
 
     const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
     const pinturaAuto = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
-    const pinturaManualRaw = $('r-pintura').value;
+    const pinturaManualRaw = $('r-pintura')?.value || '';
     const pinturaManual = pinturaManualRaw !== '' ? parseFloat(pinturaManualRaw) : null;
     const pintura = tienePintura ? (pinturaManual !== null ? pinturaManual : pinturaAuto) : 0;
 
-    const costoMaterial = (gramos / 1000) * precioKg;
+    const costoMaterial = (gramos / 1000) * eff.precioKg;
     const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
     const costoMaquina = horas * tarifaHora;
     const costoProduccion = costoMaterial + costoLuz + costoMaquina + pintura;
@@ -977,14 +1342,17 @@
     $('r-outMine').textContent = tienePrecio ? fmt(mine) : '—';
     $('r-outHers').textContent = tienePrecio ? fmt(hers) : '—';
 
-    return { precio: tienePrecio ? precio : null, colorId: colorId ? Number(colorId) : null, gramos, horas, tienePintura, pinturaManual, costoProduccion, utilidad, splitMine };
+    return { precio: tienePrecio ? precio : null, gramos, horas, tienePintura, pinturaManual, costoProduccion, utilidad, splitMine, eff };
   }
-  ['r-precio','r-gramos','r-horas','r-pintura','r-color'].forEach(id => $(id).addEventListener('input', calcReparto));
+  ['r-precio','r-gramos','r-horas','r-pintura'].forEach(id => $(id)?.addEventListener('input', calcReparto));
 
   function resetRepartoForm() {
     editingId = null;
     $('r-nombre').value = ''; $('r-precio').value = ''; $('r-gramos').value = ''; $('r-horas').value = '';
     $('r-pintura').value = ''; $('r-color').value = '';
+    rConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
+    $('r-tab-single').click();
+    updateSingleDot('r');
     tienePintura = false; splitMine = 60;
     document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('active', b.dataset.tipo === 'sin'));
     document.querySelectorAll('[data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '60'));
@@ -996,15 +1364,18 @@
     $('r-cancelar').style.display = 'none';
     calcReparto();
   }
-  $('r-cancelar').addEventListener('click', resetRepartoForm);
+  $('r-cancelar')?.addEventListener('click', resetRepartoForm);
 
-  $('r-guardar').addEventListener('click', async () => {
+  $('r-guardar')?.addEventListener('click', async () => {
     const nombre = $('r-nombre').value.trim() || 'Producto sin nombre';
     const r = calcReparto();
+    const savedConfig = JSON.parse(JSON.stringify(rConfig));
+
     const entry = {
       id: editingId || Date.now(),
       nombre,
-      colorId: r.colorId,
+      colorId: rConfig.tipo === 'single' ? rConfig.colorId : null,
+      coloresConfig: savedConfig,
       gramos: r.gramos,
       horas: r.horas,
       pintura: r.tienePintura,
@@ -1027,11 +1398,23 @@
     document.querySelector('[data-costmode="producto"]').click();
     editingId = p.id;
     $('r-nombre').value = p.nombre;
-    $('r-color').value = p.colorId ? String(p.colorId) : '';
     $('r-precio').value = p.precioVenta !== null && p.precioVenta !== undefined ? p.precioVenta : '';
     $('r-gramos').value = p.gramos || '';
     $('r-horas').value = p.horas || '';
     $('r-pintura').value = p.pinturaManual !== null && p.pinturaManual !== undefined ? p.pinturaManual : '';
+
+    if (p.coloresConfig && p.coloresConfig.tipo === 'multi') {
+      rConfig = JSON.parse(JSON.stringify(p.coloresConfig));
+      $('r-tab-multi').click();
+      if (rConfig.multiModo === 'porcentajes') $('r-method-pct').click();
+      else $('r-method-promedio').click();
+    } else {
+      rConfig = { tipo: 'single', colorId: p.colorId, multiModo: 'promedio', items: [] };
+      $('r-tab-single').click();
+      $('r-color').value = p.colorId ? String(p.colorId) : '';
+      updateSingleDot('r');
+    }
+
     tienePintura = !!p.pintura;
     splitMine = p.splitMine || 60;
     document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('active', (b.dataset.tipo === 'con') === tienePintura));
@@ -1045,29 +1428,37 @@
     calcReparto();
   }
 
-  // ---------- Cálculo de costo de producto con color dinámico ----------
+  // ---------- Cálculo de costo de producto con color o multicolor dinámico ----------
   function computeProductCost(p, overrideColorId) {
-    const effectiveColorId = (overrideColorId !== undefined) ? overrideColorId : p.colorId;
-    const precioKg = getPrecioKgForColor(effectiveColorId);
+    let eff;
+    if (overrideColorId !== undefined && overrideColorId !== null) {
+      eff = computeEffectivePrecioKg({ tipo: 'single', colorId: overrideColorId });
+    } else if (p.coloresConfig && p.coloresConfig.tipo === 'multi') {
+      eff = computeEffectivePrecioKg(p.coloresConfig);
+    } else {
+      eff = computeEffectivePrecioKg({ tipo: 'single', colorId: p.colorId });
+    }
+
     const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
-    const costoMaterial = ((p.gramos || 0) / 1000) * precioKg;
+    const costoMaterial = ((p.gramos || 0) / 1000) * eff.precioKg;
     const costoLuz = (p.horas || 0) * ajustes.consumo * ajustes.precioKwh;
     const costoMaquina = (p.horas || 0) * tarifaHora;
     const pinturaAuto = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
     const costoPintura = p.pintura ? (p.pinturaManual !== null && p.pinturaManual !== undefined ? p.pinturaManual : pinturaAuto) : 0;
     const costoTotal = costoMaterial + costoLuz + costoMaquina + costoPintura;
-    return { costoMaterial, costoLuz, costoMaquina, costoPintura, costoTotal, precioKg, effectiveColorId };
+    return { costoMaterial, costoLuz, costoMaquina, costoPintura, costoTotal, precioKg: eff.precioKg, desc: eff.desc, dots: eff.dots || [] };
   }
 
   // ---------- Productos (en Supabase) ----------
   let productosCache = [];
-  let prodActiveColors = {}; // Mapa para previsualizar colores por producto en catálogo
+  let prodActiveColors = {}; // Mapa para override de color en catálogo
 
   function rowToProducto(r) {
     return {
       id: Number(r.id),
       nombre: r.nombre,
       colorId: r.color_id ? Number(r.color_id) : null,
+      coloresConfig: r.colores_config || null,
       gramos: Number(r.gramos) || 0,
       horas: Number(r.horas) || 0,
       pintura: !!r.pintura,
@@ -1083,6 +1474,7 @@
       id: p.id,
       nombre: p.nombre,
       color_id: p.colorId || null,
+      colores_config: p.coloresConfig || null,
       gramos: p.gramos,
       horas: p.horas,
       pintura: p.pintura,
@@ -1129,10 +1521,12 @@
     const filtrados = prodBusqueda ? productos.filter(p => {
       const col = getColorById(p.colorId);
       const colName = col ? col.nombre.toLowerCase() : 'base';
-      return p.nombre.toLowerCase().includes(prodBusqueda) || colName.includes(prodBusqueda);
+      const cnfDesc = (p.coloresConfig && p.coloresConfig.items) ? p.coloresConfig.items.map(it => getColorById(it.colorId)?.nombre || '').join(' ').toLowerCase() : '';
+      return p.nombre.toLowerCase().includes(prodBusqueda) || colName.includes(prodBusqueda) || cnfDesc.includes(prodBusqueda);
     }) : productos;
 
     const el = $('productosList');
+    if (!el) return;
     el.innerHTML = '';
     if (productos.length === 0) {
       el.innerHTML = '<div class="empty">Aún no guardas productos. Ve a la pestaña Costos y calcula uno.</div>';
@@ -1144,16 +1538,18 @@
     }
 
     filtrados.forEach(p => {
-      const selectedColorId = (p.id in prodActiveColors) ? prodActiveColors[p.id] : p.colorId;
-      const c = computeProductCost(p, selectedColorId);
-      const colObj = getColorById(selectedColorId);
-      const colNombre = colObj ? colObj.nombre : 'Base general';
+      const overrideColorId = (p.id in prodActiveColors) ? prodActiveColors[p.id] : undefined;
+      const c = computeProductCost(p, overrideColorId);
       const tienePrecio = p.precioVenta !== null && p.precioVenta !== undefined && p.precioVenta > 0;
       const margen = tienePrecio ? Math.round(((p.precioVenta - c.costoTotal) / p.precioVenta) * 100) : null;
       
-      let colorOptionsHTML = `<option value="" ${!selectedColorId ? 'selected' : ''}>Base (${fmt(ajustes.precioKg)}/kg)</option>`;
+      // Dots de color
+      const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
+
+      // Opciones para probar otro color en la tarjeta
+      let colorOptionsHTML = `<option value="" ${overrideColorId === undefined ? 'selected' : ''}>Original: ${c.desc}</option>`;
       coloresCache.forEach(col => {
-        colorOptionsHTML += `<option value="${col.id}" ${selectedColorId === col.id ? 'selected' : ''}>${col.nombre} (${fmt(col.precioKg)}/kg)</option>`;
+        colorOptionsHTML += `<option value="${col.id}" ${overrideColorId === col.id ? 'selected' : ''}>${col.nombre} (${fmt(col.precioKg)}/kg)</option>`;
       });
 
       const card = document.createElement('div');
@@ -1163,7 +1559,10 @@
           <div>
             <div class="prod-name">${p.nombre}</div>
             <div class="prod-badges">
-              <span class="badge color-tag">🎨 ${colNombre}</span>
+              <span class="badge color-tag">
+                <span class="color-dots-group">${dotsHTML}</span>
+                <span>${c.desc}</span>
+              </span>
               <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? 'Con pintura' : 'Sin pintar'}</span>
               ${!tienePrecio ? '<span class="badge pendiente">Precio pendiente</span>' : ''}
             </div>
@@ -1175,7 +1574,7 @@
         </div>
 
         <div class="prod-color-bar">
-          <label for="pcol-${p.id}">Probar otro color:</label>
+          <label for="pcol-${p.id}">Probar color:</label>
           <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
             ${colorOptionsHTML}
           </select>
@@ -1190,7 +1589,7 @@
         <div class="prod-foot">
           <div>
             <span class="unit">Costo total </span><strong>${fmt(c.costoTotal)}</strong>
-            <div class="unit">con filamento ${colNombre}</div>
+            <div class="unit">con ${c.desc}</div>
           </div>
           <div style="text-align:right;">
             <div class="venta ${tienePrecio ? '' : 'pendiente'}">${tienePrecio ? fmt(p.precioVenta) : 'Sin precio aún'}</div>
@@ -1202,10 +1601,11 @@
     });
 
     el.querySelectorAll('.prod-color-switcher').forEach(sel => {
-      sel.addEventListener('change', (e) => {
+      sel.addEventListener('change', () => {
         const id = Number(sel.dataset.id);
-        const val = sel.value ? Number(sel.value) : null;
-        prodActiveColors[id] = val;
+        const val = sel.value ? Number(sel.value) : undefined;
+        if (val === undefined) delete prodActiveColors[id];
+        else prodActiveColors[id] = val;
         renderProductos();
       });
     });
@@ -1228,10 +1628,10 @@
 
   // ---------- Caja ----------
   let cajaQty = {};
-  let cajaColorSelected = {}; // color temporal seleccionado en la caja por producto
+  let cajaColorSelected = {};
   let cajaBusqueda = '';
 
-  $('caja-buscar').addEventListener('input', () => {
+  $('caja-buscar')?.addEventListener('input', () => {
     cajaBusqueda = $('caja-buscar').value.trim().toLowerCase();
     renderCaja();
   });
@@ -1245,6 +1645,7 @@
     }) : productos;
 
     const el = $('cajaList');
+    if (!el) return;
     el.innerHTML = '';
     if (productos.length === 0) {
       el.innerHTML = '<div class="empty">Aún no hay productos con precio de venta. Agrégales un precio en Productos o Costos.</div>';
@@ -1259,12 +1660,11 @@
 
     filtrados.forEach(p => {
       if (!(p.id in cajaQty)) cajaQty[p.id] = 0;
-      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : p.colorId;
+      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : undefined;
       const c = computeProductCost(p, activeColorId);
-      const colObj = getColorById(activeColorId);
-      const colNombre = colObj ? colObj.nombre : 'Base';
+      const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
 
-      let colorSelectOptions = `<option value="" ${!activeColorId ? 'selected' : ''}>Base</option>`;
+      let colorSelectOptions = `<option value="" ${activeColorId === undefined ? 'selected' : ''}>Original: ${c.desc}</option>`;
       coloresCache.forEach(col => {
         colorSelectOptions += `<option value="${col.id}" ${activeColorId === col.id ? 'selected' : ''}>${col.nombre}</option>`;
       });
@@ -1276,7 +1676,10 @@
         <div class="caja-info">
           <div class="caja-name">
             <span>${p.nombre}</span>
-            <span class="badge color-tag">🎨 ${colNombre}</span>
+            <span class="badge color-tag">
+              <span class="color-dots-group">${dotsHTML}</span>
+              <span>${c.desc}</span>
+            </span>
           </div>
           <div class="caja-meta">costo ${fmt(c.costoTotal)} · venta ${fmt(p.precioVenta)}</div>
           <div class="caja-color-sel" onclick="event.stopPropagation();">
@@ -1298,7 +1701,8 @@
       sel.addEventListener('change', (e) => {
         e.stopPropagation();
         const id = Number(sel.dataset.id);
-        cajaColorSelected[id] = sel.value ? Number(sel.value) : null;
+        if (!sel.value) delete cajaColorSelected[id];
+        else cajaColorSelected[id] = Number(sel.value);
         renderCaja();
       });
     });
@@ -1333,7 +1737,7 @@
     productos.forEach(p => {
       const q = cajaQty[p.id] || 0;
       if (q <= 0) return;
-      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : p.colorId;
+      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : undefined;
       const c = computeProductCost(p, activeColorId);
       const costoLinea = c.costoTotal * q;
       const ventaLinea = (p.precioVenta || 0) * q;
@@ -1383,7 +1787,7 @@
     ventasCache = ventasCache.filter(v => v.id !== id);
   }
 
-  $('caja-registrar').addEventListener('click', async () => {
+  $('caja-registrar')?.addEventListener('click', async () => {
     const productos = getProductos();
     const items = [];
     let totalVenta = 0, totalCosto = 0, tuParte = 0, suParte = 0;
@@ -1391,9 +1795,7 @@
     productos.forEach(p => {
       const q = cajaQty[p.id] || 0;
       if (q <= 0) return;
-      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : p.colorId;
-      const colObj = getColorById(activeColorId);
-      const colNombre = colObj ? colObj.nombre : 'Base';
+      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : undefined;
       const c = computeProductCost(p, activeColorId);
       const costoLinea = c.costoTotal * q;
       const ventaLinea = (p.precioVenta || 0) * q;
@@ -1401,7 +1803,8 @@
 
       items.push({
         nombre: p.nombre,
-        color: colNombre,
+        colorDesc: c.desc,
+        dots: c.dots || [],
         cantidad: q,
         precioUnit: p.precioVenta,
         costoUnit: Math.round(c.costoTotal)
@@ -1447,6 +1850,7 @@
     $('v-totalHers').textContent = fmt(totalHers);
 
     const el = $('ventasList');
+    if (!el) return;
     el.innerHTML = '';
     if (ventas.length === 0) {
       el.innerHTML = '<div class="empty">Aún no registras ventas. Usa la pestaña Caja para anotar una.</div>';
@@ -1454,9 +1858,10 @@
     }
     ventas.forEach(v => {
       const itemsTxt = (v.items || []).map(i => {
-        const colorTag = i.color && i.color !== 'Base' ? ` (${i.color})` : '';
-        return `${i.nombre}${colorTag} x${i.cantidad}`;
-      }).join(', ');
+        const dots = (i.dots || []).map(d => `<span class="color-dot" style="background:${d}; margin-right:2px;"></span>`).join('');
+        const colTxt = i.colorDesc || i.color || '';
+        return `<span>${dots}<strong>${i.nombre}</strong> (${colTxt}) x${i.cantidad}</span>`;
+      }).join('<br>');
 
       const card = document.createElement('div');
       card.className = 'venta-card';
