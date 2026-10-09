@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pixelito3D">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon-192.png" type="image/png">
+<title>Pixelito3D — Panel de negocio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef2f8; --bg-panel: #ffffff; --bg-soft: #f4f7fc;
+    --ink: #0f172a; --ink-soft: #64748b; --ink-faint: #94a3b8; --line: #e2e8f0;
+    --blue: #2563eb; --blue-dark: #1d4ed8; --blue-soft: #eaf1fe;
+    --green: #059669; --green-dark: #047857; --green-soft: #ecfdf5;
+    --red: #dc2626; --red-soft: #fef2f2;
+    --amber: #b45309; --amber-soft: #fffbeb;
+    --purple: #7c3aed; --purple-soft: #f5f3ff;
+    --radius: 12px; --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(15,23,42,0.05), 0 1px 1px rgba(15,23,42,0.03);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif; min-height: 100%;
+    -webkit-font-smoothing: antialiased; font-feature-settings: 'tnum' 1;
+  }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 20px 16px 72px; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .logo {
+    width: 38px; height: 38px; border-radius: 10px; background: var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #fff; font-size: 16px; flex-shrink: 0;
+  }
+  h1 { font-size: 17px; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-soft); font-size: 12.5px; margin: 1px 0 0; }
+
+  nav.tabs {
+    display: flex; gap: 4px; margin: 4px 0 18px; padding: 4px;
+    background: var(--bg-panel); border: 1px solid var(--line);
+    border-radius: 999px; overflow-x: auto;
+  }
+  nav.tabs button {
+    background: none; border: none; padding: 8px 14px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    color: var(--ink-soft); cursor: pointer; white-space: nowrap;
+    border-radius: 999px; flex-shrink: 0; transition: all 0.15s ease;
+  }
+  nav.tabs button.active { color: #fff; background: var(--blue); }
+
+  .view { display: none; }
+  .view.active { display: block; }
+  .subview { display: none; }
+  .subview.active { display: block; }
+
+  .panel {
+    background: var(--bg-panel); border: 1px solid var(--line); box-shadow: var(--shadow);
+    border-radius: var(--radius); padding: 18px 18px; margin-bottom: 14px;
+  }
+  .panel-title { font-size: 15px; font-weight: 700; margin: 0 0 2px; }
+  .panel-sub { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 14px; }
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--blue);
+    text-transform: uppercase; margin: 0 0 8px;
+  }
+
+  .field {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 11px 0; border-bottom: 1px solid var(--line);
+  }
+  .field:last-child { border-bottom: none; }
+  .field label { font-size: 13.5px; color: var(--ink-soft); }
+  .unit { font-size: 12px; color: var(--ink-faint); }
+  .input-group { display: flex; align-items: baseline; gap: 6px; }
+  input[type="number"], input[type="text"], select {
+    text-align: right; font-family: 'Inter', sans-serif; font-size: 15.5px;
+    font-weight: 600; color: var(--ink); background: transparent; border: none;
+    border-bottom: 1.5px solid var(--line); padding: 4px 2px; -moz-appearance: textfield;
+    font-feature-settings: 'tnum' 1;
+  }
+  input[type="number"] { width: 110px; }
+  input[type="text"] { width: 170px; text-align: left; font-weight: 500; }
+  select {
+    width: auto; max-width: 200px; text-align: right; font-size: 13.5px;
+    font-weight: 600; color: var(--ink); cursor: pointer;
+    background: var(--bg-soft); padding: 5px 8px; border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+  }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input:focus, select:focus { outline: none; border-color: var(--blue); }
+
+  .search-box {
+    display: flex; align-items: center; gap: 8px; background: var(--bg-soft);
+    border: 1.5px solid var(--line); border-radius: 999px; padding: 10px 14px; margin-bottom: 14px;
+  }
+  .search-box .ic { font-size: 14px; opacity: 0.6; }
+  .search-box input[type="text"] {
+    width: 100%; border-bottom: none; font-size: 14.5px; font-weight: 500; padding: 0;
+  }
+
+  .seg-row { display: flex; gap: 8px; margin-top: 4px; }
+  .seg-btn {
+    flex: 1; padding: 10px 8px; border: 1.5px solid var(--line); background: transparent;
+    color: var(--ink-soft); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    border-radius: var(--radius-sm); cursor: pointer; text-align: center; transition: all 0.15s ease;
+  }
+  .seg-btn.active { background: var(--blue-soft); color: var(--blue-dark); border-color: var(--blue); }
+
+  .r-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px;
+  }
+  .r-line:last-child { border-bottom: none; }
+  .r-line span:first-child { color: var(--ink-soft); }
+  .r-line .val { font-weight: 600; }
+  .r-total { border-top: 1.5px solid var(--ink); margin-top: 4px; padding-top: 12px; font-size: 14.5px; font-weight: 600; }
+  .r-total .val { font-size: 18px; font-weight: 800; }
+  .r-line.negative .val { color: var(--red); }
+
+  .stat-row { display: flex; gap: 10px; margin-top: 4px; }
+  .stat-card { flex: 1; border-radius: var(--radius-sm); padding: 13px 12px; }
+  .stat-card.blue { background: var(--blue-soft); }
+  .stat-card.green { background: var(--green-soft); }
+  .stat-card .stat-label { font-size: 11px; color: var(--ink-soft); font-weight: 600; margin: 0 0 3px; }
+  .stat-card.blue .stat-label { color: var(--blue-dark); }
+  .stat-card.green .stat-label { color: var(--green); }
+  .stat-card .stat-value { font-size: 18px; font-weight: 800; }
+  .stat-card.blue .stat-value { color: var(--blue-dark); }
+  .stat-card.green .stat-value { color: var(--green); }
+
+  .warn-box {
+    margin-top: 12px; padding: 10px 12px; background: var(--red-soft); border-radius: var(--radius-sm);
+    color: var(--red); font-size: 12.5px; font-weight: 500; display: none;
+  }
+  .warn-box.show { display: block; }
+  .info-box {
+    margin-top: 12px; padding: 10px 12px; background: var(--amber-soft); border-radius: var(--radius-sm);
+    color: var(--amber); font-size: 12.5px; font-weight: 500; display: none;
+  }
+  .info-box.show { display: block; }
+
+  button.primary {
+    width: 100%; padding: 13px; margin-top: 14px; border: none; border-radius: var(--radius-sm);
+    background: var(--blue); color: #fff; font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s ease;
+  }
+  button.primary:active { background: var(--blue-dark); }
+  button.secondary {
+    width: 100%; padding: 10px; margin-top: 8px; border: 1.5px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--bg-soft); color: var(--ink); font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  button.link {
+    display: block; margin: 8px auto 0; background: none; border: none;
+    color: var(--ink-soft); font-size: 12.5px; text-decoration: underline; cursor: pointer;
+  }
+
+  .prod-card {
+    border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px;
+    margin-bottom: 12px; background: var(--bg-soft);
+  }
+  .prod-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+  .prod-name { font-size: 14.5px; font-weight: 700; }
+  .prod-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .prod-actions { display: flex; gap: 10px; flex-shrink: 0; }
+  .prod-actions button { background: none; border: none; font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 4px; }
+  .prod-actions .edit { color: var(--blue); }
+  .prod-actions .del { color: var(--red); }
+  
+  .badge {
+    display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 700; padding: 2px 8px;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.02em;
+  }
+  .badge.pintado { background: var(--blue-soft); color: var(--blue-dark); }
+  .badge.sinpintar { background: var(--line); color: var(--ink-soft); }
+  .badge.pendiente { background: var(--amber-soft); color: var(--amber); }
+  .badge.color-tag { background: var(--purple-soft); color: var(--purple); text-transform: none; font-size: 11px; }
+  
+  .prod-color-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 6px 10px; margin-bottom: 10px; font-size: 12px;
+  }
+  .prod-color-bar label { color: var(--ink-soft); font-weight: 600; }
+  .prod-color-bar select {
+    font-size: 12px; padding: 2px 6px; background: var(--bg-soft); border: 1px solid var(--line);
+    border-radius: 6px; font-weight: 600;
+  }
+
+  .prod-mini { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+  .prod-mini div { font-size: 11px; color: var(--ink-soft); }
+  .prod-mini strong { display: block; font-size: 12.5px; color: var(--ink); font-weight: 700; }
+  .prod-foot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .prod-foot .venta { font-size: 15px; font-weight: 800; color: var(--blue-dark); }
+  .prod-foot .venta.pendiente { color: var(--amber); font-size: 13px; }
+  .prod-foot .margen { font-size: 12px; color: var(--green); font-weight: 700; }
+
+  .caja-row {
+    display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); cursor: pointer;
+  }
+  .caja-row:last-child { border-bottom: none; }
+  .caja-info { flex: 1; min-width: 0; }
+  .caja-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .caja-meta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .caja-color-sel { margin-top: 4px; display: inline-block; }
+  .caja-color-sel select { font-size: 11.5px; padding: 2px 6px; height: 24px; }
+  .qty-control { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .qty-btn {
+    width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid var(--line);
+    background: #fff; color: var(--blue); font-size: 16px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qty-btn:active { background: var(--blue-soft); }
+  .qty-num { min-width: 18px; text-align: center; font-weight: 700; font-size: 14px; }
+
+  .venta-card {
+    border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px;
+    margin-bottom: 10px; background: var(--bg-soft);
+  }
+  .venta-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; }
+  .venta-items { font-size: 13px; margin-bottom: 8px; line-height: 1.4; }
+  .venta-foot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .venta-total { font-size: 15px; font-weight: 800; color: var(--blue-dark); }
+  .venta-split { font-size: 11.5px; color: var(--ink-soft); }
+
+  .empty { color: var(--ink-faint); font-size: 13px; padding: 20px 0; text-align: center; }
+  footer { margin-top: 16px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.6; }
+
+  .range-slider {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+    border-radius: 999px; background: var(--line); outline: none; margin: 6px 0 4px;
+  }
+  .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--blue); cursor: pointer; border: 3px solid #fff;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.3);
+  }
+  .range-slider::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--blue);
+    cursor: pointer; border: 3px solid #fff; box-shadow: 0 1px 3px rgba(15,23,42,0.3);
+  }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .preset-chip {
+    border: 1.5px solid var(--line); background: var(--bg-soft); border-radius: var(--radius-sm);
+    padding: 8px 10px; cursor: pointer; text-align: center; flex: 1; min-width: 80px;
+  }
+  .preset-chip.active { border-color: var(--blue); background: var(--blue-soft); }
+  .preset-chip .pct { font-size: 11px; color: var(--ink-soft); font-weight: 600; }
+  .preset-chip .price { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+  .preset-chip.active .price { color: var(--blue-dark); }
+
+  /* Lista de colores en ajustes */
+  .color-card {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; background: var(--bg-soft); border: 1px solid var(--line);
+    border-radius: var(--radius-sm); margin-bottom: 8px;
+  }
+  .color-card-info { display: flex; align-items: center; gap: 8px; }
+  .color-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--purple); }
+  .color-name { font-size: 13.5px; font-weight: 600; }
+  .color-price { font-size: 13px; font-weight: 700; color: var(--blue-dark); }
+  .color-actions { display: flex; gap: 8px; }
+  .color-actions button {
+    background: none; border: none; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  }
+  .color-actions .edit { color: var(--blue); }
+  .color-actions .del { color: var(--red); }
+
+  .add-color-box {
+    margin-top: 12px; padding: 12px; background: var(--bg-soft);
+    border: 1.5px dashed var(--line); border-radius: var(--radius-sm);
+  }
+  .add-color-grid {
+    display: grid; grid-template-columns: 1fr 100px auto; gap: 8px; align-items: center;
+  }
+  .add-color-grid input {
+    background: #fff; border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 10px; font-size: 13px; text-align: left;
+  }
+  .add-color-grid input[type="number"] { text-align: right; width: 100%; }
+  .add-color-grid button {
+    padding: 8px 12px; background: var(--blue); color: #fff; border: none;
+    border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">P3D</div>
+    <div>
+      <h1>Pixelito3D</h1>
+      <p class="sub">Caja, ventas, costos, catálogo y colores</p>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="caja" class="active">Caja</button>
+    <button data-tab="ventas">Ventas</button>
+    <button data-tab="costos">Costos</button>
+    <button data-tab="productos">Productos</button>
+    <button data-tab="ajustes">Ajustes</button>
+  </nav>
+
+  <!-- CAJA -->
+  <div class="view active" id="view-caja">
+    <div class="panel">
+      <p class="panel-title">Caja rápida</p>
+      <p class="panel-sub">Busca un producto, elige su color si deseas y usa +/– para sumar unidades.</p>
+      <div class="search-box">
+        <span class="ic">🔍</span>
+        <input type="text" id="caja-buscar" placeholder="Buscar por producto o color...">
+      </div>
+      <div id="cajaList"></div>
+    </div>
+    <div class="panel">
+      <p class="eyebrow">Total de esta venta</p>
+      <div class="stat-row">
+        <div class="stat-card blue"><p class="stat-label">Venta</p><p class="stat-value" id="caja-venta">$0</p></div>
+        <div class="stat-card blue"><p class="stat-label">Costo</p><p class="stat-value" id="caja-costo">$0</p></div>
+      </div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat-card green"><p class="stat-label">Tú</p><p class="stat-value" id="caja-mine">$0</p></div>
+        <div class="stat-card green"><p class="stat-label">Ella</p><p class="stat-value" id="caja-hers">$0</p></div>
+      </div>
+      <button class="primary" id="caja-registrar">Registrar venta</button>
+    </div>
+  </div>
+
+  <!-- VENTAS -->
+  <div class="view" id="view-ventas">
+    <div class="panel">
+      <p class="panel-title">Resumen de ventas</p>
+      <div class="stat-row">
+        <div class="stat-card blue"><p class="stat-label">Ventas totales</p><p class="stat-value" id="v-totalVenta">$0</p></div>
+        <div class="stat-card blue"><p class="stat-label">Utilidad total</p><p class="stat-value" id="v-totalUtilidad">$0</p></div>
+      </div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat-card green"><p class="stat-label">Tú acumulado</p><p class="stat-value" id="v-totalMine">$0</p></div>
+        <div class="stat-card green"><p class="stat-label">Ella acumulado</p><p class="stat-value" id="v-totalHers">$0</p></div>
+      </div>
+    </div>
+    <div class="panel">
+      <p class="panel-title">Historial de ventas</p>
+      <p class="panel-sub">Registro detallado de ventas realizadas con desglose de color.</p>
+      <div id="ventasList"></div>
+    </div>
+  </div>
+
+  <!-- COSTOS -->
+  <div class="view" id="view-costos">
+    <div class="panel">
+      <p class="eyebrow">Modo de cálculo</p>
+      <div class="seg-row">
+        <button class="seg-btn active" data-costmode="produccion">Costo de producción</button>
+        <button class="seg-btn" data-costmode="producto">Costo del producto</button>
+      </div>
+    </div>
+
+    <!-- MODO: solo costo de producción -->
+    <div class="subview active" id="costmode-produccion">
+      <div class="panel">
+        <p class="panel-title">Costo de producción</p>
+        <p class="panel-sub">Elige el color de filamento y calcula material, luz y máquina.</p>
+        <div class="field">
+          <label for="cp-nombre">Nombre del producto</label>
+          <div class="input-group"><input type="text" id="cp-nombre" placeholder="Ej: llavero"></div>
+        </div>
+        <div class="field">
+          <label for="cp-color">Color de filamento</label>
+          <div class="input-group">
+            <select id="cp-color"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="cp-gramos">Gramos de filamento</label>
+          <div class="input-group"><input type="number" id="cp-gramos" step="1" placeholder="0"><span class="unit">g</span></div>
+        </div>
+        <div class="field">
+          <label for="cp-horas">Horas de impresión</label>
+          <div class="input-group"><input type="number" id="cp-horas" step="0.1" placeholder="0"><span class="unit">h</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Desglose de costo</p>
+        <div class="r-line"><span>Costo material (<span id="cp-colorPriceTag">$0/kg</span>)</span><span class="val" id="cp-outMaterial">$0</span></div>
+        <div class="r-line"><span>Costo luz</span><span class="val" id="cp-outLuz">$0</span></div>
+        <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="cp-outMaquina">$0</span></div>
+        <div class="r-line r-total"><span>Costo total</span><span class="val" id="cp-outTotal">$0</span></div>
+        <p class="unit" style="margin-top:2px;">↑ costo de producción según el color seleccionado</p>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">Fijar precio de venta</p>
+        <p class="panel-sub">Desliza para ver cómo cambian el precio y la ganancia según el margen.</p>
+        <div class="field">
+          <label>Margen de ganancia objetivo</label>
+          <div class="input-group"><span class="val" id="cp-margenLabel" style="font-weight:700;">50%</span></div>
+        </div>
+        <input type="range" id="cp-margenSlider" min="0" max="80" step="5" value="50" class="range-slider">
+        <div class="stat-row" style="margin-top:12px;">
+          <div class="stat-card blue"><p class="stat-label">Precio sugerido</p><p class="stat-value" id="cp-precioSugerido">$0</p></div>
+          <div class="stat-card green"><p class="stat-label">Ganancia</p><p class="stat-value" id="cp-gananciaSugerida">$0</p></div>
+        </div>
+        <p class="eyebrow" style="margin-top:16px;">Otras opciones de margen</p>
+        <div id="cp-presets" class="preset-row"></div>
+        <button class="primary" id="cp-guardarConPrecio">Guardar con este precio</button>
+        <button class="link" id="cp-guardarSinPrecio">Guardar sin precio de venta</button>
+      </div>
+    </div>
+
+    <!-- MODO: costo del producto completo -->
+    <div class="subview" id="costmode-producto">
+      <div class="panel">
+        <p class="panel-title" id="cd-titulo">Nuevo producto</p>
+        <p class="panel-sub">Calcula precio, color, pintura y reparto, luego guárdalo.</p>
+        <div class="field">
+          <label for="r-nombre">Nombre del producto</label>
+          <div class="input-group"><input type="text" id="r-nombre" placeholder="Ej: llavero"></div>
+        </div>
+        <div class="field">
+          <label for="r-color">Color de filamento</label>
+          <div class="input-group">
+            <select id="r-color"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="r-precio">Precio de venta (opcional)</label>
+          <div class="input-group"><span class="unit">$</span><input type="number" id="r-precio" step="100" placeholder="pendiente"></div>
+        </div>
+        <div class="field">
+          <label for="r-gramos">Gramos de filamento</label>
+          <div class="input-group"><input type="number" id="r-gramos" step="1" placeholder="0"><span class="unit">g</span></div>
+        </div>
+        <div class="field">
+          <label for="r-horas">Horas de impresión</label>
+          <div class="input-group"><input type="number" id="r-horas" step="0.1" placeholder="0"><span class="unit">h</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="eyebrow">Tipo de pieza</p>
+        <div class="seg-row">
+          <button class="seg-btn active" data-tipo="sin">Sin pintar</button>
+          <button class="seg-btn" data-tipo="con">Con pintura</button>
+        </div>
+        <div class="field" id="r-pinturaField" style="display:none; margin-top:4px;">
+          <label for="r-pintura">Costo de pintura (auto o manual)</label>
+          <div class="input-group"><span class="unit">$</span><input type="number" id="r-pintura" step="50" placeholder="auto"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="eyebrow">Reparto de utilidad <span id="r-sugerencia" style="text-transform:none;color:var(--ink-soft);font-weight:500;">— sugerido 60/40 sin pintar</span></p>
+        <div class="seg-row">
+          <button class="seg-btn active" data-split="60">60 / 40</button>
+          <button class="seg-btn" data-split="50">50 / 50</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="eyebrow">Cálculo de resultado</p>
+        <div class="r-line"><span>Precio de venta</span><span class="val" id="r-outPrecio">$0</span></div>
+        <div class="r-line"><span>Costo material (<span id="r-colorPriceTag">$0/kg</span>)</span><span class="val" id="r-outMaterial">–$0</span></div>
+        <div class="r-line"><span>Costo luz</span><span class="val" id="r-outLuz">–$0</span></div>
+        <div class="r-line" id="r-linePintura" style="display:none;"><span>Costo pintura</span><span class="val" id="r-outPintura">–$0</span></div>
+        <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="r-outMaquina">–$0</span></div>
+        <div class="r-line r-total"><span>Costo de producción total</span><span class="val" id="r-outProduccion">–$0</span></div>
+        <div class="r-line" id="r-lineUtilidad"><span>Utilidad neta</span><span class="val" id="r-outUtilidad">$0</span></div>
+        <div class="warn-box" id="r-warnBox">La utilidad quedó negativa: el precio no cubre los costos.</div>
+        <div class="info-box" id="r-infoBox">Ingresa un precio de venta para ver la utilidad y el reparto.</div>
+        <div class="stat-row">
+          <div class="stat-card blue"><p class="stat-label">Tú (<span id="r-pctMine">60</span>%)</p><p class="stat-value" id="r-outMine">$0</p></div>
+          <div class="stat-card green"><p class="stat-label">Ella (<span id="r-pctHers">40</span>%)</p><p class="stat-value" id="r-outHers">$0</p></div>
+        </div>
+        <button class="primary" id="r-guardar">Guardar en catálogo de productos</button>
+        <button class="link" id="r-cancelar" style="display:none;">Cancelar edición</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div class="view" id="view-productos">
+    <div class="panel">
+      <p class="panel-title">Catálogo de productos</p>
+      <p class="panel-sub">Puedes cambiar el color en cada tarjeta para ver cómo varían los costos y ganancias en tiempo real.</p>
+      <div class="search-box">
+        <span class="ic">🔍</span>
+        <input type="text" id="prod-buscar" placeholder="Buscar por nombre...">
+      </div>
+      <div id="productosList"></div>
+    </div>
+  </div>
+
+  <!-- AJUSTES -->
+  <div class="view" id="view-ajustes">
+    <!-- COLORES DE FILAMENTO -->
+    <div class="panel">
+      <p class="panel-title">🎨 Colores y precios de filamento</p>
+      <p class="panel-sub">Define el precio del kilo para cada color. Así tus productos calcularán su costo exacto.</p>
+      
+      <div id="coloresList"></div>
+
+      <div class="add-color-box">
+        <p class="eyebrow" style="margin-bottom:8px;">Agregar nuevo color</p>
+        <div class="add-color-grid">
+          <input type="text" id="nc-nombre" placeholder="Nombre (ej: Azul, Rojo)">
+          <input type="number" id="nc-precio" step="100" placeholder="$/kg (ej: 13000)">
+          <button id="nc-btnAgregar">+ Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRECIOS BASE -->
+    <div class="panel">
+      <p class="panel-title">Precios base y energía</p>
+      <div class="field">
+        <label for="a-precioKg">Precio base filamento (fallback)</label>
+        <div class="input-group"><span class="unit">$</span><input type="number" id="a-precioKg" step="100"></div>
+      </div>
+      <div class="field">
+        <label for="a-consumo">Consumo de la impresora</label>
+        <div class="input-group"><input type="number" id="a-consumo" step="0.01"><span class="unit">kW</span></div>
+      </div>
+      <div class="field">
+        <label for="a-precioKwh">Precio de la luz</label>
+        <div class="input-group"><span class="unit">$</span><input type="number" id="a-precioKwh" step="1"><span class="unit">/kWh</span></div>
+      </div>
+    </div>
+
+    <!-- RECUPERACIÓN DE MÁQUINA -->
+    <div class="panel">
+      <p class="panel-title">Recuperación de la impresora</p>
+      <div class="field">
+        <label for="a-inversion">Inversión impresora</label>
+        <div class="input-group"><span class="unit">$</span><input type="number" id="a-inversion" step="1000"></div>
+      </div>
+      <div class="field">
+        <label for="a-vidaUtil">Vida útil estimada</label>
+        <div class="input-group"><input type="number" id="a-vidaUtil" step="10"><span class="unit">h</span></div>
+      </div>
+      <div class="field">
+        <label>Tarifa resultante</label>
+        <div class="input-group"><span class="val" id="a-tarifaCalc" style="font-weight:700;">$0/h</span></div>
+      </div>
+    </div>
+
+    <!-- PINTURA POR LOTE -->
+    <div class="panel">
+      <p class="panel-title">Pintura (por lote)</p>
+      <div class="field">
+        <label for="a-costoSetPintura">Costo del set de pintura</label>
+        <div class="input-group"><span class="unit">$</span><input type="number" id="a-costoSetPintura" step="100"></div>
+      </div>
+      <div class="field">
+        <label for="a-piezasPorSet">Piezas que rinde ese set</label>
+        <div class="input-group"><input type="number" id="a-piezasPorSet" step="1"></div>
+      </div>
+      <div class="field">
+        <label>Costo de pintura por pieza</label>
+        <div class="input-group"><span class="val" id="a-pinturaCalc" style="font-weight:700;">$0</span></div>
+      </div>
+    </div>
+    <footer>Todos los datos se guardan y sincronizan automáticamente en Supabase. Si cambias los precios de los colores, los costos de los productos se actualizarán inmediatamente.</footer>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const fmt = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
+
+  // ---------- Supabase ----------
+  const SUPABASE_URL = 'https://ywocbwnfgglfksbzkngw.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b2Nid25mZ2dsZmtzYnprbmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjgzMzgsImV4cCI6MjEwNjY0NDMzOH0.p7k4v4q4ZRHOQBvc_eEQoq7bfKcEP3_HYzxNyhAHJbI';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ---------- Colores State & DB ----------
+  let coloresCache = [];
+
+  async function loadColoresFromDB() {
+    try {
+      const { data, error } = await db.from('colores').select('*').order('nombre', { ascending: true });
+      if (!error && data) {
+        coloresCache = data.map(c => ({
+          id: Number(c.id),
+          nombre: c.nombre,
+          precioKg: Number(c.precio_kg) || 0
+        }));
+      }
+    } catch (e) {
+      coloresCache = [];
+    }
+    renderColoresAjustes();
+    populateColorSelects();
+  }
+
+  function getColores() { return coloresCache; }
+
+  function getColorById(id) {
+    return coloresCache.find(c => c.id === Number(id)) || null;
+  }
+
+  function getPrecioKgForColor(colorId) {
+    const col = getColorById(colorId);
+    if (col && col.precioKg > 0) return col.precioKg;
+    return ajustes.precioKg || 13000;
+  }
+
+  async function insertColor(nombre, precioKg) {
+    const newColor = { id: Date.now(), nombre, precio_kg: precioKg };
+    try {
+      await db.from('colores').insert(newColor);
+    } catch (e) { console.error('Error insertando color', e); }
+    coloresCache.push({ id: newColor.id, nombre, precioKg });
+    coloresCache.sort((a,b) => a.nombre.localeCompare(b.nombre));
+    renderColoresAjustes();
+    populateColorSelects();
+    calcProduccion();
+    calcReparto();
+  }
+
+  async function updateColor(id, nombre, precioKg) {
+    try {
+      await db.from('colores').update({ nombre, precio_kg: precioKg }).eq('id', id);
+    } catch (e) { console.error('Error actualizando color', e); }
+    const c = getColorById(id);
+    if (c) { c.nombre = nombre; c.precioKg = precioKg; }
+    coloresCache.sort((a,b) => a.nombre.localeCompare(b.nombre));
+    renderColoresAjustes();
+    populateColorSelects();
+    calcProduccion();
+    calcReparto();
+  }
+
+  async function deleteColor(id) {
+    try {
+      await db.from('colores').delete().eq('id', id);
+    } catch (e) { console.error('Error eliminando color', e); }
+    coloresCache = coloresCache.filter(c => c.id !== Number(id));
+    renderColoresAjustes();
+    populateColorSelects();
+    calcProduccion();
+    calcReparto();
+  }
+
+  function renderColoresAjustes() {
+    const el = $('coloresList');
+    if (!el) return;
+    el.innerHTML = '';
+    if (coloresCache.length === 0) {
+      el.innerHTML = '<div class="empty">Aún no has agregado colores específicos. Agrega uno abajo (ej: Azul, Rojo, Negro).</div>';
+      return;
+    }
+    coloresCache.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'color-card';
+      card.innerHTML = `
+        <div class="color-card-info">
+          <div class="color-dot"></div>
+          <div>
+            <span class="color-name">${c.nombre}</span>
+            <div class="color-price">${fmt(c.precioKg)} / kg</div>
+          </div>
+        </div>
+        <div class="color-actions">
+          <button class="edit" data-id="${c.id}">Editar precio</button>
+          <button class="del" data-id="${c.id}">Borrar</button>
+        </div>
+      `;
+      el.appendChild(card);
+    });
+
+    el.querySelectorAll('.color-actions .edit').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = Number(btn.dataset.id);
+        const c = getColorById(id);
+        if (!c) return;
+        const nuevoPrecio = prompt(`Nuevo precio por kilo para "${c.nombre}":`, c.precioKg);
+        if (nuevoPrecio !== null && !isNaN(parseFloat(nuevoPrecio))) {
+          await updateColor(id, c.nombre, parseFloat(nuevoPrecio));
+        }
+      });
+    });
+
+    el.querySelectorAll('.color-actions .del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = Number(btn.dataset.id);
+        const c = getColorById(id);
+        if (confirm(`¿Eliminar el color "${c ? c.nombre : ''}"?`)) {
+          await deleteColor(id);
+        }
+      });
+    });
+  }
+
+  $('nc-btnAgregar').addEventListener('click', async () => {
+    const nombre = $('nc-nombre').value.trim();
+    const precio = parseFloat($('nc-precio').value);
+    if (!nombre) { alert('Por favor ingresa un nombre para el color.'); return; }
+    if (isNaN(precio) || precio <= 0) { alert('Por favor ingresa un precio por kilo válido.'); return; }
+    await insertColor(nombre, precio);
+    $('nc-nombre').value = '';
+    $('nc-precio').value = '';
+  });
+
+  function populateColorSelects() {
+    const selects = [$('cp-color'), $('r-color')];
+    selects.forEach(sel => {
+      if (!sel) return;
+      const currentVal = sel.value;
+      sel.innerHTML = '';
+      const defOpt = document.createElement('option');
+      defOpt.value = '';
+      defOpt.textContent = `Base general (${fmt(ajustes.precioKg)}/kg)`;
+      sel.appendChild(defOpt);
+
+      coloresCache.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.nombre} (${fmt(c.precioKg)}/kg)`;
+        sel.appendChild(opt);
+      });
+      if (currentVal && [...sel.options].some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+      }
+    });
+  }
+
+  // ---------- Ajustes Generales ----------
+  const defaultAjustes = { precioKg: 13000, consumo: 0.3, precioKwh: 150, inversion: 540000, vidaUtil: 2500, costoSetPintura: 0, piezasPorSet: 0 };
+  let ajustes = Object.assign({}, defaultAjustes);
+
+  async function loadAjustesFromDB() {
+    try {
+      const { data, error } = await db.from('ajustes').select('*').eq('id', 1).single();
+      if (!error && data) {
+        ajustes = {
+          precioKg: Number(data.precio_kg) || 13000,
+          consumo: Number(data.consumo) || 0.3,
+          precioKwh: Number(data.precio_kwh) || 150,
+          inversion: Number(data.inversion) || 540000,
+          vidaUtil: Number(data.vida_util) || 2500,
+          costoSetPintura: Number(data.costo_set_pintura) || 0,
+          piezasPorSet: Number(data.piezas_por_set) || 0
+        };
+      }
+    } catch (e) {}
+    loadAjustesUI();
+  }
+
+  function saveAjustesToDB() {
+    db.from('ajustes').update({
+      precio_kg: ajustes.precioKg,
+      consumo: ajustes.consumo,
+      precio_kwh: ajustes.precioKwh,
+      inversion: ajustes.inversion,
+      vida_util: ajustes.vidaUtil,
+      costo_set_pintura: ajustes.costoSetPintura,
+      piezas_por_set: ajustes.piezasPorSet,
+      updated_at: new Date().toISOString()
+    }).eq('id', 1).then(() => {}).catch(() => {});
+  }
+
+  function loadAjustesUI() {
+    $('a-precioKg').value = ajustes.precioKg;
+    $('a-consumo').value = ajustes.consumo;
+    $('a-precioKwh').value = ajustes.precioKwh;
+    $('a-inversion').value = ajustes.inversion;
+    $('a-vidaUtil').value = ajustes.vidaUtil;
+    $('a-costoSetPintura').value = ajustes.costoSetPintura || '';
+    $('a-piezasPorSet').value = ajustes.piezasPorSet || '';
+    updateAjustesCalc();
+    populateColorSelects();
+  }
+
+  function updateAjustesCalc() {
+    $('a-tarifaCalc').textContent = fmt(ajustes.inversion / (ajustes.vidaUtil || 1)) + '/h';
+    const pintura = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
+    $('a-pinturaCalc').textContent = fmt(pintura);
+  }
+
+  ['a-precioKg','a-consumo','a-precioKwh','a-inversion','a-vidaUtil','a-costoSetPintura','a-piezasPorSet'].forEach(id => {
+    $(id).addEventListener('input', () => {
+      ajustes.precioKg = parseFloat($('a-precioKg').value) || 0;
+      ajustes.consumo = parseFloat($('a-consumo').value) || 0;
+      ajustes.precioKwh = parseFloat($('a-precioKwh').value) || 0;
+      ajustes.inversion = parseFloat($('a-inversion').value) || 0;
+      ajustes.vidaUtil = parseFloat($('a-vidaUtil').value) || 1;
+      ajustes.costoSetPintura = parseFloat($('a-costoSetPintura').value) || 0;
+      ajustes.piezasPorSet = parseFloat($('a-piezasPorSet').value) || 0;
+      saveAjustesToDB();
+      updateAjustesCalc();
+      populateColorSelects();
+      calcProduccion();
+      calcReparto();
+    });
+  });
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('nav.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      $('view-' + btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'productos') renderProductos();
+      if (btn.dataset.tab === 'caja') renderCaja();
+      if (btn.dataset.tab === 'ventas') renderVentas();
+    });
+  });
+
+  // ---------- Costos: Submodo ----------
+  document.querySelectorAll('[data-costmode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-costmode]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.subview').forEach(v => v.classList.remove('active'));
+      $('costmode-' + btn.dataset.costmode).classList.add('active');
+    });
+  });
+
+  // ---------- Costo de producción (Modo A) ----------
+  let cpCostoTotal = 0;
+  const PRESET_MARGENES = [20, 30, 40, 50, 60, 70];
+
+  function calcProduccion() {
+    const gramos = parseFloat($('cp-gramos').value) || 0;
+    const horas = parseFloat($('cp-horas').value) || 0;
+    const colorId = $('cp-color').value;
+    const precioKg = getPrecioKgForColor(colorId);
+
+    $('cp-colorPriceTag').textContent = fmt(precioKg) + '/kg';
+
+    const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
+    const costoMaterial = (gramos / 1000) * precioKg;
+    const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
+    const costoMaquina = horas * tarifaHora;
+    cpCostoTotal = costoMaterial + costoLuz + costoMaquina;
+
+    $('cp-outMaterial').textContent = fmt(costoMaterial);
+    $('cp-outLuz').textContent = fmt(costoLuz);
+    $('cp-outMaquina').textContent = fmt(costoMaquina);
+    $('cp-outTotal').textContent = fmt(cpCostoTotal);
+    updateSugerenciaPrecio();
+  }
+  ['cp-gramos','cp-horas','cp-color'].forEach(id => $(id).addEventListener('input', calcProduccion));
+
+  function precioParaMargen(margenPct) {
+    const f = 1 - (margenPct / 100);
+    if (f <= 0) return cpCostoTotal * 100;
+    return cpCostoTotal / f;
+  }
+
+  function updateSugerenciaPrecio() {
+    const margen = parseInt($('cp-margenSlider').value, 10);
+    $('cp-margenLabel').textContent = margen + '%';
+    const precio = precioParaMargen(margen);
+    const ganancia = precio - cpCostoTotal;
+    $('cp-precioSugerido').textContent = fmt(precio);
+    $('cp-gananciaSugerida').textContent = fmt(ganancia);
+
+    const el = $('cp-presets');
+    el.innerHTML = '';
+    PRESET_MARGENES.forEach(m => {
+      const p = precioParaMargen(m);
+      const chip = document.createElement('div');
+      chip.className = 'preset-chip' + (m === margen ? ' active' : '');
+      chip.innerHTML = `<div class="pct">${m}%</div><div class="price">${fmt(p)}</div>`;
+      chip.addEventListener('click', () => {
+        $('cp-margenSlider').value = m;
+        updateSugerenciaPrecio();
+      });
+      el.appendChild(chip);
+    });
+  }
+  $('cp-margenSlider').addEventListener('input', updateSugerenciaPrecio);
+
+  async function guardarProductoDesdeCosto(conPrecio) {
+    const nombre = $('cp-nombre').value.trim() || 'Producto sin nombre';
+    const gramos = parseFloat($('cp-gramos').value) || 0;
+    const horas = parseFloat($('cp-horas').value) || 0;
+    const colorId = $('cp-color').value ? Number($('cp-color').value) : null;
+    const precioVenta = conPrecio ? Math.round(precioParaMargen(parseInt($('cp-margenSlider').value, 10))) : null;
+
+    await insertProducto({
+      id: Date.now(), nombre, gramos, horas,
+      colorId,
+      pintura: false, pinturaManual: null,
+      precioVenta, splitMine: 60,
+      fecha: new Date().toLocaleDateString('es-CL')
+    });
+    $('cp-nombre').value = ''; $('cp-gramos').value = ''; $('cp-horas').value = '';
+    calcProduccion();
+    document.querySelector('nav.tabs button[data-tab="productos"]').click();
+  }
+  $('cp-guardarConPrecio').addEventListener('click', () => guardarProductoDesdeCosto(true));
+  $('cp-guardarSinPrecio').addEventListener('click', () => guardarProductoDesdeCosto(false));
+
+  // ---------- Costo del producto (Modo B) ----------
+  let splitMine = 60;
+  let tienePintura = false;
+  let editingId = null;
+
+  document.querySelectorAll('[data-tipo]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-tipo]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tienePintura = btn.dataset.tipo === 'con';
+      $('r-pinturaField').style.display = tienePintura ? 'flex' : 'none';
+      $('r-linePintura').style.display = tienePintura ? 'flex' : 'none';
+      $('r-sugerencia').textContent = tienePintura ? '— sugerido 50/50 con pintura' : '— sugerido 60/40 sin pintar';
+      calcReparto();
+    });
+  });
+  document.querySelectorAll('[data-split]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-split]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      splitMine = parseInt(btn.dataset.split, 10);
+      calcReparto();
+    });
+  });
+
+  function calcReparto() {
+    const precioRaw = $('r-precio').value;
+    const precio = parseFloat(precioRaw) || 0;
+    const tienePrecio = precioRaw !== '' && precio > 0;
+    const gramos = parseFloat($('r-gramos').value) || 0;
+    const horas = parseFloat($('r-horas').value) || 0;
+    const colorId = $('r-color').value;
+    const precioKg = getPrecioKgForColor(colorId);
+
+    $('r-colorPriceTag').textContent = fmt(precioKg) + '/kg';
+
+    const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
+    const pinturaAuto = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
+    const pinturaManualRaw = $('r-pintura').value;
+    const pinturaManual = pinturaManualRaw !== '' ? parseFloat(pinturaManualRaw) : null;
+    const pintura = tienePintura ? (pinturaManual !== null ? pinturaManual : pinturaAuto) : 0;
+
+    const costoMaterial = (gramos / 1000) * precioKg;
+    const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
+    const costoMaquina = horas * tarifaHora;
+    const costoProduccion = costoMaterial + costoLuz + costoMaquina + pintura;
+    const utilidad = precio - costoProduccion;
+
+    $('r-outPrecio').textContent = tienePrecio ? fmt(precio) : '—';
+    $('r-outMaterial').textContent = '–' + fmt(costoMaterial);
+    $('r-outLuz').textContent = '–' + fmt(costoLuz);
+    $('r-outPintura').textContent = '–' + fmt(pintura);
+    $('r-outMaquina').textContent = '–' + fmt(costoMaquina);
+    $('r-outProduccion').textContent = '–' + fmt(costoProduccion);
+    $('r-outUtilidad').textContent = tienePrecio ? fmt(utilidad) : '—';
+    $('r-lineUtilidad').classList.toggle('negative', tienePrecio && utilidad < 0);
+    $('r-warnBox').classList.toggle('show', tienePrecio && utilidad < 0);
+    $('r-infoBox').classList.toggle('show', !tienePrecio);
+
+    const mine = tienePrecio ? Math.max(utilidad, 0) * (splitMine / 100) : 0;
+    const hers = tienePrecio ? Math.max(utilidad, 0) * ((100 - splitMine) / 100) : 0;
+    $('r-pctMine').textContent = splitMine;
+    $('r-pctHers').textContent = 100 - splitMine;
+    $('r-outMine').textContent = tienePrecio ? fmt(mine) : '—';
+    $('r-outHers').textContent = tienePrecio ? fmt(hers) : '—';
+
+    return { precio: tienePrecio ? precio : null, colorId: colorId ? Number(colorId) : null, gramos, horas, tienePintura, pinturaManual, costoProduccion, utilidad, splitMine };
+  }
+  ['r-precio','r-gramos','r-horas','r-pintura','r-color'].forEach(id => $(id).addEventListener('input', calcReparto));
+
+  function resetRepartoForm() {
+    editingId = null;
+    $('r-nombre').value = ''; $('r-precio').value = ''; $('r-gramos').value = ''; $('r-horas').value = '';
+    $('r-pintura').value = ''; $('r-color').value = '';
+    tienePintura = false; splitMine = 60;
+    document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('active', b.dataset.tipo === 'sin'));
+    document.querySelectorAll('[data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '60'));
+    $('r-pinturaField').style.display = 'none';
+    $('r-linePintura').style.display = 'none';
+    $('r-sugerencia').textContent = '— sugerido 60/40 sin pintar';
+    $('cd-titulo').textContent = 'Nuevo producto';
+    $('r-guardar').textContent = 'Guardar en catálogo de productos';
+    $('r-cancelar').style.display = 'none';
+    calcReparto();
+  }
+  $('r-cancelar').addEventListener('click', resetRepartoForm);
+
+  $('r-guardar').addEventListener('click', async () => {
+    const nombre = $('r-nombre').value.trim() || 'Producto sin nombre';
+    const r = calcReparto();
+    const entry = {
+      id: editingId || Date.now(),
+      nombre,
+      colorId: r.colorId,
+      gramos: r.gramos,
+      horas: r.horas,
+      pintura: r.tienePintura,
+      pinturaManual: r.tienePintura ? r.pinturaManual : null,
+      precioVenta: r.precio,
+      splitMine: r.splitMine,
+      fecha: new Date().toLocaleDateString('es-CL')
+    };
+    if (editingId) {
+      await updateProducto(entry);
+    } else {
+      await insertProducto(entry);
+    }
+    resetRepartoForm();
+    document.querySelector('nav.tabs button[data-tab="productos"]').click();
+  });
+
+  function editarProducto(p) {
+    document.querySelector('nav.tabs button[data-tab="costos"]').click();
+    document.querySelector('[data-costmode="producto"]').click();
+    editingId = p.id;
+    $('r-nombre').value = p.nombre;
+    $('r-color').value = p.colorId ? String(p.colorId) : '';
+    $('r-precio').value = p.precioVenta !== null && p.precioVenta !== undefined ? p.precioVenta : '';
+    $('r-gramos').value = p.gramos || '';
+    $('r-horas').value = p.horas || '';
+    $('r-pintura').value = p.pinturaManual !== null && p.pinturaManual !== undefined ? p.pinturaManual : '';
+    tienePintura = !!p.pintura;
+    splitMine = p.splitMine || 60;
+    document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('active', (b.dataset.tipo === 'con') === tienePintura));
+    document.querySelectorAll('[data-split]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.split, 10) === splitMine));
+    $('r-pinturaField').style.display = tienePintura ? 'flex' : 'none';
+    $('r-linePintura').style.display = tienePintura ? 'flex' : 'none';
+    $('r-sugerencia').textContent = tienePintura ? '— sugerido 50/50 con pintura' : '— sugerido 60/40 sin pintar';
+    $('cd-titulo').textContent = 'Editar producto';
+    $('r-guardar').textContent = 'Guardar cambios';
+    $('r-cancelar').style.display = 'block';
+    calcReparto();
+  }
+
+  // ---------- Cálculo de costo de producto con color dinámico ----------
+  function computeProductCost(p, overrideColorId) {
+    const effectiveColorId = (overrideColorId !== undefined) ? overrideColorId : p.colorId;
+    const precioKg = getPrecioKgForColor(effectiveColorId);
+    const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
+    const costoMaterial = ((p.gramos || 0) / 1000) * precioKg;
+    const costoLuz = (p.horas || 0) * ajustes.consumo * ajustes.precioKwh;
+    const costoMaquina = (p.horas || 0) * tarifaHora;
+    const pinturaAuto = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
+    const costoPintura = p.pintura ? (p.pinturaManual !== null && p.pinturaManual !== undefined ? p.pinturaManual : pinturaAuto) : 0;
+    const costoTotal = costoMaterial + costoLuz + costoMaquina + costoPintura;
+    return { costoMaterial, costoLuz, costoMaquina, costoPintura, costoTotal, precioKg, effectiveColorId };
+  }
+
+  // ---------- Productos (en Supabase) ----------
+  let productosCache = [];
+  let prodActiveColors = {}; // Mapa para previsualizar colores por producto en catálogo
+
+  function rowToProducto(r) {
+    return {
+      id: Number(r.id),
+      nombre: r.nombre,
+      colorId: r.color_id ? Number(r.color_id) : null,
+      gramos: Number(r.gramos) || 0,
+      horas: Number(r.horas) || 0,
+      pintura: !!r.pintura,
+      pinturaManual: (r.pintura_manual === null || r.pintura_manual === undefined) ? null : Number(r.pintura_manual),
+      precioVenta: (r.precio_venta === null || r.precio_venta === undefined) ? null : Number(r.precio_venta),
+      splitMine: Number(r.split_mine) || 60,
+      fecha: r.fecha
+    };
+  }
+
+  function productoToRow(p) {
+    return {
+      id: p.id,
+      nombre: p.nombre,
+      color_id: p.colorId || null,
+      gramos: p.gramos,
+      horas: p.horas,
+      pintura: p.pintura,
+      pintura_manual: p.pinturaManual,
+      precio_venta: p.precioVenta,
+      split_mine: p.splitMine,
+      fecha: p.fecha
+    };
+  }
+
+  async function loadProductosFromDB() {
+    try {
+      const { data, error } = await db.from('productos').select('*').order('created_at', { ascending: false });
+      productosCache = (!error && data) ? data.map(rowToProducto) : [];
+    } catch (e) { productosCache = []; }
+  }
+
+  function getProductos() { return productosCache; }
+
+  async function insertProducto(p) {
+    try { await db.from('productos').insert(productoToRow(p)); } catch (e) { console.error(e); }
+    productosCache.unshift(p);
+  }
+
+  async function updateProducto(p) {
+    try { await db.from('productos').update(productoToRow(p)).eq('id', p.id); } catch (e) { console.error(e); }
+    const idx = productosCache.findIndex(x => x.id === p.id);
+    if (idx !== -1) productosCache[idx] = p; else productosCache.unshift(p);
+  }
+
+  async function deleteProducto(id) {
+    try { await db.from('productos').delete().eq('id', id); } catch (e) { console.error(e); }
+    productosCache = productosCache.filter(p => p.id !== id);
+  }
+
+  let prodBusqueda = '';
+  $('prod-buscar')?.addEventListener('input', () => {
+    prodBusqueda = $('prod-buscar').value.trim().toLowerCase();
+    renderProductos();
+  });
+
+  function renderProductos() {
+    const productos = getProductos();
+    const filtrados = prodBusqueda ? productos.filter(p => {
+      const col = getColorById(p.colorId);
+      const colName = col ? col.nombre.toLowerCase() : 'base';
+      return p.nombre.toLowerCase().includes(prodBusqueda) || colName.includes(prodBusqueda);
+    }) : productos;
+
+    const el = $('productosList');
+    el.innerHTML = '';
+    if (productos.length === 0) {
+      el.innerHTML = '<div class="empty">Aún no guardas productos. Ve a la pestaña Costos y calcula uno.</div>';
+      return;
+    }
+    if (filtrados.length === 0) {
+      el.innerHTML = '<div class="empty">Ningún producto coincide con la búsqueda.</div>';
+      return;
+    }
+
+    filtrados.forEach(p => {
+      const selectedColorId = (p.id in prodActiveColors) ? prodActiveColors[p.id] : p.colorId;
+      const c = computeProductCost(p, selectedColorId);
+      const colObj = getColorById(selectedColorId);
+      const colNombre = colObj ? colObj.nombre : 'Base general';
+      const tienePrecio = p.precioVenta !== null && p.precioVenta !== undefined && p.precioVenta > 0;
+      const margen = tienePrecio ? Math.round(((p.precioVenta - c.costoTotal) / p.precioVenta) * 100) : null;
+      
+      let colorOptionsHTML = `<option value="" ${!selectedColorId ? 'selected' : ''}>Base (${fmt(ajustes.precioKg)}/kg)</option>`;
+      coloresCache.forEach(col => {
+        colorOptionsHTML += `<option value="${col.id}" ${selectedColorId === col.id ? 'selected' : ''}>${col.nombre} (${fmt(col.precioKg)}/kg)</option>`;
+      });
+
+      const card = document.createElement('div');
+      card.className = 'prod-card';
+      card.innerHTML = `
+        <div class="prod-card-head">
+          <div>
+            <div class="prod-name">${p.nombre}</div>
+            <div class="prod-badges">
+              <span class="badge color-tag">🎨 ${colNombre}</span>
+              <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? 'Con pintura' : 'Sin pintar'}</span>
+              ${!tienePrecio ? '<span class="badge pendiente">Precio pendiente</span>' : ''}
+            </div>
+          </div>
+          <div class="prod-actions">
+            <button class="edit" data-id="${p.id}">Editar</button>
+            <button class="del" data-id="${p.id}">Borrar</button>
+          </div>
+        </div>
+
+        <div class="prod-color-bar">
+          <label for="pcol-${p.id}">Probar otro color:</label>
+          <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
+            ${colorOptionsHTML}
+          </select>
+        </div>
+
+        <div class="prod-mini">
+          <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
+          <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
+          <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
+          <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
+        </div>
+        <div class="prod-foot">
+          <div>
+            <span class="unit">Costo total </span><strong>${fmt(c.costoTotal)}</strong>
+            <div class="unit">con filamento ${colNombre}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="venta ${tienePrecio ? '' : 'pendiente'}">${tienePrecio ? fmt(p.precioVenta) : 'Sin precio aún'}</div>
+            ${tienePrecio ? `<div class="margen">${fmt(p.precioVenta - c.costoTotal)} ganancia · ${margen}%</div>` : ''}
+          </div>
+        </div>
+      `;
+      el.appendChild(card);
+    });
+
+    el.querySelectorAll('.prod-color-switcher').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const id = Number(sel.dataset.id);
+        const val = sel.value ? Number(sel.value) : null;
+        prodActiveColors[id] = val;
+        renderProductos();
+      });
+    });
+
+    el.querySelectorAll('.prod-actions .del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (confirm('¿Seguro que deseas eliminar este producto?')) {
+          await deleteProducto(parseInt(btn.dataset.id, 10));
+          renderProductos();
+        }
+      });
+    });
+    el.querySelectorAll('.prod-actions .edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = getProductos().find(p => p.id === parseInt(btn.dataset.id, 10));
+        if (p) editarProducto(p);
+      });
+    });
+  }
+
+  // ---------- Caja ----------
+  let cajaQty = {};
+  let cajaColorSelected = {}; // color temporal seleccionado en la caja por producto
+  let cajaBusqueda = '';
+
+  $('caja-buscar').addEventListener('input', () => {
+    cajaBusqueda = $('caja-buscar').value.trim().toLowerCase();
+    renderCaja();
+  });
+
+  function renderCaja() {
+    const productos = getProductos().filter(p => p.precioVenta !== null && p.precioVenta !== undefined && p.precioVenta > 0);
+    const filtrados = cajaBusqueda ? productos.filter(p => {
+      const col = getColorById(p.colorId);
+      const colName = col ? col.nombre.toLowerCase() : '';
+      return p.nombre.toLowerCase().includes(cajaBusqueda) || colName.includes(cajaBusqueda);
+    }) : productos;
+
+    const el = $('cajaList');
+    el.innerHTML = '';
+    if (productos.length === 0) {
+      el.innerHTML = '<div class="empty">Aún no hay productos con precio de venta. Agrégales un precio en Productos o Costos.</div>';
+      recalcCaja();
+      return;
+    }
+    if (filtrados.length === 0) {
+      el.innerHTML = '<div class="empty">Ningún producto coincide con la búsqueda.</div>';
+      recalcCaja();
+      return;
+    }
+
+    filtrados.forEach(p => {
+      if (!(p.id in cajaQty)) cajaQty[p.id] = 0;
+      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : p.colorId;
+      const c = computeProductCost(p, activeColorId);
+      const colObj = getColorById(activeColorId);
+      const colNombre = colObj ? colObj.nombre : 'Base';
+
+      let colorSelectOptions = `<option value="" ${!activeColorId ? 'selected' : ''}>Base</option>`;
+      coloresCache.forEach(col => {
+        colorSelectOptions += `<option value="${col.id}" ${activeColorId === col.id ? 'selected' : ''}>${col.nombre}</option>`;
+      });
+
+      const row = document.createElement('div');
+      row.className = 'caja-row';
+      row.dataset.id = p.id;
+      row.innerHTML = `
+        <div class="caja-info">
+          <div class="caja-name">
+            <span>${p.nombre}</span>
+            <span class="badge color-tag">🎨 ${colNombre}</span>
+          </div>
+          <div class="caja-meta">costo ${fmt(c.costoTotal)} · venta ${fmt(p.precioVenta)}</div>
+          <div class="caja-color-sel" onclick="event.stopPropagation();">
+            <select class="caja-col-picker" data-id="${p.id}">
+              ${colorSelectOptions}
+            </select>
+          </div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" data-act="minus" data-id="${p.id}">–</button>
+          <span class="qty-num" id="qty-${p.id}">${cajaQty[p.id]}</span>
+          <button class="qty-btn" data-act="plus" data-id="${p.id}">+</button>
+        </div>
+      `;
+      el.appendChild(row);
+    });
+
+    el.querySelectorAll('.caja-col-picker').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        e.stopPropagation();
+        const id = Number(sel.dataset.id);
+        cajaColorSelected[id] = sel.value ? Number(sel.value) : null;
+        renderCaja();
+      });
+    });
+
+    el.querySelectorAll('.caja-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.qty-btn') || e.target.closest('select')) return;
+        const id = parseInt(row.dataset.id, 10);
+        cajaQty[id] = (cajaQty[id] || 0) + 1;
+        $('qty-' + id).textContent = cajaQty[id];
+        recalcCaja();
+      });
+    });
+
+    el.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = parseInt(btn.dataset.id, 10);
+        if (btn.dataset.act === 'plus') cajaQty[id]++;
+        else cajaQty[id] = Math.max(0, cajaQty[id] - 1);
+        $('qty-' + id).textContent = cajaQty[id];
+        recalcCaja();
+      });
+    });
+
+    recalcCaja();
+  }
+
+  function recalcCaja() {
+    const productos = getProductos();
+    let totalCosto = 0, totalVenta = 0, tuParte = 0, suParte = 0;
+    productos.forEach(p => {
+      const q = cajaQty[p.id] || 0;
+      if (q <= 0) return;
+      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : p.colorId;
+      const c = computeProductCost(p, activeColorId);
+      const costoLinea = c.costoTotal * q;
+      const ventaLinea = (p.precioVenta || 0) * q;
+      const utilidadLinea = ventaLinea - costoLinea;
+      totalCosto += costoLinea;
+      totalVenta += ventaLinea;
+      tuParte += utilidadLinea * (p.splitMine / 100);
+      suParte += utilidadLinea * ((100 - p.splitMine) / 100);
+    });
+    $('caja-venta').textContent = fmt(totalVenta);
+    $('caja-costo').textContent = fmt(totalCosto);
+    $('caja-mine').textContent = fmt(tuParte);
+    $('caja-hers').textContent = fmt(suParte);
+  }
+
+  // ---------- Ventas DB & View ----------
+  let ventasCache = [];
+
+  function rowToVenta(r) {
+    return {
+      id: Number(r.id), fecha: r.fecha, items: r.items,
+      totalVenta: Number(r.total_venta), totalCosto: Number(r.total_costo),
+      utilidad: Number(r.utilidad), tuParte: Number(r.tu_parte), suParte: Number(r.su_parte)
+    };
+  }
+  function ventaToRow(v) {
+    return {
+      id: v.id, fecha: v.fecha, items: v.items,
+      total_venta: v.totalVenta, total_costo: v.totalCosto,
+      utilidad: v.utilidad, tu_parte: v.tuParte, su_parte: v.suParte
+    };
+  }
+  async function loadVentasFromDB() {
+    try {
+      const { data, error } = await db.from('ventas').select('*').order('created_at', { ascending: false });
+      ventasCache = (!error && data) ? data.map(rowToVenta) : [];
+    } catch (e) { ventasCache = []; }
+  }
+  function getVentas() { return ventasCache; }
+
+  async function insertVenta(v) {
+    try { await db.from('ventas').insert(ventaToRow(v)); } catch (e) { console.error(e); }
+    ventasCache.unshift(v);
+  }
+  async function deleteVenta(id) {
+    try { await db.from('ventas').delete().eq('id', id); } catch (e) { console.error(e); }
+    ventasCache = ventasCache.filter(v => v.id !== id);
+  }
+
+  $('caja-registrar').addEventListener('click', async () => {
+    const productos = getProductos();
+    const items = [];
+    let totalVenta = 0, totalCosto = 0, tuParte = 0, suParte = 0;
+
+    productos.forEach(p => {
+      const q = cajaQty[p.id] || 0;
+      if (q <= 0) return;
+      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : p.colorId;
+      const colObj = getColorById(activeColorId);
+      const colNombre = colObj ? colObj.nombre : 'Base';
+      const c = computeProductCost(p, activeColorId);
+      const costoLinea = c.costoTotal * q;
+      const ventaLinea = (p.precioVenta || 0) * q;
+      const utilidadLinea = ventaLinea - costoLinea;
+
+      items.push({
+        nombre: p.nombre,
+        color: colNombre,
+        cantidad: q,
+        precioUnit: p.precioVenta,
+        costoUnit: Math.round(c.costoTotal)
+      });
+
+      totalCosto += costoLinea;
+      totalVenta += ventaLinea;
+      tuParte += utilidadLinea * (p.splitMine / 100);
+      suParte += utilidadLinea * ((100 - p.splitMine) / 100);
+    });
+
+    if (items.length === 0) {
+      alert('Selecciona al menos un producto con cantidad mayor a 0 para registrar la venta.');
+      return;
+    }
+
+    await insertVenta({
+      id: Date.now(),
+      fecha: new Date().toLocaleDateString('es-CL'),
+      items,
+      totalVenta: Math.round(totalVenta),
+      totalCosto: Math.round(totalCosto),
+      utilidad: Math.round(totalVenta - totalCosto),
+      tuParte: Math.round(tuParte),
+      suParte: Math.round(suParte)
+    });
+
+    cajaQty = {};
+    $('caja-buscar').value = '';
+    cajaBusqueda = '';
+    document.querySelector('nav.tabs button[data-tab="ventas"]').click();
+  });
+
+  function renderVentas() {
+    const ventas = getVentas();
+    const totalVenta = ventas.reduce((s, v) => s + (v.totalVenta || 0), 0);
+    const totalUtilidad = ventas.reduce((s, v) => s + (v.utilidad || 0), 0);
+    const totalMine = ventas.reduce((s, v) => s + (v.tuParte || 0), 0);
+    const totalHers = ventas.reduce((s, v) => s + (v.suParte || 0), 0);
+    $('v-totalVenta').textContent = fmt(totalVenta);
+    $('v-totalUtilidad').textContent = fmt(totalUtilidad);
+    $('v-totalMine').textContent = fmt(totalMine);
+    $('v-totalHers').textContent = fmt(totalHers);
+
+    const el = $('ventasList');
+    el.innerHTML = '';
+    if (ventas.length === 0) {
+      el.innerHTML = '<div class="empty">Aún no registras ventas. Usa la pestaña Caja para anotar una.</div>';
+      return;
+    }
+    ventas.forEach(v => {
+      const itemsTxt = (v.items || []).map(i => {
+        const colorTag = i.color && i.color !== 'Base' ? ` (${i.color})` : '';
+        return `${i.nombre}${colorTag} x${i.cantidad}`;
+      }).join(', ');
+
+      const card = document.createElement('div');
+      card.className = 'venta-card';
+      card.innerHTML = `
+        <div class="venta-head">
+          <span>${v.fecha}</span>
+          <span>costo <strong>${fmt(v.totalCosto)}</strong></span>
+        </div>
+        <div class="venta-items">${itemsTxt}</div>
+        <div class="venta-foot">
+          <div class="venta-split">Tú ${fmt(v.tuParte)} · Ella ${fmt(v.suParte)}</div>
+          <div class="venta-total">${fmt(v.totalVenta)}</div>
+        </div>
+        <button class="prod-actions del" data-id="${v.id}" style="margin-top:8px; background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar venta</button>
+      `;
+      el.appendChild(card);
+    });
+
+    el.querySelectorAll('button[data-id]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (confirm('¿Deseas eliminar esta venta del historial?')) {
+          await deleteVenta(parseInt(btn.dataset.id, 10));
+          renderVentas();
+        }
+      });
+    });
+  }
+
+  // ---------- Init ----------
+  async function initApp() {
+    await loadAjustesFromDB();
+    await loadColoresFromDB();
+    await Promise.all([loadProductosFromDB(), loadVentasFromDB()]);
+    calcProduccion();
+    calcReparto();
+    renderCaja();
+  }
+  initApp();
+
+  // ---------- PWA Service Worker ----------
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
