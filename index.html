@@ -168,7 +168,7 @@
     color: var(--ink-soft); font-size: 12.5px; text-decoration: underline; cursor: pointer;
   }
 
-  /* Círculo de color redondo con borde sutil */
+  /* Círculos de color redondos */
   .color-dot {
     display: inline-block; width: 14px; height: 14px; border-radius: 50%;
     border: 1.5px solid rgba(15, 23, 42, 0.15); box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -320,19 +320,38 @@
     margin-top: 10px; padding: 12px; background: var(--bg-soft);
     border: 1px solid var(--line); border-radius: var(--radius-sm);
   }
-  .multi-color-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .multi-color-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
   .multi-color-item {
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line);
+    background: #fff; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
   }
-  .multi-color-item .info { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; flex: 1; }
-  .multi-color-item .pct-input { display: flex; align-items: center; gap: 4px; }
-  .multi-color-item input[type="number"] {
-    width: 60px; text-align: right; background: var(--bg-soft); border: 1px solid var(--line);
-    border-radius: 4px; padding: 3px 6px; font-size: 13px;
+  .multi-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .multi-head .info {
+    display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; flex: 1;
+  }
+  .pct-badge {
+    font-size: 13px; font-weight: 800; color: var(--blue-dark); min-width: 44px; text-align: right;
+    background: var(--blue-soft); padding: 3px 8px; border-radius: 6px;
+  }
+  .multi-slider-row {
+    margin-top: 6px;
+  }
+  .color-slider {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 7px;
+    border-radius: 999px; background: var(--line); outline: none; margin: 6px 0 2px;
+  }
+  .color-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--blue); cursor: pointer; border: 3px solid #fff;
+    box-shadow: 0 1px 4px rgba(15,23,42,0.3);
+  }
+  .color-slider::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--blue);
+    cursor: pointer; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(15,23,42,0.3);
   }
   .multi-color-item .remove-btn {
-    background: none; border: none; color: var(--red); font-weight: 700; font-size: 16px; cursor: pointer; padding: 0 4px;
+    background: none; border: none; color: var(--red); font-weight: 700; font-size: 18px; cursor: pointer; padding: 0 4px;
   }
   .color-picker-chips {
     display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
@@ -346,11 +365,12 @@
   .color-chip-btn.selected { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-dark); }
   
   .pct-sum-bar {
-    display: flex; justify-content: space-between; align-items: center; margin-top: 8px;
-    font-size: 12px; font-weight: 600; padding: 4px 6px; border-radius: 4px;
+    display: flex; justify-content: space-between; align-items: center; margin-top: 10px;
+    font-size: 12.5px; font-weight: 600; padding: 8px 12px; border-radius: 6px;
   }
-  .pct-sum-bar.valid { color: var(--green-dark); background: var(--green-soft); }
-  .pct-sum-bar.invalid { color: var(--red); background: var(--red-soft); }
+  .pct-sum-bar.valid { color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; }
+  .pct-sum-bar.warn { color: #b45309; background: #fffbeb; border: 1px solid #fde68a; }
+  .pct-sum-bar.invalid { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
 </style>
 </head>
 <body>
@@ -359,19 +379,20 @@
     <div class="logo">P3D</div>
     <div>
       <h1>Pixelito3D</h1>
-      <p class="sub">Caja, ventas, costos, catálogo y colores</p>
+      <p class="sub">Caja, productos, costos, ventas y ajustes</p>
     </div>
   </header>
 
+  <!-- ORDEN DE PESTAÑAS: 1. Caja | 2. Productos | 3. Costos | 4. Ventas | 5. Ajustes -->
   <nav class="tabs">
     <button data-tab="caja" class="active">Caja</button>
-    <button data-tab="ventas">Ventas</button>
-    <button data-tab="costos">Costos</button>
     <button data-tab="productos">Productos</button>
+    <button data-tab="costos">Costos</button>
+    <button data-tab="ventas">Ventas</button>
     <button data-tab="ajustes">Ajustes</button>
   </nav>
 
-  <!-- CAJA -->
+  <!-- 1. CAJA -->
   <div class="view active" id="view-caja">
     <div class="panel">
       <p class="panel-title">Caja rápida</p>
@@ -396,27 +417,20 @@
     </div>
   </div>
 
-  <!-- VENTAS -->
-  <div class="view" id="view-ventas">
+  <!-- 2. PRODUCTOS -->
+  <div class="view" id="view-productos">
     <div class="panel">
-      <p class="panel-title">Resumen de ventas</p>
-      <div class="stat-row">
-        <div class="stat-card blue"><p class="stat-label">Ventas totales</p><p class="stat-value" id="v-totalVenta">$0</p></div>
-        <div class="stat-card blue"><p class="stat-label">Utilidad total</p><p class="stat-value" id="v-totalUtilidad">$0</p></div>
+      <p class="panel-title">Catálogo de productos</p>
+      <p class="panel-sub">Productos guardados con desglose exacto de colores individuales o mezclas multicolor.</p>
+      <div class="search-box">
+        <span class="ic">🔍</span>
+        <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
       </div>
-      <div class="stat-row" style="margin-top:10px;">
-        <div class="stat-card green"><p class="stat-label">Tú acumulado</p><p class="stat-value" id="v-totalMine">$0</p></div>
-        <div class="stat-card green"><p class="stat-label">Ella acumulado</p><p class="stat-value" id="v-totalHers">$0</p></div>
-      </div>
-    </div>
-    <div class="panel">
-      <p class="panel-title">Historial de ventas</p>
-      <p class="panel-sub">Registro detallado de ventas realizadas con desglose de color.</p>
-      <div id="ventasList"></div>
+      <div id="productosList"></div>
     </div>
   </div>
 
-  <!-- COSTOS -->
+  <!-- 3. COSTOS -->
   <div class="view" id="view-costos">
     <div class="panel">
       <p class="eyebrow">Modo de cálculo</p>
@@ -458,7 +472,7 @@
             <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
             <div class="seg-row">
               <button class="seg-btn active" id="cp-method-promedio">📊 Promedio de los colores</button>
-              <button class="seg-btn" id="cp-method-pct">🎚️ Porcentajes (%)</button>
+              <button class="seg-btn" id="cp-method-pct">🎚️ Porcentajes con barra (%)</button>
             </div>
             
             <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
@@ -544,7 +558,7 @@
             <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
             <div class="seg-row">
               <button class="seg-btn active" id="r-method-promedio">📊 Promedio de los colores</button>
-              <button class="seg-btn" id="r-method-pct">🎚️ Porcentajes (%)</button>
+              <button class="seg-btn" id="r-method-pct">🎚️ Porcentajes con barra (%)</button>
             </div>
             
             <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
@@ -612,20 +626,27 @@
     </div>
   </div>
 
-  <!-- PRODUCTOS -->
-  <div class="view" id="view-productos">
+  <!-- 4. VENTAS -->
+  <div class="view" id="view-ventas">
     <div class="panel">
-      <p class="panel-title">Catálogo de productos</p>
-      <p class="panel-sub">Productos guardados con desglose exacto de colores individuales o mezclas multicolor.</p>
-      <div class="search-box">
-        <span class="ic">🔍</span>
-        <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
+      <p class="panel-title">Resumen de ventas</p>
+      <div class="stat-row">
+        <div class="stat-card blue"><p class="stat-label">Ventas totales</p><p class="stat-value" id="v-totalVenta">$0</p></div>
+        <div class="stat-card blue"><p class="stat-label">Utilidad total</p><p class="stat-value" id="v-totalUtilidad">$0</p></div>
       </div>
-      <div id="productosList"></div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat-card green"><p class="stat-label">Tú acumulado</p><p class="stat-value" id="v-totalMine">$0</p></div>
+        <div class="stat-card green"><p class="stat-label">Ella acumulado</p><p class="stat-value" id="v-totalHers">$0</p></div>
+      </div>
+    </div>
+    <div class="panel">
+      <p class="panel-title">Historial de ventas</p>
+      <p class="panel-sub">Registro detallado de ventas realizadas con desglose de color.</p>
+      <div id="ventasList"></div>
     </div>
   </div>
 
-  <!-- AJUSTES -->
+  <!-- 5. AJUSTES -->
   <div class="view" id="view-ajustes">
     <!-- COLORES DE FILAMENTO -->
     <div class="panel">
@@ -942,7 +963,7 @@
     });
   });
 
-  // ---------- Control de Colores & Multicolor en Formularios de Costo ----------
+  // ---------- Control de Colores & Multicolor con Sliders Auto-Adaptables ----------
   let cpConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
   let rConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
 
@@ -1005,10 +1026,13 @@
         if (isSel) {
           configObj.items = configObj.items.filter(it => it.colorId !== c.id);
         } else {
-          configObj.items.push({ colorId: c.id, pct: Math.round(100 / (configObj.items.length + 1)) });
+          configObj.items.push({ colorId: c.id, pct: 50 });
         }
-        // Auto distribuir porcentajes equitativamente si estamos en modo porcentajes o si se agregaron
-        if (configObj.items.length > 0) {
+        // Auto distribuir porcentajes equitativamente
+        if (configObj.items.length === 2) {
+          configObj.items[0].pct = 50;
+          configObj.items[1].pct = 50;
+        } else if (configObj.items.length > 2) {
           const equalPct = Math.floor(100 / configObj.items.length);
           let rem = 100 - (equalPct * configObj.items.length);
           configObj.items.forEach((it, idx) => {
@@ -1021,56 +1045,86 @@
       chipsEl.appendChild(btn);
     });
 
-    // Render lista de colores seleccionados
+    // Render lista de colores seleccionados con sliders
     listEl.innerHTML = '';
     if (configObj.items.length === 0) {
-      listEl.innerHTML = '<div class="empty" style="padding:10px 0;">Selecciona arriba al menos 2 colores para calcular.</div>';
+      listEl.innerHTML = '<div class="empty" style="padding:10px 0;">Selecciona arriba los colores que lleva la pieza.</div>';
       return;
     }
 
-    let sumPct = 0;
     configObj.items.forEach(it => {
       const c = getColorById(it.colorId);
       if (!c) return;
-      sumPct += (Number(it.pct) || 0);
 
       const row = document.createElement('div');
       row.className = 'multi-color-item';
       row.innerHTML = `
-        <div class="info">
-          <span class="color-dot" style="background:${c.hex}"></span>
-          <span>${c.nombre}</span>
-          <span style="font-size:11.5px; color:var(--ink-soft);">(${fmt(c.precioKg)}/kg)</span>
+        <div class="multi-head">
+          <div class="info">
+            <span class="color-dot" style="background:${c.hex}"></span>
+            <span>${c.nombre}</span>
+            <span style="font-size:11.5px; color:var(--ink-soft);">(${fmt(c.precioKg)}/kg)</span>
+          </div>
+          ${configObj.multiModo === 'porcentajes' ? `
+            <span class="pct-badge" id="${prefix}-pct-badge-${c.id}">${it.pct}%</span>
+          ` : `
+            <span style="font-size:12px; font-weight:600; color:var(--blue-dark);">Promedio</span>
+          `}
+          <button type="button" class="remove-btn" data-cid="${c.id}" title="Quitar">×</button>
         </div>
         ${configObj.multiModo === 'porcentajes' ? `
-          <div class="pct-input">
-            <input type="number" min="0" max="100" step="5" value="${it.pct}" data-cid="${c.id}">
-            <span class="unit">%</span>
+          <div class="multi-slider-row">
+            <input type="range" class="range-slider color-slider" min="0" max="100" step="1" value="${it.pct}" data-cid="${c.id}" id="${prefix}-slider-${c.id}">
           </div>
-        ` : `
-          <span style="font-size:12px; font-weight:600; color:var(--blue-dark);">Promedio</span>
-        `}
-        <button type="button" class="remove-btn" data-cid="${c.id}" title="Quitar">×</button>
+        ` : ''}
       `;
       listEl.appendChild(row);
     });
 
-    listEl.querySelectorAll('.pct-input input').forEach(input => {
-      input.addEventListener('input', () => {
-        const cid = Number(input.dataset.cid);
-        const item = configObj.items.find(x => x.colorId === cid);
-        if (item) {
-          item.pct = parseFloat(input.value) || 0;
+    // Eventos de sliders con comportamiento inteligente (2 colores auto-adaptados, 3+ con aviso de total)
+    if (configObj.multiModo === 'porcentajes') {
+      listEl.querySelectorAll('.color-slider').forEach(slider => {
+        slider.addEventListener('input', () => {
+          const cid = Number(slider.dataset.cid);
+          const val = parseInt(slider.value, 10) || 0;
+
+          if (configObj.items.length === 2) {
+            // Auto-adaptación exacta para 2 colores
+            const itemA = configObj.items.find(x => x.colorId === cid);
+            const itemB = configObj.items.find(x => x.colorId !== cid);
+            if (itemA && itemB) {
+              itemA.pct = val;
+              itemB.pct = 100 - val;
+              const otherSlider = $(`${prefix}-slider-${itemB.colorId}`);
+              if (otherSlider) otherSlider.value = itemB.pct;
+              const badgeA = $(`${prefix}-pct-badge-${itemA.colorId}`);
+              if (badgeA) badgeA.textContent = `${itemA.pct}%`;
+              const badgeB = $(`${prefix}-pct-badge-${itemB.colorId}`);
+              if (badgeB) badgeB.textContent = `${itemB.pct}%`;
+            }
+          } else {
+            // Para 3 o más colores: actualiza el valor y revisa total
+            const item = configObj.items.find(x => x.colorId === cid);
+            if (item) {
+              item.pct = val;
+              const badge = $(`${prefix}-pct-badge-${item.colorId}`);
+              if (badge) badge.textContent = `${item.pct}%`;
+            }
+          }
           updatePctSumBar(prefix, configObj);
           calcFn();
-        }
+        });
       });
-    });
+    }
 
     listEl.querySelectorAll('.remove-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const cid = Number(btn.dataset.cid);
         configObj.items = configObj.items.filter(x => x.colorId !== cid);
+        if (configObj.items.length === 2) {
+          configObj.items[0].pct = 50;
+          configObj.items[1].pct = 50;
+        }
         renderMultiColorUI(prefix, configObj, calcFn);
         calcFn();
       });
@@ -1083,10 +1137,22 @@
     if (configObj.multiModo !== 'porcentajes') return;
     const total = configObj.items.reduce((s, it) => s + (Number(it.pct) || 0), 0);
     const bar = $(`${prefix}-pct-bar`);
-    const totLabel = $(`${prefix}-pct-total`);
-    if (bar && totLabel) {
-      totLabel.textContent = `${total}%`;
-      bar.className = 'pct-sum-bar ' + (total === 100 ? 'valid' : 'invalid');
+    if (!bar) return;
+
+    if (configObj.items.length === 2) {
+      bar.className = 'pct-sum-bar valid';
+      bar.innerHTML = '<span>✅ Auto-adaptado a 100%:</span><span><strong>100%</strong> (Equilibrado)</span>';
+    } else if (total === 100) {
+      bar.className = 'pct-sum-bar valid';
+      bar.innerHTML = '<span>✅ Total porcentaje:</span><span><strong>100%</strong> (¡Listo!)</span>';
+    } else if (total < 100) {
+      const falta = 100 - total;
+      bar.className = 'pct-sum-bar warn';
+      bar.innerHTML = `<span>⚠️ Total porcentaje:</span><span><strong>${total}%</strong> (Falta un ${falta}% para llegar a 100%)</span>`;
+    } else {
+      const sobra = total - 100;
+      bar.className = 'pct-sum-bar invalid';
+      bar.innerHTML = `<span>⚠️ Total porcentaje:</span><span><strong>${total}%</strong> (Te pasaste por un ${sobra}%)</span>`;
     }
   }
 
@@ -1097,7 +1163,7 @@
         .map(it => ({ col: getColorById(it.colorId), pct: Number(it.pct) || 0 }))
         .filter(it => it.col !== null);
 
-      if (validItems.length === 0) return { precioKg: ajustes.precioKg, desc: 'Base general' };
+      if (validItems.length === 0) return { precioKg: ajustes.precioKg, desc: 'Base general', dots: ['#64748b'] };
 
       if (configObj.multiModo === 'promedio') {
         const sum = validItems.reduce((acc, it) => acc + it.col.precioKg, 0);
@@ -1105,7 +1171,7 @@
         const names = validItems.map(it => it.col.nombre).join(' + ');
         return {
           precioKg: avg,
-          desc: `Promedio de ${validItems.length} colores (${names})`,
+          desc: `Promedio (${names})`,
           dots: validItems.map(it => it.col.hex)
         };
       } else {
@@ -1114,7 +1180,7 @@
         const desc = validItems.map(it => `${Math.round((it.pct/tot)*100)}% ${it.col.nombre}`).join(' · ');
         return {
           precioKg: weighted,
-          desc: `Multicolor ponderado (${desc})`,
+          desc: `Multicolor (${desc})`,
           dots: validItems.map(it => it.col.hex)
         };
       }
