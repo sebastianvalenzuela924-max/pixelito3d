@@ -25,6 +25,7 @@
     --red: #dc2626; --red-soft: #fef2f2;
     --amber: #b45309; --amber-soft: #fffbeb;
     --purple: #7c3aed; --purple-soft: #f5f3ff;
+    --pink: #db2777; --pink-soft: #fdf2f8;
     --radius: 12px; --radius-sm: 8px;
     --shadow: 0 1px 2px rgba(15,23,42,0.05), 0 1px 1px rgba(15,23,42,0.03);
     box-sizing: border-box;
@@ -63,8 +64,6 @@
 
   .view { display: none; }
   .view.active { display: block; }
-  .subview { display: none; }
-  .subview.active { display: block; }
 
   .panel {
     background: var(--bg-panel); border: 1px solid var(--line); box-shadow: var(--shadow);
@@ -134,12 +133,15 @@
   .stat-card { flex: 1; border-radius: var(--radius-sm); padding: 13px 12px; }
   .stat-card.blue { background: var(--blue-soft); }
   .stat-card.green { background: var(--green-soft); }
+  .stat-card.purple { background: var(--pink-soft); }
   .stat-card .stat-label { font-size: 11px; color: var(--ink-soft); font-weight: 600; margin: 0 0 3px; }
   .stat-card.blue .stat-label { color: var(--blue-dark); }
-  .stat-card.green .stat-label { color: var(--green); }
+  .stat-card.green .stat-label { color: var(--green-dark); }
+  .stat-card.purple .stat-label { color: var(--pink); }
   .stat-card .stat-value { font-size: 18px; font-weight: 800; }
   .stat-card.blue .stat-value { color: var(--blue-dark); }
-  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.green .stat-value { color: var(--green-dark); }
+  .stat-card.purple .stat-value { color: #be185d; }
 
   .warn-box {
     margin-top: 12px; padding: 10px 12px; background: var(--red-soft); border-radius: var(--radius-sm);
@@ -179,12 +181,13 @@
   }
   .color-dot-lg { width: 22px; height: 22px; }
 
+  /* Tarjetas de producto */
   .prod-card {
     border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px;
-    margin-bottom: 12px; background: var(--bg-soft);
+    margin-bottom: 14px; background: var(--bg-soft); box-shadow: var(--shadow);
   }
   .prod-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-  .prod-name { font-size: 14.5px; font-weight: 700; }
+  .prod-name { font-size: 15px; font-weight: 700; }
   .prod-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; align-items: center; }
   .prod-actions { display: flex; gap: 10px; flex-shrink: 0; }
   .prod-actions button { background: none; border: none; font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 4px; }
@@ -215,10 +218,59 @@
   .prod-mini div { font-size: 11px; color: var(--ink-soft); }
   .prod-mini strong { display: block; font-size: 12.5px; color: var(--ink); font-weight: 700; }
   .prod-foot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px; border-top: 1px dashed var(--line); }
-  .prod-foot .venta { font-size: 15px; font-weight: 800; color: var(--blue-dark); }
+  .prod-foot .venta { font-size: 16px; font-weight: 800; color: var(--blue-dark); }
   .prod-foot .venta.pendiente { color: var(--amber); font-size: 13px; }
-  .prod-foot .margen { font-size: 12px; color: var(--green); font-weight: 700; }
+  .prod-foot .margen { font-size: 12px; color: var(--green-dark); font-weight: 700; }
 
+  /* 🏦 Distribución de los 3 dineros en catálogo */
+  .prod-dist-box {
+    margin: 10px 0; padding: 10px; background: #ffffff;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+  }
+  .dist-mini-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; text-transform: uppercase;
+  }
+  .dist-mini-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;
+  }
+  .dist-mini-item {
+    padding: 7px 4px; border-radius: 6px; border: 1px solid transparent;
+  }
+  .dist-mini-item.inv { background: #f8fafc; border-color: #cbd5e1; }
+  .dist-mini-item.seba { background: var(--blue-soft); border-color: #bfdbfe; }
+  .dist-mini-item.cami { background: var(--pink-soft); border-color: #fbcfe8; }
+  .dist-mini-item .d-label { display: block; font-size: 10px; font-weight: 700; color: var(--ink-soft); margin-bottom: 2px; }
+  .dist-mini-item.seba .d-label { color: var(--blue-dark); }
+  .dist-mini-item.cami .d-label { color: #9d174d; }
+  .dist-mini-item .d-val { font-size: 14px; font-weight: 800; color: var(--ink); }
+  .dist-mini-item.seba .d-val { color: var(--blue-dark); }
+  .dist-mini-item.cami .d-val { color: #be185d; }
+
+  /* 🏦 Tarjetas de distribución de 3 dineros en Costos */
+  .dist-3-grid {
+    display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;
+  }
+  @media (min-width: 480px) {
+    .dist-3-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .dist-3-card {
+    border-radius: var(--radius-sm); padding: 14px 12px; border: 1px solid var(--line);
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .dist-3-card.card-inv { background: #f8fafc; border-color: #cbd5e1; }
+  .dist-3-card.card-seba { background: var(--blue-soft); border-color: #bfdbfe; }
+  .dist-3-card.card-camila { background: var(--pink-soft); border-color: #fbcfe8; }
+  .dist-3-icon { font-size: 20px; margin-bottom: 4px; }
+  .dist-3-title { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; }
+  .dist-3-card.card-seba .dist-3-title { color: var(--blue-dark); }
+  .dist-3-card.card-camila .dist-3-title { color: #9d174d; }
+  .dist-3-val { font-size: 22px; font-weight: 800; color: var(--ink); margin: 6px 0 2px; }
+  .dist-3-card.card-seba .dist-3-val { color: var(--blue-dark); }
+  .dist-3-card.card-camila .dist-3-val { color: #be185d; }
+  .dist-3-sub { font-size: 10.5px; color: var(--ink-soft); line-height: 1.3; }
+
+  /* Caja y Ventas */
   .caja-row {
     display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); cursor: pointer;
   }
@@ -244,15 +296,15 @@
   .venta-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; }
   .venta-items { font-size: 13px; margin-bottom: 8px; line-height: 1.4; }
   .venta-foot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px; border-top: 1px dashed var(--line); }
-  .venta-total { font-size: 15px; font-weight: 800; color: var(--blue-dark); }
-  .venta-split { font-size: 11.5px; color: var(--ink-soft); }
+  .venta-split { font-size: 12px; color: var(--ink-soft); }
 
   .empty { color: var(--ink-faint); font-size: 13px; padding: 20px 0; text-align: center; }
   footer { margin-top: 16px; font-size: 11.5px; color: var(--ink-faint); line-height: 1.6; }
 
+  /* Sliders y escalas */
   .range-slider {
-    -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
-    border-radius: 999px; background: var(--line); outline: none; margin: 6px 0 4px;
+    -webkit-appearance: none; appearance: none; width: 100%; height: 7px;
+    border-radius: 999px; background: var(--line); outline: none; margin: 8px 0 4px;
   }
   .range-slider::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
@@ -263,15 +315,17 @@
     width: 22px; height: 22px; border-radius: 50%; background: var(--blue);
     cursor: pointer; border: 3px solid #fff; box-shadow: 0 1px 3px rgba(15,23,42,0.3);
   }
-  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .scale-row {
+    display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-faint); font-weight: 600; margin-top: 2px;
+  }
+  .preset-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
   .preset-chip {
     border: 1.5px solid var(--line); background: var(--bg-soft); border-radius: var(--radius-sm);
-    padding: 8px 10px; cursor: pointer; text-align: center; flex: 1; min-width: 80px;
+    padding: 7px 10px; cursor: pointer; text-align: center; flex: 1; min-width: 65px;
   }
   .preset-chip.active { border-color: var(--blue); background: var(--blue-soft); }
-  .preset-chip .pct { font-size: 11px; color: var(--ink-soft); font-weight: 600; }
-  .preset-chip .price { font-size: 13.5px; font-weight: 700; color: var(--ink); }
-  .preset-chip.active .price { color: var(--blue-dark); }
+  .preset-chip .pct { font-size: 12px; color: var(--ink-soft); font-weight: 700; }
+  .preset-chip.active .pct { color: var(--blue-dark); }
 
   /* Lista de colores en ajustes */
   .color-card {
@@ -334,9 +388,7 @@
     font-size: 13px; font-weight: 800; color: var(--blue-dark); min-width: 44px; text-align: right;
     background: var(--blue-soft); padding: 3px 8px; border-radius: 6px;
   }
-  .multi-slider-row {
-    margin-top: 6px;
-  }
+  .multi-slider-row { margin-top: 6px; }
   .color-slider {
     -webkit-appearance: none; appearance: none; width: 100%; height: 7px;
     border-radius: 999px; background: var(--line); outline: none; margin: 6px 0 2px;
@@ -383,7 +435,7 @@
     </div>
   </header>
 
-  <!-- ORDEN DE PESTAÑAS: 1. Caja | 2. Productos | 3. Costos | 4. Ventas | 5. Ajustes -->
+  <!-- PESTAÑAS: 1. Caja | 2. Productos | 3. Costos | 4. Ventas | 5. Ajustes -->
   <nav class="tabs">
     <button data-tab="caja" class="active">Caja</button>
     <button data-tab="productos">Productos</button>
@@ -406,12 +458,12 @@
     <div class="panel">
       <p class="eyebrow">Total de esta venta</p>
       <div class="stat-row">
-        <div class="stat-card blue"><p class="stat-label">Venta</p><p class="stat-value" id="caja-venta">$0</p></div>
-        <div class="stat-card blue"><p class="stat-label">Costo</p><p class="stat-value" id="caja-costo">$0</p></div>
+        <div class="stat-card blue"><p class="stat-label">Total Venta</p><p class="stat-value" id="caja-venta">$0</p></div>
+        <div class="stat-card blue"><p class="stat-label">🏦 Cuenta Inversión</p><p class="stat-value" id="caja-costo">$0</p></div>
       </div>
       <div class="stat-row" style="margin-top:10px;">
-        <div class="stat-card green"><p class="stat-label">Tú</p><p class="stat-value" id="caja-mine">$0</p></div>
-        <div class="stat-card green"><p class="stat-label">Ella</p><p class="stat-value" id="caja-hers">$0</p></div>
+        <div class="stat-card green"><p class="stat-label">👤 Seba</p><p class="stat-value" id="caja-mine">$0</p></div>
+        <div class="stat-card purple"><p class="stat-label">👩 Camila</p><p class="stat-value" id="caja-hers">$0</p></div>
       </div>
       <button class="primary" id="caja-registrar">Registrar venta</button>
     </div>
@@ -421,7 +473,7 @@
   <div class="view" id="view-productos">
     <div class="panel">
       <p class="panel-title">Catálogo de productos</p>
-      <p class="panel-sub">Productos guardados con desglose exacto de colores individuales o mezclas multicolor.</p>
+      <p class="panel-sub">Productos guardados con desglose exacto de inversión y ganancias para cada cuenta de banco.</p>
       <div class="search-box">
         <span class="ic">🔍</span>
         <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
@@ -430,199 +482,165 @@
     </div>
   </div>
 
-  <!-- 3. COSTOS -->
+  <!-- 3. COSTOS (UNIFICADO) -->
   <div class="view" id="view-costos">
+    <!-- DATOS DE PRODUCCIÓN -->
     <div class="panel">
-      <p class="eyebrow">Modo de cálculo</p>
+      <p class="panel-title" id="c-titulo">Calculadora de costos y precio</p>
+      <p class="panel-sub">Calcula material, luz, máquina y pintura. Ajusta tu margen y ve la distribución para cada cuenta.</p>
+
+      <div class="field">
+        <label for="c-nombre">Nombre del producto</label>
+        <div class="input-group"><input type="text" id="c-nombre" placeholder="Ej: Dragón articulado, Llavero"></div>
+      </div>
+
+      <!-- SELECCIÓN DE COLOR EN COSTOS -->
+      <div style="margin-top:12px;">
+        <label class="eyebrow">Color o mezcla de filamento</label>
+        <div class="seg-row" style="margin-bottom:8px;">
+          <button type="button" class="seg-btn active" id="c-tab-single">1 Solo Color</button>
+          <button type="button" class="seg-btn" id="c-tab-multi">🌈 Varios Colores (Multicolor)</button>
+        </div>
+
+        <!-- MODO 1 COLOR -->
+        <div id="c-single-wrap" class="field" style="border-top:1px solid var(--line);">
+          <label for="c-color">Color</label>
+          <div class="input-group">
+            <span id="c-single-dot" class="color-dot"></span>
+            <select id="c-color"></select>
+          </div>
+        </div>
+
+        <!-- MODO MULTICOLOR -->
+        <div id="c-multi-wrap" class="multi-color-wrap" style="display:none;">
+          <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
+          <div class="seg-row">
+            <button type="button" class="seg-btn active" id="c-method-promedio">📊 Promedio de los colores</button>
+            <button type="button" class="seg-btn" id="c-method-pct">🎚️ Porcentajes con barra (%)</button>
+          </div>
+          
+          <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
+          <div id="c-color-chips" class="color-picker-chips"></div>
+
+          <div id="c-multi-items-list" class="multi-color-list"></div>
+          <div id="c-pct-bar" class="pct-sum-bar valid" style="display:none;">
+            <span>Total porcentaje:</span><span id="c-pct-total">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:8px;">
+        <label for="c-gramos">Gramos de filamento</label>
+        <div class="input-group"><input type="number" id="c-gramos" step="1" placeholder="0"><span class="unit">g</span></div>
+      </div>
+      <div class="field">
+        <label for="c-horas">Horas de impresión</label>
+        <div class="input-group"><input type="number" id="c-horas" step="0.1" placeholder="0"><span class="unit">h</span></div>
+      </div>
+    </div>
+
+    <!-- PINTURA Y ACABADO -->
+    <div class="panel">
+      <p class="panel-title">🎨 Pintura y acabado</p>
+      <p class="panel-sub">Si la pieza lleva pintura manual, ingresa el monto en pesos.</p>
       <div class="seg-row">
-        <button class="seg-btn active" data-costmode="produccion">Costo de producción</button>
-        <button class="seg-btn" data-costmode="producto">Costo del producto</button>
+        <button type="button" class="seg-btn active" id="c-btn-sin-pintura">Sin pintar ($0)</button>
+        <button type="button" class="seg-btn" id="c-btn-con-pintura">🎨 Con pintura ($)</button>
+      </div>
+      <div class="field" id="c-pinturaField" style="display:none; margin-top:8px;">
+        <label for="c-pintura">Gasto de pintura en pesos</label>
+        <div class="input-group"><span class="unit">$</span><input type="number" id="c-pintura" step="50" placeholder="Ej: 200"><span class="unit">CLP</span></div>
+      </div>
+      <div class="info-box show" id="c-pintura-aviso" style="margin-top:10px;">
+        💡 Sin pintura: Reparto sugerido 60% Seba / 40% Camila.
       </div>
     </div>
 
-    <!-- MODO: solo costo de producción -->
-    <div class="subview active" id="costmode-produccion">
-      <div class="panel">
-        <p class="panel-title">Costo de producción</p>
-        <p class="panel-sub">Calcula material (1 color o multicolor), luz y máquina.</p>
-        <div class="field">
-          <label for="cp-nombre">Nombre del producto</label>
-          <div class="input-group"><input type="text" id="cp-nombre" placeholder="Ej: llavero"></div>
-        </div>
+    <!-- DESGLOSE DE COSTO (CUENTA INVERSIÓN) -->
+    <div class="panel">
+      <p class="eyebrow">Desglose de costo</p>
+      <div class="r-line">
+        <span>Costo material (<span id="c-colorPriceTag">$0/kg</span>)</span>
+        <span class="val" id="c-outMaterial">$0</span>
+      </div>
+      <div class="r-line"><span>Costo luz (<span id="c-luzPriceTag">$260/kWh</span>)</span><span class="val" id="c-outLuz">$0</span></div>
+      <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="c-outMaquina">$0</span></div>
+      <div class="r-line" id="c-linePintura" style="display:none;"><span>Costo pintura</span><span class="val" id="c-outPintura">$0</span></div>
+      <div class="r-line r-total">
+        <span>🏦 Costo de producción (Cuenta Inversión)</span>
+        <span class="val" id="c-outTotal">$0</span>
+      </div>
+      <p class="unit" id="c-colorDesc" style="margin-top:2px;">↑ Este monto va directo a la cuenta inversión para reponer insumos</p>
+    </div>
 
-        <!-- SELECCIÓN DE COLOR EN CP -->
-        <div style="margin-top:10px;">
-          <label class="eyebrow">Color o mezcla de filamento</label>
-          <div class="seg-row" style="margin-bottom:8px;">
-            <button class="seg-btn active" id="cp-tab-single">1 Solo Color</button>
-            <button class="seg-btn" id="cp-tab-multi">🌈 Varios Colores (Multicolor)</button>
-          </div>
+    <!-- FIJAR PRECIO Y MARGEN (0% A 300%) -->
+    <div class="panel">
+      <p class="panel-title">💰 Margen y Precio de venta</p>
+      <p class="panel-sub">Elige tu margen de ganancia (hasta 300%) o escribe directamente el precio final al que quieres vender.</p>
 
-          <!-- MODO 1 COLOR -->
-          <div id="cp-single-wrap" class="field" style="border-top:1px solid var(--line);">
-            <label for="cp-color">Color</label>
-            <div class="input-group">
-              <span id="cp-single-dot" class="color-dot"></span>
-              <select id="cp-color"></select>
-            </div>
-          </div>
-
-          <!-- MODO MULTICOLOR -->
-          <div id="cp-multi-wrap" class="multi-color-wrap" style="display:none;">
-            <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
-            <div class="seg-row">
-              <button class="seg-btn active" id="cp-method-promedio">📊 Promedio de los colores</button>
-              <button class="seg-btn" id="cp-method-pct">🎚️ Porcentajes con barra (%)</button>
-            </div>
-            
-            <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
-            <div id="cp-color-chips" class="color-picker-chips"></div>
-
-            <div id="cp-multi-items-list" class="multi-color-list"></div>
-            <div id="cp-pct-bar" class="pct-sum-bar valid" style="display:none;">
-              <span>Total porcentaje:</span><span id="cp-pct-total">100%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="cp-gramos">Gramos de filamento</label>
-          <div class="input-group"><input type="number" id="cp-gramos" step="1" placeholder="0"><span class="unit">g</span></div>
-        </div>
-        <div class="field">
-          <label for="cp-horas">Horas de impresión</label>
-          <div class="input-group"><input type="number" id="cp-horas" step="0.1" placeholder="0"><span class="unit">h</span></div>
-        </div>
+      <div class="field">
+        <label>Margen de ganancia sobre costo</label>
+        <div class="input-group"><span class="val" id="c-margenLabel" style="font-weight:700; color:var(--blue-dark); font-size:18px;">50%</span></div>
+      </div>
+      <input type="range" id="c-margenSlider" min="0" max="300" step="5" value="50" class="range-slider">
+      
+      <div class="scale-row" style="margin-bottom:8px;">
+        <span>0%</span>
+        <span>50%</span>
+        <span>100%</span>
+        <span>200%</span>
+        <span>300%</span>
       </div>
 
-      <div class="panel">
-        <p class="eyebrow">Desglose de costo</p>
-        <div class="r-line">
-          <span>Costo material (<span id="cp-colorPriceTag">$0/kg</span>)</span>
-          <span class="val" id="cp-outMaterial">$0</span>
-        </div>
-        <div class="r-line"><span>Costo luz (<span id="cp-luzPriceTag">$260/kWh</span>)</span><span class="val" id="cp-outLuz">$0</span></div>
-        <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="cp-outMaquina">$0</span></div>
-        <div class="r-line r-total"><span>Costo total</span><span class="val" id="cp-outTotal">$0</span></div>
-        <p class="unit" id="cp-colorDesc" style="margin-top:2px;">↑ costo de producción según el color seleccionado</p>
+      <div class="preset-row" id="c-presets"></div>
+
+      <div class="field" style="margin-top:12px; border-top:1px solid var(--line); padding-top:12px;">
+        <label for="c-precio"><strong>Precio de venta al cliente</strong> (editable)</label>
+        <div class="input-group"><span class="unit" style="font-weight:700; font-size:16px;">$</span><input type="number" id="c-precio" step="100" placeholder="0" style="font-size:18px; font-weight:800; color:var(--blue-dark); width:130px;"></div>
       </div>
 
-      <div class="panel">
-        <p class="panel-title">Fijar precio de venta</p>
-        <p class="panel-sub">Desliza para ver cómo cambian el precio y la ganancia según el margen.</p>
-        <div class="field">
-          <label>Margen de ganancia objetivo</label>
-          <div class="input-group"><span class="val" id="cp-margenLabel" style="font-weight:700;">50%</span></div>
+      <div style="margin-top:16px;">
+        <label class="eyebrow">Reparto de ganancia <span id="c-sugerencia-split" style="text-transform:none;color:var(--ink-soft);font-weight:500;">— sugerido 60/40</span></label>
+        <div class="seg-row">
+          <button type="button" class="seg-btn active" data-split="60">60% Seba / 40% Camila</button>
+          <button type="button" class="seg-btn" data-split="50">50% Seba / 50% Camila</button>
         </div>
-        <input type="range" id="cp-margenSlider" min="0" max="80" step="5" value="50" class="range-slider">
-        <div class="stat-row" style="margin-top:12px;">
-          <div class="stat-card blue"><p class="stat-label">Precio sugerido</p><p class="stat-value" id="cp-precioSugerido">$0</p></div>
-          <div class="stat-card green"><p class="stat-label">Ganancia</p><p class="stat-value" id="cp-gananciaSugerida">$0</p></div>
-        </div>
-        <p class="eyebrow" style="margin-top:16px;">Otras opciones de margen</p>
-        <div id="cp-presets" class="preset-row"></div>
-        <button class="primary" id="cp-guardarConPrecio">Guardar con este precio</button>
-        <button class="link" id="cp-guardarSinPrecio">Guardar sin precio de venta</button>
       </div>
     </div>
 
-    <!-- MODO: costo del producto completo -->
-    <div class="subview" id="costmode-producto">
-      <div class="panel">
-        <p class="panel-title" id="cd-titulo">Nuevo producto</p>
-        <p class="panel-sub">Calcula precio, color (1 o varios), pintura y reparto, luego guárdalo.</p>
-        <div class="field">
-          <label for="r-nombre">Nombre del producto</label>
-          <div class="input-group"><input type="text" id="r-nombre" placeholder="Ej: llavero"></div>
+    <!-- DISTRIBUCIÓN DE LOS DINEROS (3 APARTADOS) -->
+    <div class="panel">
+      <p class="panel-title">🏦 Distribución de los dineros</p>
+      <p class="panel-sub">Así se divide exactamente el cobro para transferir a cada cuenta de banco:</p>
+
+      <div class="dist-3-grid">
+        <div class="dist-3-card card-inv">
+          <div class="dist-3-icon">🏦</div>
+          <div class="dist-3-title">Cuenta Inversión</div>
+          <div class="dist-3-val" id="out-dist-inversion">$0</div>
+          <div class="dist-3-sub">Reposición filamento, luz, máquina y pintura</div>
         </div>
-
-        <!-- SELECCIÓN DE COLOR EN MODO B -->
-        <div style="margin-top:10px;">
-          <label class="eyebrow">Color o mezcla de filamento</label>
-          <div class="seg-row" style="margin-bottom:8px;">
-            <button class="seg-btn active" id="r-tab-single">1 Solo Color</button>
-            <button class="seg-btn" id="r-tab-multi">🌈 Varios Colores (Multicolor)</button>
-          </div>
-
-          <!-- MODO 1 COLOR -->
-          <div id="r-single-wrap" class="field" style="border-top:1px solid var(--line);">
-            <label for="r-color">Color</label>
-            <div class="input-group">
-              <span id="r-single-dot" class="color-dot"></span>
-              <select id="r-color"></select>
-            </div>
-          </div>
-
-          <!-- MODO MULTICOLOR -->
-          <div id="r-multi-wrap" class="multi-color-wrap" style="display:none;">
-            <p class="eyebrow" style="margin:0 0 6px;">Método de cálculo multicolor</p>
-            <div class="seg-row">
-              <button class="seg-btn active" id="r-method-promedio">📊 Promedio de los colores</button>
-              <button class="seg-btn" id="r-method-pct">🎚️ Porcentajes con barra (%)</button>
-            </div>
-            
-            <p style="font-size:12px; color:var(--ink-soft); margin:10px 0 4px;">Toca los colores que lleva la pieza:</p>
-            <div id="r-color-chips" class="color-picker-chips"></div>
-
-            <div id="r-multi-items-list" class="multi-color-list"></div>
-            <div id="r-pct-bar" class="pct-sum-bar valid" style="display:none;">
-              <span>Total porcentaje:</span><span id="r-pct-total">100%</span>
-            </div>
-          </div>
+        <div class="dist-3-card card-seba">
+          <div class="dist-3-icon">👤</div>
+          <div class="dist-3-title">Ganancia Seba (<span id="out-pct-seba">60</span>%)</div>
+          <div class="dist-3-val" id="out-dist-seba">$0</div>
+          <div class="dist-3-sub">Ganancia personal neta</div>
         </div>
-
-        <div class="field">
-          <label for="r-precio">Precio de venta (opcional)</label>
-          <div class="input-group"><span class="unit">$</span><input type="number" id="r-precio" step="100" placeholder="pendiente"></div>
-        </div>
-        <div class="field">
-          <label for="r-gramos">Gramos de filamento</label>
-          <div class="input-group"><input type="number" id="r-gramos" step="1" placeholder="0"><span class="unit">g</span></div>
-        </div>
-        <div class="field">
-          <label for="r-horas">Horas de impresión</label>
-          <div class="input-group"><input type="number" id="r-horas" step="0.1" placeholder="0"><span class="unit">h</span></div>
+        <div class="dist-3-card card-camila">
+          <div class="dist-3-icon">👩</div>
+          <div class="dist-3-title">Ganancia Camila (<span id="out-pct-camila">40</span>%)</div>
+          <div class="dist-3-val" id="out-dist-camila">$0</div>
+          <div class="dist-3-sub">Ganancia personal neta</div>
         </div>
       </div>
 
-      <div class="panel">
-        <p class="eyebrow">Tipo de pieza</p>
-        <div class="seg-row">
-          <button class="seg-btn active" data-tipo="sin">Sin pintar</button>
-          <button class="seg-btn" data-tipo="con">Con pintura</button>
-        </div>
-        <div class="field" id="r-pinturaField" style="display:none; margin-top:4px;">
-          <label for="r-pintura">Costo de pintura (auto o manual)</label>
-          <div class="input-group"><span class="unit">$</span><input type="number" id="r-pintura" step="50" placeholder="auto"></div>
-        </div>
+      <div class="r-line r-total" style="margin-top:14px; border-top:1.5px solid var(--line);">
+        <span>Total precio cobrado</span>
+        <span class="val" id="out-total-venta" style="color:var(--blue-dark); font-size:20px;">$0</span>
       </div>
 
-      <div class="panel">
-        <p class="eyebrow">Reparto de utilidad <span id="r-sugerencia" style="text-transform:none;color:var(--ink-soft);font-weight:500;">— sugerido 60/40 sin pintar</span></p>
-        <div class="seg-row">
-          <button class="seg-btn active" data-split="60">60 / 40</button>
-          <button class="seg-btn" data-split="50">50 / 50</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <p class="eyebrow">Cálculo de resultado</p>
-        <div class="r-line"><span>Precio de venta</span><span class="val" id="r-outPrecio">$0</span></div>
-        <div class="r-line"><span>Costo material (<span id="r-colorPriceTag">$0/kg</span>)</span><span class="val" id="r-outMaterial">–$0</span></div>
-        <div class="r-line"><span>Costo luz (<span id="r-luzPriceTag">$260/kWh</span>)</span><span class="val" id="r-outLuz">–$0</span></div>
-        <div class="r-line" id="r-linePintura" style="display:none;"><span>Costo pintura</span><span class="val" id="r-outPintura">–$0</span></div>
-        <div class="r-line"><span>Tarifa de máquina</span><span class="val" id="r-outMaquina">–$0</span></div>
-        <div class="r-line r-total"><span>Costo de producción total</span><span class="val" id="r-outProduccion">–$0</span></div>
-        <div class="r-line" id="r-lineUtilidad"><span>Utilidad neta</span><span class="val" id="r-outUtilidad">$0</span></div>
-        <div class="warn-box" id="r-warnBox">La utilidad quedó negativa: el precio no cubre los costos.</div>
-        <div class="info-box" id="r-infoBox">Ingresa un precio de venta para ver la utilidad y el reparto.</div>
-        <div class="stat-row">
-          <div class="stat-card blue"><p class="stat-label">Tú (<span id="r-pctMine">60</span>%)</p><p class="stat-value" id="r-outMine">$0</p></div>
-          <div class="stat-card green"><p class="stat-label">Ella (<span id="r-pctHers">40</span>%)</p><p class="stat-value" id="r-outHers">$0</p></div>
-        </div>
-        <button class="primary" id="r-guardar">Guardar en catálogo de productos</button>
-        <button class="link" id="r-cancelar" style="display:none;">Cancelar edición</button>
-      </div>
+      <button class="primary" id="c-btn-guardar" style="margin-top:16px;">💾 Guardar producto en catálogo</button>
+      <button class="link" id="c-btn-cancelar" style="display:none;">Cancelar edición</button>
     </div>
   </div>
 
@@ -632,16 +650,16 @@
       <p class="panel-title">Resumen de ventas</p>
       <div class="stat-row">
         <div class="stat-card blue"><p class="stat-label">Ventas totales</p><p class="stat-value" id="v-totalVenta">$0</p></div>
-        <div class="stat-card blue"><p class="stat-label">Utilidad total</p><p class="stat-value" id="v-totalUtilidad">$0</p></div>
+        <div class="stat-card blue"><p class="stat-label">🏦 Inversión total</p><p class="stat-value" id="v-totalCosto">$0</p></div>
       </div>
       <div class="stat-row" style="margin-top:10px;">
-        <div class="stat-card green"><p class="stat-label">Tú acumulado</p><p class="stat-value" id="v-totalMine">$0</p></div>
-        <div class="stat-card green"><p class="stat-label">Ella acumulado</p><p class="stat-value" id="v-totalHers">$0</p></div>
+        <div class="stat-card green"><p class="stat-label">👤 Seba acumulado</p><p class="stat-value" id="v-totalMine">$0</p></div>
+        <div class="stat-card purple"><p class="stat-label">👩 Camila acumulado</p><p class="stat-value" id="v-totalHers">$0</p></div>
       </div>
     </div>
     <div class="panel">
       <p class="panel-title">Historial de ventas</p>
-      <p class="panel-sub">Registro detallado de ventas realizadas con desglose de color.</p>
+      <p class="panel-sub">Registro detallado de ventas realizadas con desglose para cada cuenta bancaria.</p>
       <div id="ventasList"></div>
     </div>
   </div>
@@ -700,22 +718,6 @@
       </div>
     </div>
 
-    <!-- PINTURA POR LOTE -->
-    <div class="panel">
-      <p class="panel-title">Pintura (por lote)</p>
-      <div class="field">
-        <label for="a-costoSetPintura">Costo del set de pintura</label>
-        <div class="input-group"><span class="unit">$</span><input type="number" id="a-costoSetPintura" step="100"></div>
-      </div>
-      <div class="field">
-        <label for="a-piezasPorSet">Piezas que rinde ese set</label>
-        <div class="input-group"><input type="number" id="a-piezasPorSet" step="1"></div>
-      </div>
-      <div class="field">
-        <label>Costo de pintura por pieza</label>
-        <div class="input-group"><span class="val" id="a-pinturaCalc" style="font-weight:700;">$0</span></div>
-      </div>
-    </div>
     <footer>Todos los datos se guardan y sincronizan automáticamente en Supabase. Si cambias los precios de los colores o de la luz ($260/kWh), los costos de los productos se actualizarán inmediatamente.</footer>
   </div>
 
@@ -751,7 +753,6 @@
     return '#7c3aed';
   }
 
-  // Auto-ajustar selector de color al tipear el nombre
   $('nc-nombre')?.addEventListener('input', () => {
     const hex = getSmartHex($('nc-nombre').value);
     $('nc-hex').value = hex;
@@ -801,8 +802,7 @@
     coloresCache.sort((a,b) => a.nombre.localeCompare(b.nombre));
     renderColoresAjustes();
     populateColorControls();
-    calcProduccion();
-    calcReparto();
+    calcCostos();
   }
 
   async function updateColor(id, nombre, precioKg, hex) {
@@ -815,8 +815,7 @@
     coloresCache.sort((a,b) => a.nombre.localeCompare(b.nombre));
     renderColoresAjustes();
     populateColorControls();
-    calcProduccion();
-    calcReparto();
+    calcCostos();
   }
 
   async function deleteColor(id) {
@@ -826,8 +825,7 @@
     coloresCache = coloresCache.filter(c => c.id !== Number(id));
     renderColoresAjustes();
     populateColorControls();
-    calcProduccion();
-    calcReparto();
+    calcCostos();
   }
 
   function renderColoresAjustes() {
@@ -892,7 +890,7 @@
   });
 
   // ---------- Ajustes Generales (Luz a $260 CLP/kWh) ----------
-  const defaultAjustes = { precioKg: 13000, consumo: 0.3, precioKwh: 260, inversion: 540000, vidaUtil: 2500, costoSetPintura: 0, piezasPorSet: 0 };
+  const defaultAjustes = { precioKg: 13000, consumo: 0.3, precioKwh: 260, inversion: 540000, vidaUtil: 2500 };
   let ajustes = Object.assign({}, defaultAjustes);
 
   async function loadAjustesFromDB() {
@@ -904,9 +902,7 @@
           consumo: Number(data.consumo) || 0.3,
           precioKwh: Number(data.precio_kwh) || 260,
           inversion: Number(data.inversion) || 540000,
-          vidaUtil: Number(data.vida_util) || 2500,
-          costoSetPintura: Number(data.costo_set_pintura) || 0,
-          piezasPorSet: Number(data.piezas_por_set) || 0
+          vidaUtil: Number(data.vida_util) || 2500
         };
       }
     } catch (e) {}
@@ -920,8 +916,6 @@
       precio_kwh: ajustes.precioKwh,
       inversion: ajustes.inversion,
       vida_util: ajustes.vidaUtil,
-      costo_set_pintura: ajustes.costoSetPintura,
-      piezas_por_set: ajustes.piezasPorSet,
       updated_at: new Date().toISOString()
     }).eq('id', 1).then(() => {}).catch(() => {});
   }
@@ -932,40 +926,31 @@
     $('a-precioKwh').value = ajustes.precioKwh;
     $('a-inversion').value = ajustes.inversion;
     $('a-vidaUtil').value = ajustes.vidaUtil;
-    $('a-costoSetPintura').value = ajustes.costoSetPintura || '';
-    $('a-piezasPorSet').value = ajustes.piezasPorSet || '';
     updateAjustesCalc();
     populateColorControls();
   }
 
   function updateAjustesCalc() {
     $('a-tarifaCalc').textContent = fmt(ajustes.inversion / (ajustes.vidaUtil || 1)) + '/h';
-    const pintura = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
-    $('a-pinturaCalc').textContent = fmt(pintura);
-    if ($('cp-luzPriceTag')) $('cp-luzPriceTag').textContent = fmt(ajustes.precioKwh) + '/kWh';
-    if ($('r-luzPriceTag')) $('r-luzPriceTag').textContent = fmt(ajustes.precioKwh) + '/kWh';
+    if ($('c-luzPriceTag')) $('c-luzPriceTag').textContent = fmt(ajustes.precioKwh) + '/kWh';
   }
 
-  ['a-precioKg','a-consumo','a-precioKwh','a-inversion','a-vidaUtil','a-costoSetPintura','a-piezasPorSet'].forEach(id => {
+  ['a-precioKg','a-consumo','a-precioKwh','a-inversion','a-vidaUtil'].forEach(id => {
     $(id)?.addEventListener('input', () => {
       ajustes.precioKg = parseFloat($('a-precioKg').value) || 0;
       ajustes.consumo = parseFloat($('a-consumo').value) || 0;
       ajustes.precioKwh = parseFloat($('a-precioKwh').value) || 0;
       ajustes.inversion = parseFloat($('a-inversion').value) || 0;
       ajustes.vidaUtil = parseFloat($('a-vidaUtil').value) || 1;
-      ajustes.costoSetPintura = parseFloat($('a-costoSetPintura').value) || 0;
-      ajustes.piezasPorSet = parseFloat($('a-piezasPorSet').value) || 0;
       saveAjustesToDB();
       updateAjustesCalc();
       populateColorControls();
-      calcProduccion();
-      calcReparto();
+      calcCostos();
     });
   });
 
-  // ---------- Control de Colores & Multicolor con Sliders Auto-Adaptables ----------
-  let cpConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
-  let rConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
+  // ---------- Control de Colores & Multicolor en Costos ----------
+  let cConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
 
   function setupColorModeToggles(prefix, configObj, calcFn) {
     $(`${prefix}-tab-single`).addEventListener('click', () => {
@@ -982,7 +967,6 @@
       $(`${prefix}-single-wrap`).style.display = 'none';
       $(`${prefix}-multi-wrap`).style.display = 'block';
       configObj.tipo = 'multi';
-      // Si no hay items seleccionados, agregamos el color actual
       if (configObj.items.length === 0 && configObj.colorId) {
         configObj.items.push({ colorId: configObj.colorId, pct: 100 });
       }
@@ -1014,7 +998,6 @@
     const listEl = $(`${prefix}-multi-items-list`);
     if (!chipsEl || !listEl) return;
 
-    // Render chips para activar/desactivar colores
     chipsEl.innerHTML = '';
     coloresCache.forEach(c => {
       const isSel = configObj.items.some(it => it.colorId === c.id);
@@ -1028,7 +1011,6 @@
         } else {
           configObj.items.push({ colorId: c.id, pct: 50 });
         }
-        // Auto distribuir porcentajes equitativamente
         if (configObj.items.length === 2) {
           configObj.items[0].pct = 50;
           configObj.items[1].pct = 50;
@@ -1045,7 +1027,6 @@
       chipsEl.appendChild(btn);
     });
 
-    // Render lista de colores seleccionados con sliders
     listEl.innerHTML = '';
     if (configObj.items.length === 0) {
       listEl.innerHTML = '<div class="empty" style="padding:10px 0;">Selecciona arriba los colores que lleva la pieza.</div>';
@@ -1081,7 +1062,6 @@
       listEl.appendChild(row);
     });
 
-    // Eventos de sliders con comportamiento inteligente (2 colores auto-adaptados, 3+ con aviso de total)
     if (configObj.multiModo === 'porcentajes') {
       listEl.querySelectorAll('.color-slider').forEach(slider => {
         slider.addEventListener('input', () => {
@@ -1089,7 +1069,6 @@
           const val = parseInt(slider.value, 10) || 0;
 
           if (configObj.items.length === 2) {
-            // Auto-adaptación exacta para 2 colores
             const itemA = configObj.items.find(x => x.colorId === cid);
             const itemB = configObj.items.find(x => x.colorId !== cid);
             if (itemA && itemB) {
@@ -1103,7 +1082,6 @@
               if (badgeB) badgeB.textContent = `${itemB.pct}%`;
             }
           } else {
-            // Para 3 o más colores: actualiza el valor y revisa total
             const item = configObj.items.find(x => x.colorId === cid);
             if (item) {
               item.pct = val;
@@ -1148,7 +1126,7 @@
     } else if (total < 100) {
       const falta = 100 - total;
       bar.className = 'pct-sum-bar warn';
-      bar.innerHTML = `<span>⚠️ Total porcentaje:</span><span><strong>${total}%</strong> (Falta un ${falta}% para llegar a 100%)</span>`;
+      bar.innerHTML = `<span>⚠️ Total porcentaje:</span><span><strong>${total}%</strong> (Falta un ${falta}% para 100%)</span>`;
     } else {
       const sobra = total - 100;
       bar.className = 'pct-sum-bar invalid';
@@ -1156,7 +1134,6 @@
     }
   }
 
-  // Cálculo de precio/kg efectivo según config (1 color o multicolor)
   function computeEffectivePrecioKg(configObj) {
     if (configObj.tipo === 'multi' && configObj.items && configObj.items.length > 0) {
       const validItems = configObj.items
@@ -1186,7 +1163,6 @@
       }
     }
 
-    // 1 Solo color
     const col = getColorById(configObj.colorId);
     if (col) {
       return { precioKg: col.precioKg, desc: col.nombre, dots: [col.hex] };
@@ -1195,27 +1171,25 @@
   }
 
   function populateColorControls() {
-    ['cp', 'r'].forEach(prefix => {
-      const sel = $(`${prefix}-color`);
-      if (!sel) return;
-      const curVal = sel.value;
-      sel.innerHTML = '';
-      const defOpt = document.createElement('option');
-      defOpt.value = '';
-      defOpt.textContent = `Base general (${fmt(ajustes.precioKg)}/kg)`;
-      sel.appendChild(defOpt);
+    const sel = $('c-color');
+    if (!sel) return;
+    const curVal = sel.value;
+    sel.innerHTML = '';
+    const defOpt = document.createElement('option');
+    defOpt.value = '';
+    defOpt.textContent = `Base general (${fmt(ajustes.precioKg)}/kg)`;
+    sel.appendChild(defOpt);
 
-      coloresCache.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = `${c.nombre} (${fmt(c.precioKg)}/kg)`;
-        sel.appendChild(opt);
-      });
-      if (curVal && [...sel.options].some(o => o.value === curVal)) {
-        sel.value = curVal;
-      }
-      updateSingleDot(prefix);
+    coloresCache.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = `${c.nombre} (${fmt(c.precioKg)}/kg)`;
+      sel.appendChild(opt);
     });
+    if (curVal && [...sel.options].some(o => o.value === curVal)) {
+      sel.value = curVal;
+    }
+    updateSingleDot('c');
   }
 
   function updateSingleDot(prefix) {
@@ -1226,19 +1200,13 @@
     dot.style.background = col ? col.hex : '#64748b';
   }
 
-  $('cp-color')?.addEventListener('change', () => {
-    cpConfig.colorId = $('cp-color').value ? Number($('cp-color').value) : null;
-    updateSingleDot('cp');
-    calcProduccion();
-  });
-  $('r-color')?.addEventListener('change', () => {
-    rConfig.colorId = $('r-color').value ? Number($('r-color').value) : null;
-    updateSingleDot('r');
-    calcReparto();
+  $('c-color')?.addEventListener('change', () => {
+    cConfig.colorId = $('c-color').value ? Number($('c-color').value) : null;
+    updateSingleDot('c');
+    calcCostos();
   });
 
-  setupColorModeToggles('cp', cpConfig, calcProduccion);
-  setupColorModeToggles('r', rConfig, calcReparto);
+  setupColorModeToggles('c', cConfig, calcCostos);
 
   // ---------- Tabs ----------
   document.querySelectorAll('nav.tabs button').forEach(btn => {
@@ -1253,245 +1221,274 @@
     });
   });
 
-  // ---------- Costos: Submodo ----------
-  document.querySelectorAll('[data-costmode]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-costmode]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.subview').forEach(v => v.classList.remove('active'));
-      $('costmode-' + btn.dataset.costmode).classList.add('active');
-    });
-  });
+  // ---------- SECCIÓN COSTOS UNIFICADA ----------
+  let cMargen = 50;
+  let tienePintura = false;
+  let splitMine = 60;
+  let editingId = null;
 
-  // ---------- Costo de producción (Modo A) ----------
-  let cpCostoTotal = 0;
-  const PRESET_MARGENES = [20, 30, 40, 50, 60, 70];
+  const PRESET_MARGENES = [30, 50, 100, 150, 200, 300];
 
-  function calcProduccion() {
-    const gramos = parseFloat($('cp-gramos')?.value) || 0;
-    const horas = parseFloat($('cp-horas')?.value) || 0;
-    const eff = computeEffectivePrecioKg(cpConfig);
-
-    $('cp-colorPriceTag').textContent = fmt(eff.precioKg) + '/kg';
-    if ($('cp-colorDesc')) $('cp-colorDesc').textContent = `↑ ${eff.desc}`;
-
-    const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
-    const costoMaterial = (gramos / 1000) * eff.precioKg;
-    const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
-    const costoMaquina = horas * tarifaHora;
-    cpCostoTotal = costoMaterial + costoLuz + costoMaquina;
-
-    $('cp-outMaterial').textContent = fmt(costoMaterial);
-    $('cp-outLuz').textContent = fmt(costoLuz);
-    $('cp-outMaquina').textContent = fmt(costoMaquina);
-    $('cp-outTotal').textContent = fmt(cpCostoTotal);
-    updateSugerenciaPrecio();
-  }
-  ['cp-gramos','cp-horas'].forEach(id => $(id)?.addEventListener('input', calcProduccion));
-
-  function precioParaMargen(margenPct) {
-    const f = 1 - (margenPct / 100);
-    if (f <= 0) return cpCostoTotal * 100;
-    return cpCostoTotal / f;
-  }
-
-  function updateSugerenciaPrecio() {
-    const margen = parseInt($('cp-margenSlider')?.value || 50, 10);
-    $('cp-margenLabel').textContent = margen + '%';
-    const precio = precioParaMargen(margen);
-    const ganancia = precio - cpCostoTotal;
-    $('cp-precioSugerido').textContent = fmt(precio);
-    $('cp-gananciaSugerida').textContent = fmt(ganancia);
-
-    const el = $('cp-presets');
+  function updateMargenPresets(currentMargen) {
+    const el = $('c-presets');
     if (!el) return;
     el.innerHTML = '';
     PRESET_MARGENES.forEach(m => {
-      const p = precioParaMargen(m);
       const chip = document.createElement('div');
-      chip.className = 'preset-chip' + (m === margen ? ' active' : '');
-      chip.innerHTML = `<div class="pct">${m}%</div><div class="price">${fmt(p)}</div>`;
+      chip.className = 'preset-chip' + (m === currentMargen ? ' active' : '');
+      chip.innerHTML = `<div class="pct">${m}%</div>`;
       chip.addEventListener('click', () => {
-        $('cp-margenSlider').value = m;
-        updateSugerenciaPrecio();
+        cMargen = m;
+        $('c-margenSlider').value = m;
+        calcCostos();
       });
       el.appendChild(chip);
     });
   }
-  $('cp-margenSlider')?.addEventListener('input', updateSugerenciaPrecio);
 
-  async function guardarProductoDesdeCosto(conPrecio) {
-    const nombre = $('cp-nombre').value.trim() || 'Producto sin nombre';
-    const gramos = parseFloat($('cp-gramos').value) || 0;
-    const horas = parseFloat($('cp-horas').value) || 0;
-    const precioVenta = conPrecio ? Math.round(precioParaMargen(parseInt($('cp-margenSlider').value, 10))) : null;
-
-    const savedConfig = JSON.parse(JSON.stringify(cpConfig));
-
-    await insertProducto({
-      id: Date.now(), nombre, gramos, horas,
-      colorId: cpConfig.tipo === 'single' ? cpConfig.colorId : null,
-      coloresConfig: savedConfig,
-      pintura: false, pinturaManual: null,
-      precioVenta, splitMine: 60,
-      fecha: new Date().toLocaleDateString('es-CL')
-    });
-    $('cp-nombre').value = ''; $('cp-gramos').value = ''; $('cp-horas').value = '';
-    calcProduccion();
-    document.querySelector('nav.tabs button[data-tab="productos"]').click();
-  }
-  $('cp-guardarConPrecio')?.addEventListener('click', () => guardarProductoDesdeCosto(true));
-  $('cp-guardarSinPrecio')?.addEventListener('click', () => guardarProductoDesdeCosto(false));
-
-  // ---------- Costo del producto (Modo B) ----------
-  let splitMine = 60;
-  let tienePintura = false;
-  let editingId = null;
-
-  document.querySelectorAll('[data-tipo]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-tipo]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      tienePintura = btn.dataset.tipo === 'con';
-      $('r-pinturaField').style.display = tienePintura ? 'flex' : 'none';
-      $('r-linePintura').style.display = tienePintura ? 'flex' : 'none';
-      $('r-sugerencia').textContent = tienePintura ? '— sugerido 50/50 con pintura' : '— sugerido 60/40 sin pintar';
-      calcReparto();
-    });
+  // Toggles de pintura
+  $('c-btn-sin-pintura')?.addEventListener('click', () => {
+    tienePintura = false;
+    $('c-btn-sin-pintura').classList.add('active');
+    $('c-btn-con-pintura').classList.remove('active');
+    $('c-pinturaField').style.display = 'none';
+    $('c-pintura-aviso').textContent = '💡 Sin pintura: Reparto sugerido 60% Seba / 40% Camila.';
+    $('c-sugerencia-split').textContent = '— sugerido 60/40 sin pintar';
+    splitMine = 60;
+    document.querySelectorAll('#view-costos [data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '60'));
+    calcCostos();
   });
-  document.querySelectorAll('[data-split]').forEach(btn => {
+
+  $('c-btn-con-pintura')?.addEventListener('click', () => {
+    tienePintura = true;
+    $('c-btn-con-pintura').classList.add('active');
+    $('c-btn-sin-pintura').classList.remove('active');
+    $('c-pinturaField').style.display = 'flex';
+    if (!$('c-pintura').value) $('c-pintura').value = '200';
+    $('c-pintura-aviso').textContent = '🎨 Con pintura: Reparto automático sugerido 50% Seba / 50% Camila.';
+    $('c-sugerencia-split').textContent = '— sugerido 50/50 con pintura';
+    splitMine = 50;
+    document.querySelectorAll('#view-costos [data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '50'));
+    calcCostos();
+  });
+
+  // Split selector
+  document.querySelectorAll('#view-costos [data-split]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('[data-split]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#view-costos [data-split]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       splitMine = parseInt(btn.dataset.split, 10);
-      calcReparto();
+      calcCostos();
     });
   });
 
-  function calcReparto() {
-    const precioRaw = $('r-precio')?.value || '';
-    const precio = parseFloat(precioRaw) || 0;
-    const tienePrecio = precioRaw !== '' && precio > 0;
-    const gramos = parseFloat($('r-gramos')?.value) || 0;
-    const horas = parseFloat($('r-horas')?.value) || 0;
-    const eff = computeEffectivePrecioKg(rConfig);
+  // Slider de margen
+  $('c-margenSlider')?.addEventListener('input', () => {
+    cMargen = parseInt($('c-margenSlider').value, 10);
+    calcCostos();
+  });
 
-    $('r-colorPriceTag').textContent = fmt(eff.precioKg) + '/kg';
-
+  // Input directo de precio
+  $('c-precio')?.addEventListener('input', () => {
+    const inputVal = parseFloat($('c-precio').value) || 0;
+    const gramos = parseFloat($('c-gramos')?.value) || 0;
+    const horas = parseFloat($('c-horas')?.value) || 0;
+    const eff = computeEffectivePrecioKg(cConfig);
     const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
-    const pinturaAuto = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
-    const pinturaManualRaw = $('r-pintura')?.value || '';
-    const pinturaManual = pinturaManualRaw !== '' ? parseFloat(pinturaManualRaw) : null;
-    const pintura = tienePintura ? (pinturaManual !== null ? pinturaManual : pinturaAuto) : 0;
-
     const costoMaterial = (gramos / 1000) * eff.precioKg;
     const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
     const costoMaquina = horas * tarifaHora;
-    const costoProduccion = costoMaterial + costoLuz + costoMaquina + pintura;
-    const utilidad = precio - costoProduccion;
+    const costoPintura = tienePintura ? (parseFloat($('c-pintura')?.value) || 0) : 0;
+    const costoProduccion = costoMaterial + costoLuz + costoMaquina + costoPintura;
 
-    $('r-outPrecio').textContent = tienePrecio ? fmt(precio) : '—';
-    $('r-outMaterial').textContent = '–' + fmt(costoMaterial);
-    $('r-outLuz').textContent = '–' + fmt(costoLuz);
-    $('r-outPintura').textContent = '–' + fmt(pintura);
-    $('r-outMaquina').textContent = '–' + fmt(costoMaquina);
-    $('r-outProduccion').textContent = '–' + fmt(costoProduccion);
-    $('r-outUtilidad').textContent = tienePrecio ? fmt(utilidad) : '—';
-    $('r-lineUtilidad').classList.toggle('negative', tienePrecio && utilidad < 0);
-    $('r-warnBox').classList.toggle('show', tienePrecio && utilidad < 0);
-    $('r-infoBox').classList.toggle('show', !tienePrecio);
+    if (costoProduccion > 0 && inputVal >= costoProduccion) {
+      const ganancia = inputVal - costoProduccion;
+      cMargen = Math.min(300, Math.round((ganancia / costoProduccion) * 100));
+      $('c-margenSlider').value = cMargen;
+      $('c-margenLabel').textContent = cMargen + '%';
+      
+      const gananciaSeba = Math.round(ganancia * (splitMine / 100));
+      const gananciaCamila = Math.round(ganancia * ((100 - splitMine) / 100));
+      $('out-dist-inversion').textContent = fmt(costoProduccion);
+      $('out-dist-seba').textContent = fmt(gananciaSeba);
+      $('out-dist-camila').textContent = fmt(gananciaCamila);
+      $('out-total-venta').textContent = fmt(inputVal);
+      updateMargenPresets(cMargen);
+    }
+  });
 
-    const mine = tienePrecio ? Math.max(utilidad, 0) * (splitMine / 100) : 0;
-    const hers = tienePrecio ? Math.max(utilidad, 0) * ((100 - splitMine) / 100) : 0;
-    $('r-pctMine').textContent = splitMine;
-    $('r-pctHers').textContent = 100 - splitMine;
-    $('r-outMine').textContent = tienePrecio ? fmt(mine) : '—';
-    $('r-outHers').textContent = tienePrecio ? fmt(hers) : '—';
+  function calcCostos() {
+    const gramos = parseFloat($('c-gramos')?.value) || 0;
+    const horas = parseFloat($('c-horas')?.value) || 0;
+    const eff = computeEffectivePrecioKg(cConfig);
 
-    return { precio: tienePrecio ? precio : null, gramos, horas, tienePintura, pinturaManual, costoProduccion, utilidad, splitMine, eff };
+    $('c-colorPriceTag').textContent = fmt(eff.precioKg) + '/kg';
+    if ($('c-colorDesc')) $('c-colorDesc').textContent = `↑ ${eff.desc}`;
+
+    const tarifaHora = ajustes.inversion / (ajustes.vidaUtil || 1);
+    const costoMaterial = (gramos / 1000) * eff.precioKg;
+    const costoLuz = horas * ajustes.consumo * ajustes.precioKwh;
+    const costoMaquina = horas * tarifaHora;
+    
+    const pinturaMontoRaw = $('c-pintura')?.value;
+    const costoPintura = tienePintura ? (parseFloat(pinturaMontoRaw) || 0) : 0;
+    
+    const costoProduccion = costoMaterial + costoLuz + costoMaquina + costoPintura;
+
+    $('c-outMaterial').textContent = fmt(costoMaterial);
+    $('c-outLuz').textContent = fmt(costoLuz);
+    $('c-outMaquina').textContent = fmt(costoMaquina);
+    $('c-outPintura').textContent = tienePintura ? fmt(costoPintura) : '$0';
+    $('c-linePintura').style.display = tienePintura ? 'flex' : 'none';
+    $('c-outTotal').textContent = fmt(costoProduccion);
+
+    // Margen & Precio
+    const gananciaTotal = Math.round(costoProduccion * (cMargen / 100));
+    const precioVenta = costoProduccion + gananciaTotal;
+
+    // Actualizar campos de precio y margen
+    $('c-margenLabel').textContent = cMargen + '%';
+    if (document.activeElement !== $('c-precio')) {
+      $('c-precio').value = precioVenta > 0 ? precioVenta : '';
+    }
+    $('out-total-venta').textContent = fmt(precioVenta);
+
+    // 3 Apartados de Distribución:
+    const gananciaSeba = Math.round(gananciaTotal * (splitMine / 100));
+    const gananciaCamila = Math.round(gananciaTotal * ((100 - splitMine) / 100));
+
+    $('out-dist-inversion').textContent = fmt(costoProduccion);
+    $('out-dist-seba').textContent = fmt(gananciaSeba);
+    $('out-dist-camila').textContent = fmt(gananciaCamila);
+    $('out-pct-seba').textContent = splitMine;
+    $('out-pct-camila').textContent = 100 - splitMine;
+
+    updateMargenPresets(cMargen);
+
+    return {
+      nombre: $('c-nombre')?.value.trim() || 'Producto sin nombre',
+      gramos,
+      horas,
+      tienePintura,
+      costoPintura,
+      costoProduccion,
+      precioVenta,
+      gananciaTotal,
+      gananciaSeba,
+      gananciaCamila,
+      splitMine,
+      cConfig
+    };
   }
-  ['r-precio','r-gramos','r-horas','r-pintura'].forEach(id => $(id)?.addEventListener('input', calcReparto));
+  ['c-gramos','c-horas','c-pintura'].forEach(id => $(id)?.addEventListener('input', calcCostos));
 
-  function resetRepartoForm() {
+  function resetCostosForm() {
     editingId = null;
-    $('r-nombre').value = ''; $('r-precio').value = ''; $('r-gramos').value = ''; $('r-horas').value = '';
-    $('r-pintura').value = ''; $('r-color').value = '';
-    rConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
-    $('r-tab-single').click();
-    updateSingleDot('r');
-    tienePintura = false; splitMine = 60;
-    document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('active', b.dataset.tipo === 'sin'));
-    document.querySelectorAll('[data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '60'));
-    $('r-pinturaField').style.display = 'none';
-    $('r-linePintura').style.display = 'none';
-    $('r-sugerencia').textContent = '— sugerido 60/40 sin pintar';
-    $('cd-titulo').textContent = 'Nuevo producto';
-    $('r-guardar').textContent = 'Guardar en catálogo de productos';
-    $('r-cancelar').style.display = 'none';
-    calcReparto();
+    $('c-nombre').value = '';
+    $('c-gramos').value = '';
+    $('c-horas').value = '';
+    $('c-pintura').value = '';
+    $('c-precio').value = '';
+    tienePintura = false;
+    splitMine = 60;
+    cMargen = 50;
+    $('c-margenSlider').value = 50;
+    $('c-btn-sin-pintura').classList.add('active');
+    $('c-btn-con-pintura').classList.remove('active');
+    $('c-pinturaField').style.display = 'none';
+    $('c-pintura-aviso').textContent = '💡 Sin pintura: Reparto sugerido 60% Seba / 40% Camila.';
+    $('c-sugerencia-split').textContent = '— sugerido 60/40 sin pintar';
+    document.querySelectorAll('#view-costos [data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '60'));
+    $('c-titulo').textContent = 'Calculadora de costos y precio';
+    $('c-btn-guardar').textContent = '💾 Guardar producto en catálogo';
+    $('c-btn-cancelar').style.display = 'none';
+    cConfig = { tipo: 'single', colorId: null, multiModo: 'promedio', items: [] };
+    $('c-tab-single').click();
+    updateSingleDot('c');
+    calcCostos();
   }
-  $('r-cancelar')?.addEventListener('click', resetRepartoForm);
+  $('c-btn-cancelar')?.addEventListener('click', () => {
+    resetCostosForm();
+    document.querySelector('nav.tabs button[data-tab="productos"]').click();
+  });
 
-  $('r-guardar')?.addEventListener('click', async () => {
-    const nombre = $('r-nombre').value.trim() || 'Producto sin nombre';
-    const r = calcReparto();
-    const savedConfig = JSON.parse(JSON.stringify(rConfig));
-
+  $('c-btn-guardar')?.addEventListener('click', async () => {
+    const c = calcCostos();
     const entry = {
       id: editingId || Date.now(),
-      nombre,
-      colorId: rConfig.tipo === 'single' ? rConfig.colorId : null,
-      coloresConfig: savedConfig,
-      gramos: r.gramos,
-      horas: r.horas,
-      pintura: r.tienePintura,
-      pinturaManual: r.tienePintura ? r.pinturaManual : null,
-      precioVenta: r.precio,
-      splitMine: r.splitMine,
+      nombre: c.nombre,
+      colorId: c.cConfig.tipo === 'single' ? c.cConfig.colorId : null,
+      coloresConfig: JSON.parse(JSON.stringify(c.cConfig)),
+      gramos: c.gramos,
+      horas: c.horas,
+      pintura: c.tienePintura,
+      pinturaManual: c.tienePintura ? c.costoPintura : null,
+      precioVenta: c.precioVenta > 0 ? Math.round(c.precioVenta) : null,
+      splitMine: c.splitMine,
       fecha: new Date().toLocaleDateString('es-CL')
     };
+
     if (editingId) {
       await updateProducto(entry);
     } else {
       await insertProducto(entry);
     }
-    resetRepartoForm();
+
+    resetCostosForm();
     document.querySelector('nav.tabs button[data-tab="productos"]').click();
   });
 
   function editarProducto(p) {
     document.querySelector('nav.tabs button[data-tab="costos"]').click();
-    document.querySelector('[data-costmode="producto"]').click();
     editingId = p.id;
-    $('r-nombre').value = p.nombre;
-    $('r-precio').value = p.precioVenta !== null && p.precioVenta !== undefined ? p.precioVenta : '';
-    $('r-gramos').value = p.gramos || '';
-    $('r-horas').value = p.horas || '';
-    $('r-pintura').value = p.pinturaManual !== null && p.pinturaManual !== undefined ? p.pinturaManual : '';
+    $('c-titulo').textContent = 'Editar: ' + p.nombre;
+    $('c-btn-guardar').textContent = '💾 Guardar cambios del producto';
+    $('c-btn-cancelar').style.display = 'block';
+
+    $('c-nombre').value = p.nombre || '';
+    $('c-gramos').value = p.gramos || '';
+    $('c-horas').value = p.horas || '';
+    
+    tienePintura = !!p.pintura;
+    $('c-btn-sin-pintura').classList.toggle('active', !tienePintura);
+    $('c-btn-con-pintura').classList.toggle('active', tienePintura);
+    $('c-pinturaField').style.display = tienePintura ? 'flex' : 'none';
+    $('c-pintura').value = (p.pinturaManual !== null && p.pinturaManual !== undefined) ? p.pinturaManual : (tienePintura ? 200 : '');
+    $('c-pintura-aviso').textContent = tienePintura
+      ? '🎨 Con pintura: Reparto sugerido 50% Seba / 50% Camila.'
+      : '💡 Sin pintura: Reparto sugerido 60% Seba / 40% Camila.';
+    $('c-sugerencia-split').textContent = tienePintura ? '— sugerido 50/50 con pintura' : '— sugerido 60/40 sin pintar';
+
+    splitMine = p.splitMine || (tienePintura ? 50 : 60);
+    document.querySelectorAll('#view-costos [data-split]').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.split, 10) === splitMine);
+    });
 
     if (p.coloresConfig && p.coloresConfig.tipo === 'multi') {
-      rConfig = JSON.parse(JSON.stringify(p.coloresConfig));
-      $('r-tab-multi').click();
-      if (rConfig.multiModo === 'porcentajes') $('r-method-pct').click();
-      else $('r-method-promedio').click();
+      cConfig = JSON.parse(JSON.stringify(p.coloresConfig));
+      $('c-tab-multi').click();
+      if (cConfig.multiModo === 'porcentajes') $('c-method-pct').click();
+      else $('c-method-promedio').click();
     } else {
-      rConfig = { tipo: 'single', colorId: p.colorId, multiModo: 'promedio', items: [] };
-      $('r-tab-single').click();
-      $('r-color').value = p.colorId ? String(p.colorId) : '';
-      updateSingleDot('r');
+      cConfig = { tipo: 'single', colorId: p.colorId, multiModo: 'promedio', items: [] };
+      $('c-tab-single').click();
+      $('c-color').value = p.colorId ? String(p.colorId) : '';
+      updateSingleDot('c');
     }
 
-    tienePintura = !!p.pintura;
-    splitMine = p.splitMine || 60;
-    document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('active', (b.dataset.tipo === 'con') === tienePintura));
-    document.querySelectorAll('[data-split]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.split, 10) === splitMine));
-    $('r-pinturaField').style.display = tienePintura ? 'flex' : 'none';
-    $('r-linePintura').style.display = tienePintura ? 'flex' : 'none';
-    $('r-sugerencia').textContent = tienePintura ? '— sugerido 50/50 con pintura' : '— sugerido 60/40 sin pintar';
-    $('cd-titulo').textContent = 'Editar producto';
-    $('r-guardar').textContent = 'Guardar cambios';
-    $('r-cancelar').style.display = 'block';
-    calcReparto();
+    const c = computeProductCost(p);
+    if (p.precioVenta && p.precioVenta > c.costoTotal && c.costoTotal > 0) {
+      const ganancia = p.precioVenta - c.costoTotal;
+      cMargen = Math.min(300, Math.round((ganancia / c.costoTotal) * 100));
+      $('c-margenSlider').value = cMargen;
+      $('c-precio').value = p.precioVenta;
+    } else {
+      cMargen = 50;
+      $('c-margenSlider').value = 50;
+    }
+
+    calcCostos();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ---------- Cálculo de costo de producto con color o multicolor dinámico ----------
@@ -1509,15 +1506,14 @@
     const costoMaterial = ((p.gramos || 0) / 1000) * eff.precioKg;
     const costoLuz = (p.horas || 0) * ajustes.consumo * ajustes.precioKwh;
     const costoMaquina = (p.horas || 0) * tarifaHora;
-    const pinturaAuto = ajustes.piezasPorSet > 0 ? ajustes.costoSetPintura / ajustes.piezasPorSet : 0;
-    const costoPintura = p.pintura ? (p.pinturaManual !== null && p.pinturaManual !== undefined ? p.pinturaManual : pinturaAuto) : 0;
+    const costoPintura = p.pintura ? (Number(p.pinturaManual) || 0) : 0;
     const costoTotal = costoMaterial + costoLuz + costoMaquina + costoPintura;
     return { costoMaterial, costoLuz, costoMaquina, costoPintura, costoTotal, precioKg: eff.precioKg, desc: eff.desc, dots: eff.dots || [] };
   }
 
   // ---------- Productos (en Supabase) ----------
   let productosCache = [];
-  let prodActiveColors = {}; // Mapa para override de color en catálogo
+  let prodActiveColors = {};
 
   function rowToProducto(r) {
     return {
@@ -1607,12 +1603,15 @@
       const overrideColorId = (p.id in prodActiveColors) ? prodActiveColors[p.id] : undefined;
       const c = computeProductCost(p, overrideColorId);
       const tienePrecio = p.precioVenta !== null && p.precioVenta !== undefined && p.precioVenta > 0;
-      const margen = tienePrecio ? Math.round(((p.precioVenta - c.costoTotal) / p.precioVenta) * 100) : null;
+      const gananciaTotal = tienePrecio ? Math.max(0, p.precioVenta - c.costoTotal) : 0;
+      const margen = (tienePrecio && c.costoTotal > 0) ? Math.round((gananciaTotal / c.costoTotal) * 100) : null;
       
-      // Dots de color
+      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
+      const gananciaSeba = Math.round(gananciaTotal * (splitSeba / 100));
+      const gananciaCamila = Math.round(gananciaTotal * ((100 - splitSeba) / 100));
+
       const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
 
-      // Opciones para probar otro color en la tarjeta
       let colorOptionsHTML = `<option value="" ${overrideColorId === undefined ? 'selected' : ''}>Original: ${c.desc}</option>`;
       coloresCache.forEach(col => {
         colorOptionsHTML += `<option value="${col.id}" ${overrideColorId === col.id ? 'selected' : ''}>${col.nombre} (${fmt(col.precioKg)}/kg)</option>`;
@@ -1629,7 +1628,7 @@
                 <span class="color-dots-group">${dotsHTML}</span>
                 <span>${c.desc}</span>
               </span>
-              <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? 'Con pintura' : 'Sin pintar'}</span>
+              <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
               ${!tienePrecio ? '<span class="badge pendiente">Precio pendiente</span>' : ''}
             </div>
           </div>
@@ -1652,14 +1651,36 @@
           <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
           <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
         </div>
-        <div class="prod-foot">
+
+        <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
+        <div class="prod-dist-box">
+          <div class="dist-mini-head">
+            <span>🏦 Distribución para cuentas de banco</span>
+            <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
+          </div>
+          <div class="dist-mini-grid">
+            <div class="dist-mini-item inv">
+              <span class="d-label">🏦 Inversión</span>
+              <div class="d-val">${fmt(c.costoTotal)}</div>
+            </div>
+            <div class="dist-mini-item seba">
+              <span class="d-label">👤 Seba (${splitSeba}%)</span>
+              <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
+            </div>
+            <div class="dist-mini-item cami">
+              <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
+              <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-foot" style="margin-top:10px;">
           <div>
-            <span class="unit">Costo total </span><strong>${fmt(c.costoTotal)}</strong>
-            <div class="unit">con ${c.desc}</div>
+            <span class="unit">Peso: </span><strong>${p.gramos}g</strong> · <span class="unit">Tiempo: </span><strong>${p.horas}h</strong>
           </div>
           <div style="text-align:right;">
             <div class="venta ${tienePrecio ? '' : 'pendiente'}">${tienePrecio ? fmt(p.precioVenta) : 'Sin precio aún'}</div>
-            ${tienePrecio ? `<div class="margen">${fmt(p.precioVenta - c.costoTotal)} ganancia · ${margen}%</div>` : ''}
+            ${tienePrecio ? `<div class="margen">${fmt(gananciaTotal)} ganancia · ${margen}%</div>` : ''}
           </div>
         </div>
       `;
@@ -1807,11 +1828,13 @@
       const c = computeProductCost(p, activeColorId);
       const costoLinea = c.costoTotal * q;
       const ventaLinea = (p.precioVenta || 0) * q;
-      const utilidadLinea = ventaLinea - costoLinea;
+      const utilidadLinea = Math.max(0, ventaLinea - costoLinea);
+      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
+
       totalCosto += costoLinea;
       totalVenta += ventaLinea;
-      tuParte += utilidadLinea * (p.splitMine / 100);
-      suParte += utilidadLinea * ((100 - p.splitMine) / 100);
+      tuParte += utilidadLinea * (splitSeba / 100);
+      suParte += utilidadLinea * ((100 - splitSeba) / 100);
     });
     $('caja-venta').textContent = fmt(totalVenta);
     $('caja-costo').textContent = fmt(totalCosto);
@@ -1865,7 +1888,8 @@
       const c = computeProductCost(p, activeColorId);
       const costoLinea = c.costoTotal * q;
       const ventaLinea = (p.precioVenta || 0) * q;
-      const utilidadLinea = ventaLinea - costoLinea;
+      const utilidadLinea = Math.max(0, ventaLinea - costoLinea);
+      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
 
       items.push({
         nombre: p.nombre,
@@ -1878,8 +1902,8 @@
 
       totalCosto += costoLinea;
       totalVenta += ventaLinea;
-      tuParte += utilidadLinea * (p.splitMine / 100);
-      suParte += utilidadLinea * ((100 - p.splitMine) / 100);
+      tuParte += utilidadLinea * (splitSeba / 100);
+      suParte += utilidadLinea * ((100 - splitSeba) / 100);
     });
 
     if (items.length === 0) {
@@ -1907,11 +1931,11 @@
   function renderVentas() {
     const ventas = getVentas();
     const totalVenta = ventas.reduce((s, v) => s + (v.totalVenta || 0), 0);
-    const totalUtilidad = ventas.reduce((s, v) => s + (v.utilidad || 0), 0);
+    const totalCosto = ventas.reduce((s, v) => s + (v.totalCosto || 0), 0);
     const totalMine = ventas.reduce((s, v) => s + (v.tuParte || 0), 0);
     const totalHers = ventas.reduce((s, v) => s + (v.suParte || 0), 0);
     $('v-totalVenta').textContent = fmt(totalVenta);
-    $('v-totalUtilidad').textContent = fmt(totalUtilidad);
+    $('v-totalCosto').textContent = fmt(totalCosto);
     $('v-totalMine').textContent = fmt(totalMine);
     $('v-totalHers').textContent = fmt(totalHers);
 
@@ -1934,12 +1958,15 @@
       card.innerHTML = `
         <div class="venta-head">
           <span>${v.fecha}</span>
-          <span>costo <strong>${fmt(v.totalCosto)}</strong></span>
+          <span>Total venta <strong>${fmt(v.totalVenta)}</strong></span>
         </div>
         <div class="venta-items">${itemsTxt}</div>
         <div class="venta-foot">
-          <div class="venta-split">Tú ${fmt(v.tuParte)} · Ella ${fmt(v.suParte)}</div>
-          <div class="venta-total">${fmt(v.totalVenta)}</div>
+          <div class="venta-split">
+            <span>🏦 Inversión <strong>${fmt(v.totalCosto)}</strong></span> · 
+            <span>👤 Seba <strong>${fmt(v.tuParte)}</strong></span> · 
+            <span>👩 Camila <strong>${fmt(v.suParte)}</strong></span>
+          </div>
         </div>
         <button class="prod-actions del" data-id="${v.id}" style="margin-top:8px; background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar venta</button>
       `;
@@ -1961,8 +1988,7 @@
     await loadAjustesFromDB();
     await loadColoresFromDB();
     await Promise.all([loadProductosFromDB(), loadVentasFromDB()]);
-    calcProduccion();
-    calcReparto();
+    calcCostos();
     renderCaja();
   }
   initApp();
