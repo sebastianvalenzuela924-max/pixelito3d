@@ -841,69 +841,195 @@
     background: var(--blue-dark);
   }
 
-  /* Items del carrito en Caja */
+  /* Items del carrito en Caja - Diseño horizontal, limpio y sin letras verticales */
   .cart-item-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 0;
+    padding: 10px 4px;
     border-bottom: 1px solid var(--line);
+    flex-wrap: nowrap;
   }
   .cart-item-row:last-child {
     border-bottom: none;
+  }
+  .cart-item-thumb {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #edeae3;
+    border: 1px solid var(--line);
   }
   .cart-item-info {
     flex: 1;
     min-width: 0;
   }
   .cart-item-name {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--ink);
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .cart-item-sub {
+  .cart-item-meta {
     font-size: 11.5px;
     color: var(--ink-soft);
-    margin-top: 2px;
-  }
-  .cart-item-split {
-    font-size: 10.5px;
-    color: var(--blue-dark);
-    background: var(--blue-soft);
-    display: inline-block;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-top: 3px;
-  }
-  .cart-item-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .cart-item-subtotal {
-    font-size: 15px;
+  .cart-unit-tag {
+    color: var(--ink-faint);
+  }
+  .cart-item-controls {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .cart-qbtn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    width: 28px;
+    height: 30px;
+    cursor: pointer;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+  .cart-qbtn:hover { background: var(--line); }
+  .cart-qval {
+    min-width: 22px;
+    text-align: center;
+    font-size: 13px;
     font-weight: 800;
     color: var(--ink);
+  }
+  .cart-item-subtotal {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--blue-dark);
     text-align: right;
-    min-width: 65px;
+    min-width: 58px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .cart-item-del {
     background: none;
     border: none;
-    color: var(--red);
-    font-size: 18px;
+    color: var(--ink-faint);
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     padding: 4px 6px;
     line-height: 1;
-    border-radius: 4px;
+    flex-shrink: 0;
   }
   .cart-item-del:hover {
-    background: var(--red-soft);
+    color: var(--red);
+  }
+
+  /* Vista colapsable de productos en Catálogo */
+  .toggle-expand-all-btn {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    color: var(--blue-dark);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .toggle-expand-all-btn:hover {
+    background: var(--blue-soft);
+    border-color: var(--blue);
+  }
+  .prod-toggle-card-btn {
+    width: 100%;
+    background: var(--bg-soft);
+    border: none;
+    border-top: 1px solid var(--line);
+    padding: 8px 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+  .prod-toggle-card-btn:hover {
+    background: var(--blue-soft);
+    color: var(--blue-dark);
+  }
+  .prod-details-panel {
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+  .prod-cart-multicols {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .multicols-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .multicol-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--blue-soft);
+    color: var(--blue-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid #bfdbfe;
+    cursor: pointer;
+  }
+  .multicol-chip:hover {
+    background: #dbeafe;
+  }
+  .multicol-chip.active-col {
+    background: var(--blue);
+    color: #ffffff;
+    border-color: var(--blue-dark);
+  }
+  .multicol-chip.active-col .chip-del {
+    color: #ffffff;
+  }
+  .chip-del {
+    color: var(--red);
+    font-weight: 800;
+    font-size: 13px;
+    margin-left: 2px;
+    cursor: pointer;
   }
 
   /* Control de carrito en tarjetas de Catálogo */
@@ -1034,9 +1160,14 @@
   <!-- 2. PRODUCTOS -->
   <div class="view" id="view-productos">
     <div class="panel">
-      <p class="panel-title">Catálogo de productos</p>
-      <p class="panel-sub">Productos guardados con desglose exacto de inversión y ganancias para cada cuenta de banco.</p>
-      <div class="search-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <div>
+          <p class="panel-title" style="margin:0 0 2px;">Catálogo de productos</p>
+          <p class="panel-sub" style="margin:0;">Toca una tarjeta para ver sus detalles o añade a la venta.</p>
+        </div>
+        <button type="button" class="toggle-expand-all-btn" id="prod-toggle-all-btn">↕️ Expandir todos</button>
+      </div>
+      <div class="search-box" style="margin-top:12px;">
         <span class="ic">🔍</span>
         <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
       </div>
@@ -2513,35 +2644,23 @@
     // 3. Renderizar el Carrito en Caja
     renderCajaCart();
 
-    // 4. Actualizar botones de cantidad en el Catálogo
-    const productos = getProductos();
-    productos.forEach(p => {
-      const colId = prodActiveColors[p.id];
-      const q = getCartQty(p.id, colId);
-      const effP = getEffectiveProductSalePrice(p, colId);
-
-      const qtySpan = $(`cat-qty-${p.id}`);
-      if (qtySpan) qtySpan.textContent = q;
-
-      const btnAdd = $(`cat-btn-add-${p.id}`);
-      if (btnAdd) {
-        if (q > 0) {
-          btnAdd.classList.add('in-cart');
-          btnAdd.textContent = `🛒 ${q} en venta (${fmt(effP * q)})`;
-        } else {
-          btnAdd.classList.remove('in-cart');
-          btnAdd.textContent = `🛒 Sumar a venta (${fmt(effP)})`;
-        }
-      }
-
-      // Caja quick item counter
-      const cajaQtySpan = $(`caja-qty-${p.id}`);
-      if (cajaQtySpan) {
-        const cColId = cajaColorSelected[p.id];
-        cajaQtySpan.textContent = getCartQty(p.id, cColId);
-      }
-    });
+    // 4. Actualizar Catálogo y Caja rápida para reflejar cantidades y chips
+    renderProductos();
+    renderCajaQuickList();
   }
+
+  // ---------- Control de Catálogo Expandible (Redesplegable) ----------
+  let catalogExpanded = {}; // productId -> boolean
+  let allCatalogExpanded = false;
+
+  $('prod-toggle-all-btn')?.addEventListener('click', () => {
+    allCatalogExpanded = !allCatalogExpanded;
+    const productos = getProductos();
+    productos.forEach(p => { catalogExpanded[p.id] = allCatalogExpanded; });
+    const btn = $('prod-toggle-all-btn');
+    if (btn) btn.textContent = allCatalogExpanded ? '▲ Colapsar todos' : '▼ Expandir todos';
+    renderProductos();
+  });
 
   // ---------- Render Productos (Catálogo) ----------
   function renderProductos() {
@@ -2566,6 +2685,7 @@
     }
 
     filtrados.forEach(p => {
+      const isExpanded = !!catalogExpanded[p.id];
       const overrideColorId = (p.id in prodActiveColors) ? prodActiveColors[p.id] : undefined;
       const c = computeProductCost(p, overrideColorId);
       const effectivePrecio = getEffectiveProductSalePrice(p, overrideColorId);
@@ -2586,7 +2706,34 @@
 
       const isColorDifferent = overrideColorId !== undefined && overrideColorId !== null;
       const cartKey = getCartItemKey(p.id, overrideColorId);
-      const currentQty = (cajaCart[cartKey] && cajaCart[cartKey].qty) || 0;
+      const currentSelectedColorQty = (cajaCart[cartKey] && cajaCart[cartKey].qty) || 0;
+
+      // Colores de este producto en el carrito
+      const productCartKeys = Object.keys(cajaCart).filter(k => cajaCart[k].productId === p.id && cajaCart[k].qty > 0);
+      const totalProductQty = productCartKeys.reduce((acc, k) => acc + cajaCart[k].qty, 0);
+
+      let multiColorChipsHTML = '';
+      if (productCartKeys.length > 0) {
+        multiColorChipsHTML = `
+          <div class="prod-cart-multicols">
+            <span class="multicols-title">En esta venta:</span>
+            ${productCartKeys.map(k => {
+              const item = cajaCart[k];
+              const itemCost = computeProductCost(p, item.overrideColorId);
+              const itemDots = itemCost.dots.map(d => `<span class="color-dot" style="width:10px;height:10px;background:${d}"></span>`).join('');
+              const isCurrent = (item.overrideColorId === overrideColorId) || (item.overrideColorId === undefined && overrideColorId === undefined);
+              return `
+                <span class="multicol-chip ${isCurrent ? 'active-col' : ''}" data-id="${p.id}" data-color="${item.overrideColorId !== undefined ? item.overrideColorId : ''}" title="Toca para seleccionar este color">
+                  ${itemDots}
+                  <span>${itemCost.desc}</span>
+                  <strong>x${item.qty}</strong>
+                  <span class="chip-del" data-key="${k}" title="Quitar este color">×</span>
+                </span>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
 
       const card = document.createElement('div');
       card.className = 'prod-card';
@@ -2618,7 +2765,7 @@
         ${mediaHTML}
         <div class="prod-body">
           <div class="prod-card-head">
-            <div>
+            <div style="flex:1; min-width:0;">
               <div class="prod-name">${p.nombre}</div>
               <div class="prod-badges">
                 <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
@@ -2626,55 +2773,9 @@
                 ${p.imagenUrl ? `<button type="button" class="prod-change-photo-link" data-id="${p.id}">Cambiar foto</button>` : ''}
               </div>
             </div>
-            <div class="prod-actions">
-              <button class="edit" data-id="${p.id}" title="Editar">Editar</button>
-              <button class="del" data-id="${p.id}" title="Borrar">Borrar</button>
-            </div>
-          </div>
-
-          <div class="prod-color-bar">
-            <label for="pcol-${p.id}">Cambiar color filamento:</label>
-            <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
-              ${colorOptionsHTML}
-            </select>
-          </div>
-
-          <div class="prod-mini">
-            <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
-            <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
-            <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
-            <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
-          </div>
-
-          <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
-          <div class="prod-dist-box">
-            <div class="dist-mini-head">
-              <span>🏦 Reparto bancos (${isColorDifferent ? 'Color seleccionado' : 'Color base'})</span>
-              <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
-            </div>
-            <div class="dist-mini-grid">
-              <div class="dist-mini-item inv">
-                <span class="d-label">🏦 Inversión</span>
-                <div class="d-val">${fmt(c.costoTotal)}</div>
-              </div>
-              <div class="dist-mini-item seba">
-                <span class="d-label">👤 Seba (${splitSeba}%)</span>
-                <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
-              </div>
-              <div class="dist-mini-item cami">
-                <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
-                <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="prod-foot" style="margin-top:10px;">
-            <div>
-              <span class="unit">Peso: </span><strong>${p.gramos}g</strong> · <span class="unit">Tiempo: </span><strong>${p.horas}h</strong>
-            </div>
-            <div style="text-align:right;">
-              <div class="venta ${tienePrecio ? '' : 'pendiente'}">${tienePrecio ? fmt(effectivePrecio) : 'Sin precio aún'}</div>
-              ${tienePrecio ? `<div class="margen">${fmt(gananciaTotal)} ganancia (${margen}%)</div>` : ''}
+            <div style="text-align:right; flex-shrink:0;">
+              <div class="venta ${tienePrecio ? '' : 'pendiente'}" style="font-size:16px; font-weight:800; color:var(--blue-dark);">${tienePrecio ? fmt(effectivePrecio) : 'Sin precio'}</div>
+              ${tienePrecio && margen !== null ? `<div class="margen" style="font-size:11px; color:var(--green-dark); font-weight:700;">+${margen}% margen</div>` : ''}
             </div>
           </div>
 
@@ -2683,14 +2784,72 @@
             <div class="prod-cart-control">
               <div class="prod-cart-qty-wrap">
                 <button type="button" class="prod-cart-btn prod-btn-minus" data-id="${p.id}">–</button>
-                <span class="prod-cart-qty-val" id="cat-qty-${p.id}">${currentQty}</span>
+                <span class="prod-cart-qty-val" id="cat-qty-${p.id}">${currentSelectedColorQty}</span>
                 <button type="button" class="prod-cart-btn prod-btn-plus" data-id="${p.id}">+</button>
               </div>
-              <button type="button" class="prod-cart-action-btn ${currentQty > 0 ? 'in-cart' : ''}" data-id="${p.id}" id="cat-btn-add-${p.id}">
-                ${currentQty > 0 ? `🛒 ${currentQty} en venta (${fmt(effectivePrecio * currentQty)})` : `🛒 Sumar a venta (${fmt(effectivePrecio)})`}
+              <button type="button" class="prod-cart-action-btn ${totalProductQty > 0 ? 'in-cart' : ''}" data-id="${p.id}" id="cat-btn-add-${p.id}">
+                ${totalProductQty > 0 ? `🛒 ${totalProductQty} en venta · Ir a Caja` : `🛒 Sumar a venta (${fmt(effectivePrecio)})`}
               </button>
             </div>
+            ${multiColorChipsHTML}
           ` : ''}
+
+          <!-- BOTÓN PARA DESPLEGAR DETALLES -->
+          <button type="button" class="prod-toggle-card-btn" data-id="${p.id}" style="margin-top:12px;">
+            <span>${isExpanded ? '▲ Ocultar detalles y costos' : '▼ Ver detalles, costos y bancos'}</span>
+          </button>
+
+          <!-- PANEL DETALLES REDESPLEGABLE -->
+          <div class="prod-details-panel" id="prod-details-${p.id}" style="display:${isExpanded ? 'block' : 'none'};">
+            <div class="prod-color-bar">
+              <label for="pcol-${p.id}">Cambiar color filamento:</label>
+              <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
+                ${colorOptionsHTML}
+              </select>
+            </div>
+
+            <div class="prod-mini">
+              <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
+              <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
+              <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
+              <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
+            </div>
+
+            <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
+            <div class="prod-dist-box">
+              <div class="dist-mini-head">
+                <span>🏦 Reparto bancos (${isColorDifferent ? 'Color seleccionado' : 'Color base'})</span>
+                <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
+              </div>
+              <div class="dist-mini-grid">
+                <div class="dist-mini-item inv">
+                  <span class="d-label">🏦 Inversión</span>
+                  <div class="d-val">${fmt(c.costoTotal)}</div>
+                </div>
+                <div class="dist-mini-item seba">
+                  <span class="d-label">👤 Seba (${splitSeba}%)</span>
+                  <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
+                </div>
+                <div class="dist-mini-item cami">
+                  <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
+                  <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Especificaciones en 1 línea fija + acciones -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--line); margin-top:8px; gap:8px;">
+              <div style="font-size:12px; color:var(--ink-soft); white-space:nowrap; display:flex; align-items:center; gap:4px;">
+                <span>Peso: <strong style="color:var(--ink);">${p.gramos}g</strong></span>
+                <span>·</span>
+                <span style="white-space:nowrap;">Tiempo: <strong style="color:var(--ink);">${p.horas}h</strong></span>
+              </div>
+              <div class="prod-actions" style="margin:0;">
+                <button class="edit" data-id="${p.id}" title="Editar">Editar</button>
+                <button class="del" data-id="${p.id}" title="Borrar">Borrar</button>
+              </div>
+            </div>
+          </div>
         </div>
       `;
       el.appendChild(card);
@@ -2708,6 +2867,37 @@
         e.stopPropagation();
         quickUploadProductId = Number(btn.dataset.id);
         $('catalog-photo-input').click();
+      });
+    });
+
+    // Botón desplegar/colapsar tarjeta
+    el.querySelectorAll('.prod-toggle-card-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = Number(btn.dataset.id);
+        catalogExpanded[pid] = !catalogExpanded[pid];
+        renderProductos();
+      });
+    });
+
+    // Multi-color chips en Catálogo
+    el.querySelectorAll('.prod-cart-multicols .multicol-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        if (e.target.classList.contains('chip-del')) return;
+        e.stopPropagation();
+        const pid = Number(chip.dataset.id);
+        const colVal = chip.dataset.color;
+        if (colVal === '' || colVal === undefined) delete prodActiveColors[pid];
+        else prodActiveColors[pid] = Number(colVal);
+        renderProductos();
+      });
+    });
+
+    el.querySelectorAll('.prod-cart-multicols .chip-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = btn.dataset.key;
+        removeCartItem(key);
       });
     });
 
@@ -2740,8 +2930,9 @@
         if (qty === 0) {
           updateCartQty(pid, colId, 1);
         } else {
-          // Si ya tiene productos en el carrito, va directo a la Caja para cobrar
+          // Va directo a la Caja para cobrar
           document.querySelector('nav.tabs button[data-tab="caja"]').click();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       });
     });
@@ -2774,7 +2965,7 @@
     });
   }
 
-  // ---------- Render Carrito en Caja ----------
+  // ---------- Render Carrito en Caja (Diseño horizontal limpio) ----------
   function renderCajaCart() {
     const itemsEl = $('caja-cart-items');
     const totalsEl = $('caja-cart-totals');
@@ -2803,53 +2994,40 @@
       const effectivePrecio = getEffectiveProductSalePrice(p, item.overrideColorId);
       const q = item.qty;
       const subtotalVenta = effectivePrecio * q;
-      const subtotalCosto = Math.round(c.costoTotal * q);
-      const subtotalUtilidad = Math.max(0, subtotalVenta - subtotalCosto);
-      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
-      const subSeba = Math.round(subtotalUtilidad * (splitSeba / 100));
-      const subCamila = Math.round(subtotalUtilidad * ((100 - splitSeba) / 100));
 
       const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
 
       const row = document.createElement('div');
       row.className = 'cart-item-row';
       row.innerHTML = `
-        <div class="caja-thumb-wrap">
+        <div class="cart-item-thumb">
           ${p.imagenUrl 
-            ? `<img src="${p.imagenUrl}" class="caja-thumb" alt="${p.nombre}">` 
-            : `<div class="caja-thumb-fallback"><img src="/icon.png" class="caja-thumb-mini" alt="Pixelito3D"></div>`
+            ? `<img src="${p.imagenUrl}" style="width:100%;height:100%;object-fit:cover;" alt="${p.nombre}">` 
+            : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f8fafc;"><img src="/icon.png" style="width:24px;height:24px;object-fit:contain;" alt="Pixelito3D"></div>`
           }
         </div>
         <div class="cart-item-info">
-          <div class="cart-item-name">
-            <span>${p.nombre}</span>
-            <span class="badge color-tag" style="font-size:10px; padding:2px 6px;">
-              <span class="color-dots-group">${dotsHTML}</span>
-              <span>${c.desc}</span>
-            </span>
-          </div>
-          <div class="cart-item-sub">
-            ${fmt(effectivePrecio)} c/u · costo ${fmt(c.costoTotal)}
-          </div>
-          <div class="cart-item-split">
-            🏦 Inv: ${fmt(subtotalCosto)} · 👤 Seba: ${fmt(subSeba)} · 👩 Cami: ${fmt(subCamila)}
+          <div class="cart-item-name" title="${p.nombre}">${p.nombre}</div>
+          <div class="cart-item-meta">
+            <span class="color-dots-group">${dotsHTML}</span>
+            <span>${c.desc}</span>
+            <span class="cart-unit-tag">· ${fmt(effectivePrecio)} c/u</span>
           </div>
         </div>
-        <div class="cart-item-right">
-          <div class="qty-control" style="background:var(--bg-soft); border-radius:6px; padding:2px 4px;">
-            <button class="qty-btn cart-qty-minus" data-key="${key}">–</button>
-            <span class="qty-num">${q}</span>
-            <button class="qty-btn cart-qty-plus" data-key="${key}">+</button>
-          </div>
-          <div class="cart-item-subtotal">${fmt(subtotalVenta)}</div>
-          <button type="button" class="cart-item-del" data-key="${key}" title="Quitar">×</button>
+        <div class="cart-item-controls">
+          <button type="button" class="cart-qbtn cart-qty-minus" data-key="${key}">–</button>
+          <span class="cart-qval">${q}</span>
+          <button type="button" class="cart-qbtn cart-qty-plus" data-key="${key}">+</button>
         </div>
+        <div class="cart-item-subtotal">${fmt(subtotalVenta)}</div>
+        <button type="button" class="cart-item-del" data-key="${key}" title="Quitar">×</button>
       `;
       itemsEl.appendChild(row);
     });
 
     itemsEl.querySelectorAll('.cart-qty-minus').forEach(b => {
-      b.addEventListener('click', () => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
         const key = b.dataset.key;
         if (cajaCart[key]) {
           updateCartQty(cajaCart[key].productId, cajaCart[key].overrideColorId, -1);
@@ -2858,7 +3036,8 @@
     });
 
     itemsEl.querySelectorAll('.cart-qty-plus').forEach(b => {
-      b.addEventListener('click', () => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
         const key = b.dataset.key;
         if (cajaCart[key]) {
           updateCartQty(cajaCart[key].productId, cajaCart[key].overrideColorId, 1);
@@ -2867,7 +3046,8 @@
     });
 
     itemsEl.querySelectorAll('.cart-item-del').forEach(b => {
-      b.addEventListener('click', () => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
         removeCartItem(b.dataset.key);
       });
     });
@@ -2927,6 +3107,30 @@
 
       const currentQ = getCartQty(p.id, activeColorId);
 
+      // Colores de este producto en el carrito
+      const productCartKeys = Object.keys(cajaCart).filter(k => cajaCart[k].productId === p.id && cajaCart[k].qty > 0);
+      let quickMultiChipsHTML = '';
+      if (productCartKeys.length > 0) {
+        quickMultiChipsHTML = `
+          <div class="prod-cart-multicols" style="margin-top:4px; padding-top:4px; border-top:1px dashed var(--line);">
+            ${productCartKeys.map(k => {
+              const item = cajaCart[k];
+              const itemCost = computeProductCost(p, item.overrideColorId);
+              const itemDots = itemCost.dots.map(d => `<span class="color-dot" style="width:9px;height:9px;background:${d}"></span>`).join('');
+              const isSel = (item.overrideColorId === activeColorId) || (item.overrideColorId === undefined && activeColorId === undefined);
+              return `
+                <span class="multicol-chip ${isSel ? 'active-col' : ''}" style="font-size:10px; padding:2px 6px;" data-id="${p.id}" data-color="${item.overrideColorId !== undefined ? item.overrideColorId : ''}" title="Toca para seleccionar este color">
+                  ${itemDots}
+                  <span>${itemCost.desc}</span>
+                  <strong>x${item.qty}</strong>
+                  <span class="chip-del" data-key="${k}" title="Quitar">×</span>
+                </span>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
       const row = document.createElement('div');
       row.className = 'caja-row';
       row.dataset.id = p.id;
@@ -2951,6 +3155,7 @@
               ${colorSelectOptions}
             </select>
           </div>
+          ${quickMultiChipsHTML}
         </div>
         <div class="qty-control">
           <button class="qty-btn quick-qty-minus" data-id="${p.id}">–</button>
@@ -2968,6 +3173,27 @@
         if (!sel.value) delete cajaColorSelected[id];
         else cajaColorSelected[id] = Number(sel.value);
         renderCajaQuickList();
+      });
+    });
+
+    // Chips en lista rápida de Caja
+    el.querySelectorAll('.caja-row .multicol-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        if (e.target.classList.contains('chip-del')) return;
+        e.stopPropagation();
+        const pid = Number(chip.dataset.id);
+        const colVal = chip.dataset.color;
+        if (colVal === '' || colVal === undefined) delete cajaColorSelected[pid];
+        else cajaColorSelected[pid] = Number(colVal);
+        renderCajaQuickList();
+      });
+    });
+
+    el.querySelectorAll('.caja-row .chip-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = btn.dataset.key;
+        removeCartItem(key);
       });
     });
 
@@ -3093,58 +3319,6 @@
     try { await db.from('ventas').delete().eq('id', id); } catch (e) { console.error(e); }
     ventasCache = ventasCache.filter(v => v.id !== id);
   }
-
-  $('caja-registrar')?.addEventListener('click', async () => {
-    const productos = getProductos();
-    const items = [];
-    let totalVenta = 0, totalCosto = 0, tuParte = 0, suParte = 0;
-
-    productos.forEach(p => {
-      const q = cajaQty[p.id] || 0;
-      if (q <= 0) return;
-      const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : undefined;
-      const c = computeProductCost(p, activeColorId);
-      const costoLinea = c.costoTotal * q;
-      const ventaLinea = (p.precioVenta || 0) * q;
-      const utilidadLinea = Math.max(0, ventaLinea - costoLinea);
-      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
-
-      items.push({
-        nombre: p.nombre,
-        colorDesc: c.desc,
-        dots: c.dots || [],
-        cantidad: q,
-        precioUnit: p.precioVenta,
-        costoUnit: Math.round(c.costoTotal)
-      });
-
-      totalCosto += costoLinea;
-      totalVenta += ventaLinea;
-      tuParte += utilidadLinea * (splitSeba / 100);
-      suParte += utilidadLinea * ((100 - splitSeba) / 100);
-    });
-
-    if (items.length === 0) {
-      alert('Selecciona al menos un producto con cantidad mayor a 0 para registrar la venta.');
-      return;
-    }
-
-    await insertVenta({
-      id: Date.now(),
-      fecha: new Date().toLocaleDateString('es-CL'),
-      items,
-      totalVenta: Math.round(totalVenta),
-      totalCosto: Math.round(totalCosto),
-      utilidad: Math.round(totalVenta - totalCosto),
-      tuParte: Math.round(tuParte),
-      suParte: Math.round(suParte)
-    });
-
-    cajaQty = {};
-    $('caja-buscar').value = '';
-    cajaBusqueda = '';
-    document.querySelector('nav.tabs button[data-tab="ventas"]').click();
-  });
 
   function renderVentas() {
     const ventas = getVentas();
