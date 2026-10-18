@@ -841,21 +841,29 @@
     background: var(--blue-dark);
   }
 
-  /* Items del carrito en Caja - Diseño horizontal, limpio y sin letras verticales */
+  /* Items del carrito en Caja - Diseño amplio, cómodo y sin palabras cortadas */
   .cart-item-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 4px;
-    border-bottom: 1px solid var(--line);
-    flex-wrap: nowrap;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 10px;
+    border: 1px solid var(--line);
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.03);
   }
   .cart-item-row:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .cart-item-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
   }
   .cart-item-thumb {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
@@ -867,43 +875,66 @@
     min-width: 0;
   }
   .cart-item-name {
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.35;
+    word-break: break-word;
   }
   .cart-item-meta {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--ink-soft);
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    gap: 6px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    line-height: 1.3;
   }
   .cart-unit-tag {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .cart-item-del {
+    background: none;
+    border: none;
     color: var(--ink-faint);
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: 4px;
+    transition: color 0.15s ease;
+  }
+  .cart-item-del:hover {
+    color: var(--red);
+  }
+  .cart-item-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+    gap: 10px;
   }
   .cart-item-controls {
     display: inline-flex;
     align-items: center;
     background: var(--bg-soft);
-    border: 1px solid var(--line);
-    border-radius: 6px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
   }
   .cart-qbtn {
     background: none;
     border: none;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
-    width: 28px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
     color: var(--ink);
     display: flex;
@@ -913,34 +944,27 @@
   }
   .cart-qbtn:hover { background: var(--line); }
   .cart-qval {
-    min-width: 22px;
+    min-width: 28px;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
     color: var(--ink);
   }
+  .cart-item-subtotal-wrap {
+    text-align: right;
+  }
+  .cart-item-subtotal-label {
+    font-size: 10px;
+    color: var(--ink-soft);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
   .cart-item-subtotal {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 800;
     color: var(--blue-dark);
-    text-align: right;
-    min-width: 58px;
-    flex-shrink: 0;
     white-space: nowrap;
-  }
-  .cart-item-del {
-    background: none;
-    border: none;
-    color: var(--ink-faint);
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    padding: 4px 6px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-  .cart-item-del:hover {
-    color: var(--red);
   }
 
   /* Vista colapsable de productos en Catálogo */
@@ -1887,7 +1911,7 @@
         .map(it => ({ col: getColorById(it.colorId), pct: Number(it.pct) || 0 }))
         .filter(it => it.col !== null);
 
-      if (validItems.length === 0) return { precioKg: ajustes.precioKg, desc: 'Base general', dots: ['#64748b'] };
+      if (validItems.length === 0) return { precioKg: ajustes.precioKg, desc: 'Color base', dots: ['#64748b'] };
 
       if (configObj.multiModo === 'promedio') {
         const sum = validItems.reduce((acc, it) => acc + it.col.precioKg, 0);
@@ -1914,7 +1938,7 @@
     if (col) {
       return { precioKg: col.precioKg, desc: col.nombre, dots: [col.hex] };
     }
-    return { precioKg: ajustes.precioKg, desc: 'Base general', dots: ['#64748b'] };
+    return { precioKg: ajustes.precioKg, desc: 'Color base', dots: ['#64748b'] };
   }
 
   function populateColorControls() {
@@ -1924,7 +1948,7 @@
     sel.innerHTML = '';
     const defOpt = document.createElement('option');
     defOpt.value = '';
-    defOpt.textContent = `Base general (${fmt(ajustes.precioKg)}/kg)`;
+    defOpt.textContent = `Color base (${fmt(ajustes.precioKg)}/kg)`;
     sel.appendChild(defOpt);
 
     coloresCache.forEach(c => {
@@ -2271,8 +2295,9 @@
         $('c-margenSlider').value = cMargen;
       }
     } else {
-      gananciaTotal = Math.round(costoProduccion * (cMargen / 100));
-      precioVenta = costoProduccion + gananciaTotal;
+      const rawVenta = costoProduccion * (1 + (cMargen / 100));
+      precioVenta = Math.ceil(rawVenta / 100) * 100;
+      gananciaTotal = Math.max(0, precioVenta - costoProduccion);
     }
 
     // Actualizar campos de precio y margen
@@ -2468,8 +2493,11 @@
     if (baseCost > 0) {
       const marginRatio = (p.precioVenta - baseCost) / baseCost;
       // Ajuste proporcional según el nuevo costo:
-      const adjustedPrice = Math.round(newCost * (1 + marginRatio));
-      return Math.max(Math.round(newCost), adjustedPrice);
+      const rawAdjustedPrice = newCost * (1 + marginRatio);
+      // Aproximar siempre hacia arriba a la siguiente centena (de 100 en 100, ej: 2455 -> 2500, 3240 -> 3300):
+      const roundedAdjusted = Math.ceil(rawAdjustedPrice / 100) * 100;
+      const minRounded = Math.ceil(newCost / 100) * 100;
+      return Math.max(minRounded, roundedAdjusted);
     }
 
     return Math.round(p.precioVenta);
@@ -3000,27 +3028,34 @@
       const row = document.createElement('div');
       row.className = 'cart-item-row';
       row.innerHTML = `
-        <div class="cart-item-thumb">
-          ${p.imagenUrl 
-            ? `<img src="${p.imagenUrl}" style="width:100%;height:100%;object-fit:cover;" alt="${p.nombre}">` 
-            : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f8fafc;"><img src="/icon.png" style="width:24px;height:24px;object-fit:contain;" alt="Pixelito3D"></div>`
-          }
+        <div class="cart-item-top">
+          <div class="cart-item-thumb">
+            ${p.imagenUrl 
+              ? `<img src="${p.imagenUrl}" style="width:100%;height:100%;object-fit:cover;" alt="${p.nombre}">` 
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f8fafc;"><img src="/icon.png" style="width:26px;height:26px;object-fit:contain;" alt="Pixelito3D"></div>`
+            }
+          </div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${p.nombre}</div>
+            <div class="cart-item-meta">
+              <span class="color-dots-group">${dotsHTML}</span>
+              <span style="font-weight:600; color:var(--ink);">${c.desc}</span>
+              <span class="cart-unit-tag">· ${fmt(effectivePrecio)} c/u</span>
+            </div>
+          </div>
+          <button type="button" class="cart-item-del" data-key="${key}" title="Quitar producto">×</button>
         </div>
-        <div class="cart-item-info">
-          <div class="cart-item-name" title="${p.nombre}">${p.nombre}</div>
-          <div class="cart-item-meta">
-            <span class="color-dots-group">${dotsHTML}</span>
-            <span>${c.desc}</span>
-            <span class="cart-unit-tag">· ${fmt(effectivePrecio)} c/u</span>
+        <div class="cart-item-bottom">
+          <div class="cart-item-controls">
+            <button type="button" class="cart-qbtn cart-qty-minus" data-key="${key}">–</button>
+            <span class="cart-qval">${q}</span>
+            <button type="button" class="cart-qbtn cart-qty-plus" data-key="${key}">+</button>
+          </div>
+          <div class="cart-item-subtotal-wrap">
+            <div class="cart-item-subtotal-label">Subtotal</div>
+            <div class="cart-item-subtotal">${fmt(subtotalVenta)}</div>
           </div>
         </div>
-        <div class="cart-item-controls">
-          <button type="button" class="cart-qbtn cart-qty-minus" data-key="${key}">–</button>
-          <span class="cart-qval">${q}</span>
-          <button type="button" class="cart-qbtn cart-qty-plus" data-key="${key}">+</button>
-        </div>
-        <div class="cart-item-subtotal">${fmt(subtotalVenta)}</div>
-        <button type="button" class="cart-item-del" data-key="${key}" title="Quitar">×</button>
       `;
       itemsEl.appendChild(row);
     });
