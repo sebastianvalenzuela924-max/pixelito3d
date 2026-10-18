@@ -1266,6 +1266,138 @@
     background: var(--line);
   }
 
+  /* Estilos para Cuentas de Clientes, Favoritos y Fidelidad */
+  .client-auth-btn {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .client-auth-btn:hover {
+    background: var(--bg-soft);
+    border-color: var(--blue);
+  }
+  .client-user-pill {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .client-profile-btn {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #15803d;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .client-profile-btn:hover {
+    background: #bbf7d0;
+  }
+  .fav-filter-btn {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .fav-filter-btn.active {
+    background: #fef2f2;
+    border-color: #f87171;
+    color: #b91c1c;
+  }
+  .prod-fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .prod-fav-btn:hover {
+    transform: scale(1.1);
+  }
+  .prod-fav-btn.active {
+    background: #ffffff;
+    border-color: #f87171;
+  }
+  .loyalty-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 1.5px solid #bfdbfe;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .loyalty-progress-wrap {
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .loyalty-progress-fill {
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+    gap: 8px;
+  }
+  .auth-tab-btn {
+    flex: 1;
+    padding: 8px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .auth-tab-btn.active {
+    color: var(--blue-dark);
+    border-bottom-color: var(--blue-dark);
+  }
 </style>
 </head>
 <body>
@@ -1278,8 +1410,18 @@
         <p class="sub" id="header-sub" style="margin:1px 0 0;">Catálogo de impresiones 3D</p>
       </div>
     </div>
-    <div id="header-auth-section" style="flex-shrink:0;">
-      <button type="button" class="admin-login-btn" id="btn-open-admin-login">🔐 Acceso Admin</button>
+    <div id="header-auth-section" style="flex-shrink:0; display:flex; align-items:center; gap:6px;">
+      <!-- CLIENTE (OPCIONAL) -->
+      <button type="button" class="client-auth-btn" id="btn-open-client-auth">👤 Mi Cuenta</button>
+      <div id="client-user-pill" class="client-user-pill" style="display:none;">
+        <span id="client-loyalty-icon">⭐</span>
+        <span id="client-user-name">Cliente</span>
+        <button type="button" id="btn-open-client-profile" class="client-profile-btn" title="Ver perfil y premios">🎁 Premios</button>
+        <button type="button" id="btn-client-logout" class="admin-logout-btn" title="Cerrar sesión">Salir</button>
+      </div>
+
+      <!-- ADMIN (SEBA & CAMI) -->
+      <button type="button" class="admin-login-btn" id="btn-open-admin-login">🔐 Admin</button>
       <div id="admin-user-pill" class="admin-user-pill" style="display:none;">
         <span>👤</span>
         <span id="admin-user-name">Seba</span>
@@ -1288,10 +1430,11 @@
     </div>
   </header>
 
-  <!-- PESTAÑAS ADMIN: 1. Caja | 2. Catálogo | 3. Costos | 4. Ventas | 5. Ajustes -->
+  <!-- PESTAÑAS ADMIN: 1. Caja | 2. Catálogo | 3. Pedidos Web | 4. Costos | 5. Ventas | 6. Ajustes -->
   <nav class="tabs" id="nav-tabs-admin" style="display:none;">
     <button data-tab="caja" id="tab-btn-caja">🛒 Caja</button>
     <button data-tab="productos" class="active" id="tab-btn-productos">📦 Catálogo</button>
+    <button data-tab="pedidos" id="tab-btn-pedidos">📋 Pedidos Web (<span id="admin-pending-orders-count">0</span>)</button>
     <button data-tab="costos">🧮 Costos</button>
     <button data-tab="ventas">📊 Ventas</button>
     <button data-tab="ajustes">⚙️ Ajustes</button>
@@ -1352,11 +1495,39 @@
         </div>
         <button type="button" class="toggle-expand-all-btn" id="prod-toggle-all-btn" style="display:none;">↕️ Expandir todos</button>
       </div>
-      <div class="search-box" style="margin-top:12px;">
-        <span class="ic">🔍</span>
-        <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
+      <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
+        <div class="search-box" style="flex:1; margin:0;">
+          <span class="ic">🔍</span>
+          <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
+        </div>
+        <button type="button" id="btn-filter-favs" class="fav-filter-btn" title="Filtrar por favoritos">
+          <span id="fav-icon-filter">🤍</span> <span id="fav-filter-text">Favoritos</span>
+        </button>
       </div>
       <div id="productosList"></div>
+    </div>
+  </div>
+
+  <!-- PEDIDOS WEB (ADMIN) -->
+  <div class="view" id="view-pedidos">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div>
+          <p class="panel-title" style="margin:0 0 2px;">📋 Pedidos Web & Cotizaciones</p>
+          <p class="panel-sub" style="margin:0;">Pedidos enviados por clientes desde Instagram o link de cotización.</p>
+        </div>
+        <button type="button" class="btn-secondary" id="btn-refresh-pedidos" style="padding:6px 12px; font-size:12px;">🔄 Actualizar</button>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:14px; overflow-x:auto;">
+        <button type="button" class="preset-chip active" id="pedidos-filter-pendientes" style="padding:6px 12px; font-size:12px;">🟡 Pendientes (<span id="count-pedidos-pendientes">0</span>)</button>
+        <button type="button" class="preset-chip" id="pedidos-filter-aprobados" style="padding:6px 12px; font-size:12px;">🟢 Aprobados (<span id="count-pedidos-aprobados">0</span>)</button>
+        <button type="button" class="preset-chip" id="pedidos-filter-todos" style="padding:6px 12px; font-size:12px;">Todos</button>
+      </div>
+
+      <div id="admin-pedidos-list">
+        <!-- Render dinámico -->
+      </div>
     </div>
   </div>
 
@@ -1702,6 +1873,18 @@
         <button type="button" id="btn-copy-quote-manual" class="copy-quote-manual-btn">
           📋 Copiar texto del pedido al portapapeles
         </button>
+
+        <button type="button" id="btn-share-cart-link" class="copy-quote-manual-btn" style="margin-top:6px; background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">
+          🔗 Compartir pedido con Link directo
+        </button>
+
+        <div id="cart-link-result-box" style="display:none; margin-top:10px; padding:10px 12px; background:#f8fafc; border:1px solid #bfdbfe; border-radius:8px; text-align:left;">
+          <div style="font-weight:700; font-size:12px; color:var(--ink); display:flex; justify-content:space-between;">
+            <span>Link de tu pedido:</span>
+            <span style="color:#10b981;">✓ ¡Copiado!</span>
+          </div>
+          <div id="cart-link-url" style="word-break:break-all; font-family:monospace; background:#ffffff; padding:6px 8px; border-radius:6px; border:1px solid var(--line); margin-top:4px; font-size:11.5px; color:var(--blue-dark);"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1740,6 +1923,173 @@
           <button type="submit" id="btn-admin-submit-login" class="btn-primary" style="flex:1; padding:9px; border-radius:8px;">Entrar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL CUENTA CLIENTE (LOGIN / REGISTRO) -->
+  <div id="modal-client-auth" class="lightbox-overlay" style="display:none;">
+    <div class="admin-login-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:10px;">
+        <h3 style="margin:0; font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <span>👤</span> Mi Cuenta Pixelito3D
+        </h3>
+        <button type="button" id="btn-close-client-auth" class="lightbox-close" style="position:static; width:30px; height:30px; font-size:16px;">✕</button>
+      </div>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tab-auth-login">Iniciar Sesión</button>
+        <button type="button" class="auth-tab-btn" id="tab-auth-register">Crear Cuenta</button>
+      </div>
+
+      <!-- FORM INICIAR SESIÓN -->
+      <form id="client-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label for="cli-login-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Usuario o Email:</label>
+          <input type="text" id="cli-login-user" placeholder="tu usuario" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+        <div>
+          <label for="cli-login-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Contraseña:</label>
+          <input type="password" id="cli-login-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+        <div id="cli-login-error" style="display:none; color:#dc2626; font-size:12px; font-weight:700; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 10px;"></div>
+        <button type="submit" id="btn-submit-client-login" class="btn-primary" style="padding:10px; border-radius:8px; margin-top:4px;">Entrar a Mi Cuenta</button>
+      </form>
+
+      <!-- FORM REGISTRO -->
+      <form id="client-register-form" onsubmit="return false;" style="display:none; flex-direction:column; gap:12px;">
+        <div>
+          <label for="cli-reg-name" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Tu Nombre o Apodo:</label>
+          <input type="text" id="cli-reg-name" placeholder="Ej: Matias" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+        <div>
+          <label for="cli-reg-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Elige un Usuario:</label>
+          <input type="text" id="cli-reg-user" placeholder="Ej: matias3d" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+        <div>
+          <label for="cli-reg-contact" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Instagram o WhatsApp (para contactarte):</label>
+          <input type="text" id="cli-reg-contact" placeholder="@tu_instagram o +569..." style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);">
+        </div>
+        <div>
+          <label for="cli-reg-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Crea una Contraseña:</label>
+          <input type="password" id="cli-reg-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+        <div id="cli-reg-error" style="display:none; color:#dc2626; font-size:12px; font-weight:700; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 10px;"></div>
+        <div style="font-size:11.5px; color:var(--ink-soft); line-height:1.4;">
+          🎁 Al registrarte acumulas compras para ganar impresiones 3D gratis cada 10 productos y guardas tus favoritos.
+        </div>
+        <button type="submit" id="btn-submit-client-register" class="btn-primary" style="padding:10px; border-radius:8px;">Crear mi cuenta</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PERFIL CLIENTE Y PREMIOS FIDELIDAD -->
+  <div id="modal-client-profile" class="lightbox-overlay" style="display:none;">
+    <div class="client-cart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:10px;">
+        <h3 style="margin:0; font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <span>⭐</span> Mi Cuenta & Fidelidad
+        </h3>
+        <button type="button" id="btn-close-client-profile" class="lightbox-close" style="position:static; width:30px; height:30px; font-size:16px;">✕</button>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #3b82f6, #10b981); color:#fff; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800;" id="cli-avatar-letter">C</div>
+        <div>
+          <div id="cli-prof-name" style="font-size:16px; font-weight:800; color:var(--ink);">Cliente</div>
+          <div id="cli-prof-user" style="font-size:12px; color:var(--ink-soft);">@usuario</div>
+        </div>
+      </div>
+
+      <!-- TARJETA CLUB DE FIDELIDAD -->
+      <div class="loyalty-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:12.5px; font-weight:800; color:#1e40af; display:flex; align-items:center; gap:6px;">
+            <span>🎁</span> Club Pixelito3D
+          </span>
+          <span id="cli-loyalty-count" style="font-size:12px; font-weight:800; color:#15803d; background:#dcfce7; padding:2px 8px; border-radius:999px;">0 / 10 compras</span>
+        </div>
+
+        <div class="loyalty-progress-wrap">
+          <div id="cli-loyalty-bar" class="loyalty-progress-fill" style="width:0%;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); margin-top:2px;">
+          <span id="cli-loyalty-text">Llevas 0 productos comprados</span>
+          <span id="cli-loyalty-grams">0g acumulados</span>
+        </div>
+
+        <div id="cli-reward-box" style="margin-top:10px; padding:10px; border-radius:8px; font-size:12px; line-height:1.4; background:#ffffff; border:1px solid #bfdbfe;">
+          Compra 10 productos para desbloquear 1 impresión 3D gratis proporcional a tus compras.
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button type="button" id="btn-view-my-favs" class="copy-quote-manual-btn">
+          ❤️ Ver mis productos favoritos (<span id="cli-favs-count">0</span>)
+        </button>
+        <button type="button" id="btn-logout-client" class="copy-quote-manual-btn" style="color:var(--red);">
+          Cerrar mi sesión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER PEDIDO COMPARTIDO POR LINK (?pedido=PIX-...) -->
+  <div id="modal-order-view" class="lightbox-overlay" style="display:none;">
+    <div class="client-cart-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:10px;">
+        <div>
+          <div style="font-size:11px; font-weight:800; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.5px;">Cotización Pixelito3D</div>
+          <h3 id="order-view-title" style="margin:0; font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;">
+            <span>📦</span> Pedido <span id="order-view-id">PIX-0000</span>
+          </h3>
+        </div>
+        <button type="button" id="btn-close-order-view" class="lightbox-close" style="position:static; width:30px; height:30px; font-size:16px;">✕</button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card-subtle); border:1px solid var(--border); border-radius:8px; padding:8px 12px; margin-bottom:12px;">
+        <div>
+          <div id="order-view-client" style="font-size:13px; font-weight:700; color:var(--ink);">Cliente: —</div>
+          <div id="order-view-date" style="font-size:11px; color:var(--ink-soft);">Fecha: —</div>
+        </div>
+        <span id="order-view-status" style="font-size:11px; font-weight:800; padding:4px 8px; border-radius:999px;">🟡 Pendiente</span>
+      </div>
+
+      <!-- LISTA DE PRODUCTOS DEL PEDIDO -->
+      <div id="order-view-items-list" style="max-height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+      </div>
+
+      <div style="background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; font-weight:700; font-size:14px;">
+          <span>Total:</span>
+          <span id="order-view-total" style="font-size:18px; font-weight:800; color:var(--blue-dark);">$0</span>
+        </div>
+        <div id="order-view-stats" style="font-size:11.5px; color:var(--ink-soft); margin-top:4px;">
+          0 piezas en total
+        </div>
+      </div>
+
+      <!-- SECCIÓN EXCLUSIVA ADMIN -->
+      <div id="order-admin-panel" style="display:none; background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:12px; margin-bottom:14px; text-align:left;">
+        <div style="font-weight:800; font-size:13px; color:#166534; display:flex; align-items:center; gap:6px;">
+          <span>👑</span> Panel Admin · Aprobación de Pedido
+        </div>
+        <div id="order-admin-breakdown" style="font-size:12px; color:#14532d; margin:6px 0 10px; line-height:1.4;">
+          <!-- Desglose de costo y ganancia -->
+        </div>
+        <button type="button" id="btn-admin-approve-order" class="btn-primary" style="width:100%; background:#16a34a; padding:10px; font-weight:800; font-size:14px; border-radius:8px; cursor:pointer;">
+          ✅ Aceptar y Registrar como Venta
+        </button>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <button type="button" id="btn-copy-order-link" class="copy-quote-manual-btn" style="flex:1;">
+          🔗 Copiar Link del Pedido
+        </button>
+        <button type="button" id="btn-load-order-to-cart" class="copy-quote-manual-btn" style="flex:1; background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">
+          🛒 Cargar a mi Carrito
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2240,6 +2590,7 @@
       if (btn.dataset.tab === 'productos') renderProductos();
       if (btn.dataset.tab === 'caja') renderCaja();
       if (btn.dataset.tab === 'ventas') renderVentas();
+      if (btn.dataset.tab === 'pedidos') renderAdminPedidosList();
     });
   });
 
@@ -2669,6 +3020,363 @@
     renderProductos();
   }
 
+  // ---------- CLIENT ACCOUNTS, FAVORITES & LOYALTY ----------
+  let currentClient = null;
+  let clientFavs = new Set();
+  let filterOnlyFavs = false;
+  const CLIENT_SESSION_KEY = 'pixelito_client_session';
+  const CLIENT_FAVS_KEY = 'pixelito_local_favs';
+  let adminPedidosCache = [];
+  let pedidosFilterMode = 'pendientes'; // 'pendientes' | 'aprobados' | 'todos'
+  let currentViewOrder = null;
+
+  function loadLocalFavorites() {
+    try {
+      const raw = localStorage.getItem(CLIENT_FAVS_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach(id => clientFavs.add(Number(id)));
+        }
+      }
+    } catch (e) {
+      console.warn('Favs parse error', e);
+    }
+  }
+
+  async function saveFavorites() {
+    try {
+      const arr = Array.from(clientFavs);
+      localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(arr));
+      if (currentClient && currentClient.id) {
+        await db.from('clientes').update({ favoritos: arr }).eq('id', currentClient.id);
+      }
+    } catch (e) {
+      console.warn('Error saving favs', e);
+    }
+    updateClientUI();
+  }
+
+  async function toggleFavorite(productId) {
+    const pid = Number(productId);
+    if (clientFavs.has(pid)) {
+      clientFavs.delete(pid);
+    } else {
+      clientFavs.add(pid);
+    }
+    await saveFavorites();
+    renderProductos();
+  }
+
+  async function checkExistingClientSession() {
+    loadLocalFavorites();
+    try {
+      const raw = localStorage.getItem(CLIENT_SESSION_KEY);
+      if (raw) {
+        const sess = JSON.parse(raw);
+        if (sess && sess.id) {
+          currentClient = sess;
+          try {
+            const { data, error } = await db.from('clientes').select('*').eq('id', sess.id).single();
+            if (!error && data) {
+              currentClient = data;
+              localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(data));
+              if (Array.isArray(data.favoritos)) {
+                data.favoritos.forEach(id => clientFavs.add(Number(id)));
+                localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(Array.from(clientFavs)));
+              }
+            }
+          } catch (err) {
+            console.warn('Client refresh error', err);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Client session error', e);
+    }
+    updateClientUI();
+  }
+
+  function updateClientUI() {
+    const openAuthBtn = $('btn-open-client-auth');
+    const userPill = $('client-user-pill');
+    const userNameEl = $('client-user-name');
+    const loyaltyIcon = $('client-loyalty-icon');
+    const favCountEl = $('cli-favs-count');
+    const favFilterBtn = $('btn-filter-favs');
+    const favIconFilter = $('fav-icon-filter');
+    const favFilterText = $('fav-filter-text');
+
+    if (favCountEl) favCountEl.textContent = clientFavs.size;
+
+    if (favFilterBtn) {
+      if (filterOnlyFavs) {
+        favFilterBtn.classList.add('active');
+        if (favIconFilter) favIconFilter.textContent = '❤️';
+        if (favFilterText) favFilterText.textContent = `Favoritos (${clientFavs.size})`;
+      } else {
+        favFilterBtn.classList.remove('active');
+        if (favIconFilter) favIconFilter.textContent = '🤍';
+        if (favFilterText) favFilterText.textContent = clientFavs.size > 0 ? `Favoritos (${clientFavs.size})` : 'Favoritos';
+      }
+    }
+
+    if (currentClient) {
+      if (openAuthBtn) openAuthBtn.style.display = 'none';
+      if (userPill) userPill.style.display = 'inline-flex';
+      const name = currentClient.nombre || currentClient.usuario || 'Cliente';
+      if (userNameEl) userNameEl.textContent = name;
+
+      const avatarLetter = $('cli-avatar-letter');
+      if (avatarLetter) avatarLetter.textContent = name.charAt(0).toUpperCase();
+      const profName = $('cli-prof-name');
+      if (profName) profName.textContent = name;
+      const profUser = $('cli-prof-user');
+      if (profUser) profUser.textContent = '@' + (currentClient.usuario || '') + (currentClient.contacto ? ' · ' + currentClient.contacto : '');
+
+      const pieces = Number(currentClient.compras_piezas) || 0;
+      const grams = Number(currentClient.gramos_comprados) || 0;
+      const redeemed = Number(currentClient.premios_canjeados) || 0;
+      const availableRewards = Math.max(0, Math.floor(pieces / 10) - redeemed);
+      const cyclePieces = pieces % 10;
+      const pct = Math.min(100, Math.round((cyclePieces / 10) * 100));
+
+      const countEl = $('cli-loyalty-count');
+      if (countEl) countEl.textContent = `${cyclePieces} / 10 piezas`;
+
+      const barEl = $('cli-loyalty-bar');
+      if (barEl) barEl.style.width = pct + '%';
+
+      const textEl = $('cli-loyalty-text');
+      if (textEl) textEl.textContent = `${pieces} pieza(s) comprada(s)`;
+
+      const gramsEl = $('cli-loyalty-grams');
+      if (gramsEl) gramsEl.textContent = `${Math.round(grams)}g acumulados`;
+
+      const avgGrams = pieces > 0 ? Math.round(grams / pieces) : 50;
+      const rewardMaxGrams = Math.max(50, Math.round(avgGrams * 1.2));
+
+      const rewardBox = $('cli-reward-box');
+      if (rewardBox) {
+        if (availableRewards > 0) {
+          rewardBox.innerHTML = `
+            <div style="color:#15803d; font-weight:800; font-size:13px; margin-bottom:4px;">
+              🎉 ¡Tienes ${availableRewards} impresión(es) 3D GRATIS disponible(s)!
+            </div>
+            <div style="color:var(--ink); font-size:12px;">
+              Canjeable por una pieza de hasta <b>${rewardMaxGrams}g</b> (calculado según tus compras). ¡Menciónalo en tu cotización para canjearla!
+            </div>
+          `;
+          rewardBox.style.background = '#dcfce7';
+          rewardBox.style.borderColor = '#86efac';
+          if (loyaltyIcon) loyaltyIcon.textContent = '🎁';
+        } else {
+          rewardBox.innerHTML = `
+            <div style="font-weight:700; color:#1e40af; margin-bottom:2px;">
+              Próximo beneficio: Impresión 3D gratis (hasta ~${rewardMaxGrams}g)
+            </div>
+            <div style="color:var(--ink-soft); font-size:11.5px;">
+              Te faltan <b>${10 - cyclePieces} pieza(s)</b> compradas para desbloquear tu siguiente impresión gratis.
+            </div>
+          `;
+          rewardBox.style.background = '#ffffff';
+          rewardBox.style.borderColor = '#bfdbfe';
+          if (loyaltyIcon) loyaltyIcon.textContent = '⭐';
+        }
+      }
+    } else {
+      if (openAuthBtn) openAuthBtn.style.display = 'inline-flex';
+      if (userPill) userPill.style.display = 'none';
+    }
+  }
+
+  function openClientAuthModal(tab = 'login') {
+    const modal = $('modal-client-auth');
+    if (!modal) return;
+    switchAuthTab(tab);
+    modal.style.display = 'flex';
+    const firstInput = tab === 'register' ? $('cli-reg-name') : $('cli-login-user');
+    setTimeout(() => firstInput?.focus(), 100);
+  }
+
+  function closeClientAuthModal() {
+    const modal = $('modal-client-auth');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function switchAuthTab(tab) {
+    const tabLogin = $('tab-auth-login');
+    const tabReg = $('tab-auth-register');
+    const formLogin = $('client-login-form');
+    const formReg = $('client-register-form');
+    const errLogin = $('cli-login-error');
+    const errReg = $('cli-reg-error');
+    if (errLogin) errLogin.style.display = 'none';
+    if (errReg) errReg.style.display = 'none';
+
+    if (tab === 'register') {
+      tabLogin?.classList.remove('active');
+      tabReg?.classList.add('active');
+      if (formLogin) formLogin.style.display = 'none';
+      if (formReg) formReg.style.display = 'flex';
+    } else {
+      tabReg?.classList.remove('active');
+      tabLogin?.classList.add('active');
+      if (formReg) formReg.style.display = 'none';
+      if (formLogin) formLogin.style.display = 'flex';
+    }
+  }
+
+  async function handleClientLoginSubmit() {
+    const uInput = $('cli-login-user');
+    const pInput = $('cli-login-pass');
+    const errBox = $('cli-login-error');
+    if (!uInput || !pInput) return;
+
+    const u = (uInput.value || '').trim().toLowerCase();
+    const p = (pInput.value || '');
+
+    if (!u || !p) {
+      if (errBox) {
+        errBox.textContent = 'Por favor completa todos los campos.';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+
+    const hashed = await sha256Salted(p);
+    try {
+      const { data, error } = await db.from('clientes')
+        .select('*')
+        .or(`usuario.eq.${u},contacto.eq.${u}`)
+        .maybeSingle();
+
+      if (error || !data) {
+        if (errBox) {
+          errBox.textContent = 'Usuario no encontrado. ¿Quieres crear una cuenta?';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      if (data.pass_hash !== hashed) {
+        if (errBox) {
+          errBox.textContent = 'Contraseña incorrecta.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      currentClient = data;
+      localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(data));
+      if (Array.isArray(data.favoritos)) {
+        data.favoritos.forEach(id => clientFavs.add(Number(id)));
+        localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(Array.from(clientFavs)));
+      }
+      closeClientAuthModal();
+      updateClientUI();
+      renderProductos();
+    } catch (e) {
+      console.error(e);
+      if (errBox) {
+        errBox.textContent = 'Error al iniciar sesión: ' + (e.message || 'Inténtalo de nuevo');
+        errBox.style.display = 'block';
+      }
+    }
+  }
+
+  async function handleClientRegisterSubmit() {
+    const nameInput = $('cli-reg-name');
+    const userInput = $('cli-reg-user');
+    const contactInput = $('cli-reg-contact');
+    const passInput = $('cli-reg-pass');
+    const errBox = $('cli-reg-error');
+
+    const nombre = (nameInput?.value || '').trim();
+    const usuario = (userInput?.value || '').trim().toLowerCase();
+    const contacto = (contactInput?.value || '').trim();
+    const pass = (passInput?.value || '');
+
+    if (!nombre || !usuario || !pass) {
+      if (errBox) {
+        errBox.textContent = 'Nombre, usuario y contraseña son obligatorios.';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+
+    if (usuario.length < 3) {
+      if (errBox) {
+        errBox.textContent = 'El usuario debe tener al menos 3 caracteres.';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+
+    const hashed = await sha256Salted(pass);
+
+    try {
+      const { data: existing } = await db.from('clientes').select('id').eq('usuario', usuario).maybeSingle();
+      if (existing) {
+        if (errBox) {
+          errBox.textContent = 'Ese nombre de usuario ya está registrado. Elige otro.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const newId = 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 5);
+      const row = {
+        id: newId,
+        nombre: nombre,
+        usuario: usuario,
+        contacto: contacto,
+        pass_hash: hashed,
+        favoritos: Array.from(clientFavs),
+        compras_piezas: 0,
+        gramos_comprados: 0,
+        premios_canjeados: 0,
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await db.from('clientes').insert([row]).select().single();
+      if (error) throw error;
+
+      currentClient = data || row;
+      localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
+      closeClientAuthModal();
+      updateClientUI();
+      renderProductos();
+      alert(`🎉 ¡Bienvenido a Pixelito3D, ${nombre}! Tu cuenta ha sido creada con éxito.`);
+    } catch (e) {
+      console.error(e);
+      if (errBox) {
+        errBox.textContent = 'Error al registrarse: ' + (e.message || 'Inténtalo de nuevo');
+        errBox.style.display = 'block';
+      }
+    }
+  }
+
+  function logoutClient() {
+    localStorage.removeItem(CLIENT_SESSION_KEY);
+    currentClient = null;
+    closeClientProfileModal();
+    updateClientUI();
+    renderProductos();
+  }
+
+  function openClientProfileModal() {
+    const modal = $('modal-client-profile');
+    if (!modal) return;
+    updateClientUI();
+    modal.style.display = 'flex';
+  }
+
+  function closeClientProfileModal() {
+    const modal = $('modal-client-profile');
+    if (modal) modal.style.display = 'none';
+  }
+
   // ---------- CARRITO CLIENTE Y COTIZACIÓN INSTAGRAM ----------
   function openClientCartModal() {
     const modal = $('modal-client-cart');
@@ -2687,6 +3395,7 @@
     const totalEl = $('client-cart-total-val');
     const quoteBtn = $('btn-quote-instagram');
     const copyBtn = $('btn-copy-quote-manual');
+    const shareLinkBtn = $('btn-share-cart-link');
     if (!listEl) return;
 
     listEl.innerHTML = '';
@@ -2705,11 +3414,13 @@
       `;
       if (quoteBtn) { quoteBtn.disabled = true; quoteBtn.style.opacity = '0.5'; }
       if (copyBtn) { copyBtn.disabled = true; copyBtn.style.opacity = '0.5'; }
+      if (shareLinkBtn) { shareLinkBtn.disabled = true; shareLinkBtn.style.opacity = '0.5'; }
       return;
     }
 
     if (quoteBtn) { quoteBtn.disabled = false; quoteBtn.style.opacity = '1'; }
     if (copyBtn) { copyBtn.disabled = false; copyBtn.style.opacity = '1'; }
+    if (shareLinkBtn) { shareLinkBtn.disabled = false; shareLinkBtn.style.opacity = '1'; }
 
     keys.forEach(key => {
       const item = cajaCart[key];
@@ -2778,13 +3489,128 @@
     });
   }
 
-  function buildQuoteMessage() {
+  // ---------- PEDIDOS Y LINKS COMPARTIDOS (?pedido=PIX-...) ----------
+  function generateOrderId() {
+    const num = Math.floor(1000 + Math.random() * 9000);
+    return `PIX-${num}`;
+  }
+
+  async function createOrderFromCart() {
+    const keys = Object.keys(cajaCart).filter(k => cajaCart[k].qty > 0);
+    if (keys.length === 0) return null;
+
+    let items = [];
+    let totalCosto = 0;
+    let totalVenta = 0;
+    let totalPiezas = 0;
+    let totalGramos = 0;
+
+    keys.forEach(key => {
+      const item = cajaCart[key];
+      const p = getProductos().find(x => x.id === item.productId);
+      if (!p) return;
+      const c = computeProductCost(p, item.overrideColorId);
+      const price = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const subtotal = price * item.qty;
+      const costoSubtotal = c.costoTotal * item.qty;
+
+      totalVenta += subtotal;
+      totalCosto += costoSubtotal;
+      totalPiezas += item.qty;
+      totalGramos += (Number(p.gramos) || 0) * item.qty;
+
+      items.push({
+        productId: p.id,
+        nombre: p.nombre,
+        imagenUrl: p.imagenUrl || '',
+        overrideColorId: item.overrideColorId !== undefined ? item.overrideColorId : null,
+        colorDesc: c.desc,
+        dots: c.dots,
+        qty: item.qty,
+        precioUnitario: price,
+        subtotal: subtotal,
+        costoUnitario: c.costoTotal,
+        gramos: Number(p.gramos) || 0,
+        horas: Number(p.horas) || 0,
+        pintura: !!p.pintura,
+        pinturaManual: Number(p.pinturaManual) || 0,
+        splitMine: Number(p.splitMine) || (p.pintura ? 50 : 60)
+      });
+    });
+
+    const orderId = generateOrderId();
+    const row = {
+      id: orderId,
+      cliente_id: currentClient ? currentClient.id : null,
+      cliente_nombre: currentClient ? (currentClient.nombre || currentClient.usuario) : 'Cliente Web',
+      cliente_contacto: currentClient ? (currentClient.contacto || '') : '',
+      items: items,
+      total_venta: totalVenta,
+      total_costo: totalCosto,
+      total_piezas: totalPiezas,
+      total_gramos: totalGramos,
+      estado: 'pendiente',
+      created_at: new Date().toISOString()
+    };
+
+    try {
+      const { data, error } = await db.from('pedidos').insert([row]).select().single();
+      if (!error && data) {
+        return data;
+      }
+    } catch (e) {
+      console.warn('Error saving pedido in Supabase', e);
+    }
+    return row;
+  }
+
+  function getOrderShareUrl(orderId) {
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+    return `${origin}${pathname}?pedido=${orderId}`;
+  }
+
+  async function handleShareCartLinkClick() {
+    const btn = $('btn-share-cart-link');
+    if (btn) btn.textContent = '⏳ Generando link...';
+
+    const order = await createOrderFromCart();
+    if (!order) {
+      alert('Tu pedido está vacío. Agrega productos para generar un link.');
+      if (btn) btn.textContent = '🔗 Compartir pedido con Link directo';
+      return;
+    }
+
+    const url = getOrderShareUrl(order.id);
+    const box = $('cart-link-result-box');
+    const urlEl = $('cart-link-url');
+    if (urlEl) urlEl.textContent = url;
+    if (box) box.style.display = 'block';
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch (e) {
+      console.warn('Clip copy error', e);
+    }
+
+    if (btn) btn.textContent = '✓ Link generado y copiado';
+    setTimeout(() => {
+      if (btn) btn.textContent = '🔗 Compartir pedido con Link directo';
+    }, 3000);
+  }
+
+  function buildQuoteMessage(orderUrl) {
     const totals = computeCartTotals();
     const keys = Object.keys(cajaCart).filter(k => cajaCart[k].qty > 0);
     if (keys.length === 0) return '';
 
     let lines = [];
     lines.push('👋 ¡Hola Pixelito3D! Quiero cotizar los siguientes productos 3D:');
+    if (currentClient) {
+      lines.push(`👤 Cliente: *${currentClient.nombre || currentClient.usuario}* (@${currentClient.usuario})`);
+    }
     lines.push('');
 
     keys.forEach((key, idx) => {
@@ -2803,14 +3629,19 @@
 
     lines.push('');
     lines.push(`📦 *Total estimado:* ${fmt(totals.totalVenta)} (${totals.count} un.)`);
+    if (orderUrl) {
+      lines.push('');
+      lines.push(`🔗 *Ver mi pedido y detalles interactivos:*`);
+      lines.push(orderUrl);
+    }
     lines.push('');
     lines.push('¿Me confirman disponibilidad y tiempo de entrega? ¡Muchas gracias! 😊');
 
     return lines.join('\n');
   }
 
-  async function copyQuoteTextToClipboard() {
-    const text = buildQuoteMessage();
+  async function copyQuoteTextToClipboard(orderUrl) {
+    const text = buildQuoteMessage(orderUrl);
     if (!text) {
       alert('Tu pedido está vacío. Agrega productos del catálogo para cotizar.');
       return false;
@@ -2834,14 +3665,28 @@
   }
 
   async function sendQuoteToInstagram() {
-    const text = buildQuoteMessage();
-    if (!text) {
+    const keys = Object.keys(cajaCart).filter(k => cajaCart[k].qty > 0);
+    if (keys.length === 0) {
       alert('Tu pedido está vacío. Agrega productos del catálogo para cotizar.');
       return;
     }
 
-    const copied = await copyQuoteTextToClipboard();
-    if (!copied) return;
+    const quoteBtn = $('btn-quote-instagram');
+    const originalText = quoteBtn ? quoteBtn.textContent : '';
+    if (quoteBtn) quoteBtn.textContent = '⏳ Creando link de pedido...';
+
+    let orderUrl = '';
+    try {
+      const order = await createOrderFromCart();
+      if (order && order.id) {
+        orderUrl = getOrderShareUrl(order.id);
+      }
+    } catch (e) {
+      console.warn('Could not create order prior to Instagram', e);
+    }
+
+    const text = buildQuoteMessage(orderUrl);
+    await copyQuoteTextToClipboard(orderUrl);
 
     const feedback = $('quote-feedback-msg');
     if (feedback) {
@@ -2849,13 +3694,387 @@
       feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    if (quoteBtn) quoteBtn.textContent = '✓ ¡Copiado! Abriendo Instagram...';
+
     const encoded = encodeURIComponent(text);
     setTimeout(() => {
       window.open(`https://ig.me/m/3dpixelito?text=${encoded}`, '_blank');
+      if (quoteBtn) quoteBtn.textContent = originalText;
     }, 700);
   }
 
+  async function loadAndShowOrderModal(orderId) {
+    const modal = $('modal-order-view');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    const idEl = $('order-view-id');
+    const itemsList = $('order-view-items-list');
+    if (idEl) idEl.textContent = orderId;
+    if (itemsList) itemsList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--ink-soft);">Cargando pedido...</div>';
+
+    try {
+      const { data, error } = await db.from('pedidos').select('*').eq('id', orderId).single();
+      if (error || !data) {
+        if (itemsList) {
+          itemsList.innerHTML = `
+            <div style="text-align:center; padding:20px; color:var(--red);">
+              No pudimos encontrar el pedido <b>${orderId}</b>.<br>
+              <small style="color:var(--ink-soft);">Verifica que el link sea correcto.</small>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      currentViewOrder = data;
+      renderOrderViewModal(data);
+    } catch (e) {
+      console.error(e);
+      if (itemsList) itemsList.innerHTML = '<div style="color:var(--red); padding:10px;">Error al cargar el pedido.</div>';
+    }
+  }
+
+  function renderOrderViewModal(order) {
+    currentViewOrder = order;
+    const modal = $('modal-order-view');
+    if (!modal || !order) return;
+
+    const idEl = $('order-view-id');
+    const clientEl = $('order-view-client');
+    const dateEl = $('order-view-date');
+    const statusEl = $('order-view-status');
+    const totalEl = $('order-view-total');
+    const statsEl = $('order-view-stats');
+    const itemsList = $('order-view-items-list');
+    const adminPanel = $('order-admin-panel');
+    const adminBreakdown = $('order-admin-breakdown');
+    const approveBtn = $('btn-admin-approve-order');
+
+    if (idEl) idEl.textContent = order.id;
+    if (clientEl) {
+      const contactTxt = order.cliente_contacto ? ` (${order.cliente_contacto})` : '';
+      clientEl.textContent = `Cliente: ${order.cliente_nombre || 'Cliente Web'}${contactTxt}`;
+    }
+    if (dateEl) {
+      const d = order.created_at ? new Date(order.created_at).toLocaleDateString('es-CL', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+      dateEl.textContent = `Fecha: ${d}`;
+    }
+
+    const isAprobado = order.estado === 'aprobado';
+    if (statusEl) {
+      if (isAprobado) {
+        statusEl.textContent = `🟢 Aprobado por ${order.aprobado_por || 'Admin'}`;
+        statusEl.style.background = '#dcfce7';
+        statusEl.style.color = '#15803d';
+      } else {
+        statusEl.textContent = '🟡 Pendiente';
+        statusEl.style.background = '#fef3c7';
+        statusEl.style.color = '#92400e';
+      }
+    }
+
+    if (totalEl) totalEl.textContent = fmt(order.total_venta);
+    if (statsEl) statsEl.textContent = `${order.total_piezas || 0} piezas en total · ~${Math.round(order.total_gramos || 0)}g filamento`;
+
+    if (itemsList) {
+      itemsList.innerHTML = '';
+      const items = Array.isArray(order.items) ? order.items : [];
+      items.forEach(it => {
+        const itemRow = document.createElement('div');
+        itemRow.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px 10px; background:var(--card-subtle); border-radius:8px; border:1px solid var(--border);';
+        const dots = (it.dots || []).map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
+        itemRow.innerHTML = `
+          <div style="width:40px; height:40px; border-radius:6px; overflow:hidden; background:#ffffff; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:1px solid var(--line);">
+            ${it.imagenUrl 
+              ? `<img src="${it.imagenUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${it.nombre}">`
+              : `<img src="/icon.png" style="width:20px; height:20px; object-fit:contain;" alt="Pixelito3D">`
+            }
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:700; font-size:12.5px; color:var(--ink);">${it.nombre}</div>
+            <div style="font-size:11px; color:var(--ink-soft); display:flex; align-items:center; gap:3px;">
+              <span class="color-dots-group">${dots}</span>
+              <span>${it.colorDesc || 'Base'}</span>
+              ${it.pintura ? ' · 🎨 Pintado' : ''}
+            </div>
+            <div style="font-size:11.5px; font-weight:700; color:var(--blue-dark); margin-top:2px;">
+              ${fmt(it.subtotal)} <span style="font-weight:500; font-size:10.5px; color:var(--ink-soft);">(${fmt(it.precioUnitario)} c/u)</span>
+            </div>
+          </div>
+          <div style="font-weight:800; font-size:13px; color:var(--ink); padding:4px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+            x${it.qty}
+          </div>
+        `;
+        itemsList.appendChild(itemRow);
+      });
+    }
+
+    if (isAdmin && adminPanel && adminBreakdown) {
+      adminPanel.style.display = 'block';
+      const venta = Number(order.total_venta) || 0;
+      const costo = Number(order.total_costo) || 0;
+      const ganancia = Math.max(0, venta - costo);
+
+      let sebaTotal = 0;
+      let camiTotal = 0;
+      (order.items || []).forEach(it => {
+        const itemVenta = Number(it.subtotal) || 0;
+        const itemCosto = (Number(it.costoUnitario) || 0) * (it.qty || 1);
+        const itemGanancia = Math.max(0, itemVenta - itemCosto);
+        const sMine = it.splitMine || (it.pintura ? 50 : 60);
+        sebaTotal += Math.round(itemGanancia * (sMine / 100));
+        camiTotal += Math.round(itemGanancia * ((100 - sMine) / 100));
+      });
+
+      adminBreakdown.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
+          <div>🏦 Inversión (Costo): <b>${fmt(costo)}</b></div>
+          <div>✨ Ganancia Total: <b>${fmt(ganancia)}</b></div>
+          <div>👤 Seba: <b>${fmt(sebaTotal)}</b></div>
+          <div>👩 Camila: <b>${fmt(camiTotal)}</b></div>
+        </div>
+        <div style="font-size:11px; color:#166534;">
+          ${isAprobado 
+            ? `✓ Este pedido ya fue aprobado y registrado en las ventas de la app.`
+            : `Al pulsar "Aceptar y Registrar", se anotará la venta automáticamente en tu historial y se sumarán los puntos al cliente.`
+          }
+        </div>
+      `;
+
+      if (approveBtn) {
+        if (isAprobado) {
+          approveBtn.disabled = true;
+          approveBtn.style.opacity = '0.6';
+          approveBtn.textContent = `✓ Ya registrado como venta (${order.aprobado_por || 'Admin'})`;
+        } else {
+          approveBtn.disabled = false;
+          approveBtn.style.opacity = '1';
+          approveBtn.textContent = '✅ Aceptar y Registrar como Venta';
+        }
+      }
+    } else if (adminPanel) {
+      adminPanel.style.display = 'none';
+    }
+  }
+
+  async function approveOrderAsAdmin() {
+    if (!isAdmin || !currentViewOrder) return;
+    if (currentViewOrder.estado === 'aprobado') {
+      alert('Este pedido ya fue aprobado anteriormente.');
+      return;
+    }
+
+    const confirmApprove = confirm(`¿Confirmas aceptar el pedido ${currentViewOrder.id} y registrarlo como venta por ${fmt(currentViewOrder.total_venta)}?`);
+    if (!confirmApprove) return;
+
+    const order = currentViewOrder;
+    const approveBtn = $('btn-admin-approve-order');
+    if (approveBtn) {
+      approveBtn.disabled = true;
+      approveBtn.textContent = '⏳ Registrando venta...';
+    }
+
+    try {
+      let totalVenta = Number(order.total_venta) || 0;
+      let totalCosto = Number(order.total_costo) || 0;
+      let totalMine = 0;
+      let totalHers = 0;
+      const ventaItems = (order.items || []).map(it => {
+        const itemVenta = Number(it.subtotal) || 0;
+        const itemCosto = (Number(it.costoUnitario) || 0) * (it.qty || 1);
+        const itemGanancia = Math.max(0, itemVenta - itemCosto);
+        const sMine = it.splitMine || (it.pintura ? 50 : 60);
+        totalMine += Math.round(itemGanancia * (sMine / 100));
+        totalHers += Math.round(itemGanancia * ((100 - sMine) / 100));
+        return {
+          productId: it.productId,
+          nombre: it.nombre,
+          colorDesc: it.colorDesc,
+          dots: it.dots,
+          cantidad: it.qty,
+          precioVenta: it.precioUnitario,
+          costoTotal: it.costoUnitario,
+          subtotal: it.subtotal
+        };
+      });
+
+      const today = new Date().toISOString().slice(0, 10);
+      const ventaRow = {
+        fecha: today,
+        items: ventaItems,
+        total_venta: totalVenta,
+        total_costo: totalCosto,
+        tu_parte: totalMine,
+        su_parte: totalHers
+      };
+      const { data: vData, error: vErr } = await db.from('ventas').insert([ventaRow]).select().single();
+      if (vErr) throw vErr;
+      if (vData) addVentaToCache(vData);
+
+      const adminName = currentAdminUser ? currentAdminUser.name : 'Admin';
+      const nowIso = new Date().toISOString();
+      const { data: updatedOrder, error: oErr } = await db.from('pedidos')
+        .update({
+          estado: 'aprobado',
+          aprobado_por: adminName,
+          aprobado_at: nowIso
+        })
+        .eq('id', order.id)
+        .select()
+        .single();
+
+      if (oErr) throw oErr;
+      currentViewOrder = updatedOrder || { ...order, estado: 'aprobado', aprobado_por: adminName, aprobado_at: nowIso };
+
+      if (order.cliente_id) {
+        try {
+          const { data: cli } = await db.from('clientes').select('compras_piezas, gramos_comprados').eq('id', order.cliente_id).single();
+          if (cli) {
+            const newPieces = (Number(cli.compras_piezas) || 0) + (Number(order.total_piezas) || 0);
+            const newGrams = (Number(cli.gramos_comprados) || 0) + (Number(order.total_gramos) || 0);
+            await db.from('clientes').update({
+              compras_piezas: newPieces,
+              gramos_comprados: newGrams
+            }).eq('id', order.cliente_id);
+
+            if (currentClient && currentClient.id === order.cliente_id) {
+              currentClient.compras_piezas = newPieces;
+              currentClient.gramos_comprados = newGrams;
+              localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
+              updateClientUI();
+            }
+          }
+        } catch (cliErr) {
+          console.warn('Error updating client loyalty', cliErr);
+        }
+      }
+
+      renderOrderViewModal(currentViewOrder);
+      await loadAdminPedidosFromDB();
+      renderAdminPedidosList();
+      renderVentas();
+
+      alert(`✅ ¡Pedido ${order.id} aceptado y registrado como venta con éxito!\nSe distribuyó a Inversión, Seba y Camila.`);
+    } catch (e) {
+      console.error(e);
+      alert('Error al aprobar pedido: ' + (e.message || 'Error desconocido'));
+      if (approveBtn) {
+        approveBtn.disabled = false;
+        approveBtn.textContent = '✅ Aceptar y Registrar como Venta';
+      }
+    }
+  }
+
+  function loadOrderProductsIntoCart() {
+    if (!currentViewOrder || !Array.isArray(currentViewOrder.items)) return;
+    const items = currentViewOrder.items;
+    items.forEach(it => {
+      const colId = it.overrideColorId !== null ? it.overrideColorId : undefined;
+      const key = getCartItemKey(it.productId, colId);
+      if (!cajaCart[key]) {
+        cajaCart[key] = { productId: it.productId, overrideColorId: colId, qty: it.qty };
+      } else {
+        cajaCart[key].qty += it.qty;
+      }
+    });
+    onCartUpdated();
+    closeOrderViewModal();
+    openClientCartModal();
+  }
+
+  function closeOrderViewModal() {
+    const modal = $('modal-order-view');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function loadAdminPedidosFromDB() {
+    try {
+      const { data, error } = await db.from('pedidos').select('*').order('created_at', { ascending: false }).limit(50);
+      if (!error && Array.isArray(data)) {
+        adminPedidosCache = data;
+      }
+    } catch (e) {
+      console.warn('Error loading pedidos', e);
+    }
+    updateAdminPedidosCountBadge();
+  }
+
+  function updateAdminPedidosCountBadge() {
+    const pending = adminPedidosCache.filter(p => p.estado === 'pendiente').length;
+    const badge = $('admin-pending-orders-count');
+    if (badge) badge.textContent = pending;
+    const pendBadge = $('count-pedidos-pendientes');
+    if (pendBadge) pendBadge.textContent = pending;
+    const aprBadge = $('count-pedidos-aprobados');
+    if (aprBadge) aprBadge.textContent = adminPedidosCache.filter(p => p.estado === 'aprobado').length;
+  }
+
+  function renderAdminPedidosList() {
+    const listEl = $('admin-pedidos-list');
+    if (!listEl) return;
+    updateAdminPedidosCountBadge();
+
+    let list = adminPedidosCache;
+    if (pedidosFilterMode === 'pendientes') {
+      list = list.filter(p => p.estado === 'pendiente');
+    } else if (pedidosFilterMode === 'aprobados') {
+      list = list.filter(p => p.estado === 'aprobado');
+    }
+
+    if (list.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align:center; padding:30px 10px; color:var(--ink-soft);">
+          <div style="font-size:32px; margin-bottom:8px;">📋</div>
+          <div style="font-weight:700; color:var(--ink); font-size:14px;">No hay pedidos en esta sección</div>
+          <div style="font-size:12px; margin-top:4px;">Cuando los clientes coticen o envíen un link, aparecerán aquí.</div>
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = '';
+    list.forEach(ord => {
+      const isAprobado = ord.estado === 'aprobado';
+      const card = document.createElement('div');
+      card.className = 'venta-card';
+      card.style.cursor = 'pointer';
+      const d = ord.created_at ? new Date(ord.created_at).toLocaleDateString('es-CL', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+      const statusPill = isAprobado
+        ? `<span style="background:#dcfce7; color:#15803d; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟢 Aprobado</span>`
+        : `<span style="background:#fef3c7; color:#92400e; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟡 Pendiente</span>`;
+
+      const itemsTxt = (ord.items || []).map(it => `• ${it.nombre} (${it.colorDesc || 'Base'}) x${it.qty}`).join('<br>');
+
+      card.innerHTML = `
+        <div class="venta-head">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <strong style="font-size:13.5px; color:var(--blue-dark);">${ord.id}</strong>
+            <span style="font-size:12px; color:var(--ink-soft);">${d}</span>
+          </div>
+          <div>${statusPill}</div>
+        </div>
+        <div style="font-size:12.5px; font-weight:700; color:var(--ink); margin:4px 0 2px;">
+          👤 ${ord.cliente_nombre || 'Cliente Web'} ${ord.cliente_contacto ? `· <span style="font-weight:500; color:var(--ink-soft);">${ord.cliente_contacto}</span>` : ''}
+        </div>
+        <div class="venta-items" style="margin:4px 0 8px; font-size:12px; color:var(--ink-soft);">${itemsTxt}</div>
+        <div class="venta-foot">
+          <div style="font-size:13px; font-weight:800; color:var(--ink);">
+            Total: <span style="color:var(--blue-dark);">${fmt(ord.total_venta)}</span> (${ord.total_piezas || 0} piezas)
+          </div>
+          <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Ver detalle →</button>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        renderOrderViewModal(ord);
+        $('modal-order-view').style.display = 'flex';
+      });
+      listEl.appendChild(card);
+    });
+  }
+
   function setupAdminAndCartModals() {
+    // Admin Auth
     $('btn-open-admin-login')?.addEventListener('click', openAdminLoginModal);
     $('btn-close-admin-login')?.addEventListener('click', closeAdminLoginModal);
     $('btn-cancel-admin-login')?.addEventListener('click', closeAdminLoginModal);
@@ -2865,10 +4084,43 @@
     });
     $('btn-admin-logout')?.addEventListener('click', logoutAdmin);
 
+    // Cliente Auth & Profile
+    $('btn-open-client-auth')?.addEventListener('click', () => openClientAuthModal('login'));
+    $('btn-close-client-auth')?.addEventListener('click', closeClientAuthModal);
+    $('tab-auth-login')?.addEventListener('click', () => switchAuthTab('login'));
+    $('tab-auth-register')?.addEventListener('click', () => switchAuthTab('register'));
+    $('client-login-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleClientLoginSubmit();
+    });
+    $('client-register-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleClientRegisterSubmit();
+    });
+    $('btn-open-client-profile')?.addEventListener('click', openClientProfileModal);
+    $('btn-close-client-profile')?.addEventListener('click', closeClientProfileModal);
+    $('btn-client-logout')?.addEventListener('click', logoutClient);
+    $('btn-logout-client')?.addEventListener('click', logoutClient);
+    $('btn-view-my-favs')?.addEventListener('click', () => {
+      closeClientProfileModal();
+      filterOnlyFavs = true;
+      updateClientUI();
+      renderProductos();
+      $('view-productos')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Filtro Favoritos en Catálogo
+    $('btn-filter-favs')?.addEventListener('click', () => {
+      filterOnlyFavs = !filterOnlyFavs;
+      updateClientUI();
+      renderProductos();
+    });
+
+    // Carrito Cliente & Compartir Link
     $('client-tab-carrito')?.addEventListener('click', openClientCartModal);
     $('btn-close-client-cart')?.addEventListener('click', closeClientCartModal);
-
     $('btn-quote-instagram')?.addEventListener('click', sendQuoteToInstagram);
+    $('btn-share-cart-link')?.addEventListener('click', handleShareCartLinkClick);
     $('btn-copy-quote-manual')?.addEventListener('click', async () => {
       const ok = await copyQuoteTextToClipboard();
       if (ok) {
@@ -2880,17 +4132,73 @@
       }
     });
 
+    // Modal Ver Pedido (?pedido=PIX-...)
+    $('btn-close-order-view')?.addEventListener('click', closeOrderViewModal);
+    $('btn-admin-approve-order')?.addEventListener('click', approveOrderAsAdmin);
+    $('btn-load-order-to-cart')?.addEventListener('click', loadOrderProductsIntoCart);
+    $('btn-copy-order-link')?.addEventListener('click', async () => {
+      if (currentViewOrder && currentViewOrder.id) {
+        const url = getOrderShareUrl(currentViewOrder.id);
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            alert('✓ Link del pedido copiado al portapapeles.');
+          }
+        } catch(e) {}
+      }
+    });
+
+    // Pestaña Admin Pedidos
+    $('btn-refresh-pedidos')?.addEventListener('click', async () => {
+      await loadAdminPedidosFromDB();
+      renderAdminPedidosList();
+    });
+    $('pedidos-filter-pendientes')?.addEventListener('click', () => {
+      pedidosFilterMode = 'pendientes';
+      $('pedidos-filter-pendientes')?.classList.add('active');
+      $('pedidos-filter-aprobados')?.classList.remove('active');
+      $('pedidos-filter-todos')?.classList.remove('active');
+      renderAdminPedidosList();
+    });
+    $('pedidos-filter-aprobados')?.addEventListener('click', () => {
+      pedidosFilterMode = 'aprobados';
+      $('pedidos-filter-aprobados')?.classList.add('active');
+      $('pedidos-filter-pendientes')?.classList.remove('active');
+      $('pedidos-filter-todos')?.classList.remove('active');
+      renderAdminPedidosList();
+    });
+    $('pedidos-filter-todos')?.addEventListener('click', () => {
+      pedidosFilterMode = 'todos';
+      $('pedidos-filter-todos')?.classList.add('active');
+      $('pedidos-filter-pendientes')?.classList.remove('active');
+      $('pedidos-filter-aprobados')?.classList.remove('active');
+      renderAdminPedidosList();
+    });
+
+    // Clicks en backdrop para cerrar modales
     $('modal-client-cart')?.addEventListener('click', (e) => {
       if (e.target === $('modal-client-cart')) closeClientCartModal();
     });
     $('modal-admin-login')?.addEventListener('click', (e) => {
       if (e.target === $('modal-admin-login')) closeAdminLoginModal();
     });
+    $('modal-client-auth')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-client-auth')) closeClientAuthModal();
+    });
+    $('modal-client-profile')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-client-profile')) closeClientProfileModal();
+    });
+    $('modal-order-view')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-order-view')) closeOrderViewModal();
+    });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeClientCartModal();
         closeAdminLoginModal();
+        closeClientAuthModal();
+        closeClientProfileModal();
+        closeOrderViewModal();
       }
     });
   }
@@ -3127,13 +4435,18 @@
     const newCostObj = computeProductCost(p, overrideColorId);
     const newCost = newCostObj.costoTotal;
 
+    // Si el color seleccionado tiene el mismo precio por kg o el costo es idéntico, mantener el precio original exacto:
+    if (newCostObj.precioKg === baseCostObj.precioKg || Math.abs(newCost - baseCost) < 0.5) {
+      return Math.round(p.precioVenta);
+    }
+
     // Margen original impuesto sobre el costo base
     if (baseCost > 0) {
       const marginRatio = (p.precioVenta - baseCost) / baseCost;
       // Ajuste proporcional según el nuevo costo:
       const rawAdjustedPrice = newCost * (1 + marginRatio);
-      // Aproximar siempre hacia arriba a la siguiente centena (de 100 en 100, ej: 2455 -> 2500, 3240 -> 3300):
-      const roundedAdjusted = Math.ceil(rawAdjustedPrice / 100) * 100;
+      // Aproximar hacia arriba a la siguiente centena evitando errores de redondeo infinitesimal:
+      const roundedAdjusted = Math.ceil((rawAdjustedPrice - 0.01) / 100) * 100;
       const minRounded = Math.ceil(newCost / 100) * 100;
       return Math.max(minRounded, roundedAdjusted);
     }
@@ -3339,7 +4652,10 @@
 
   // ---------- Render Productos (Catálogo) ----------
   function renderProductos() {
-    const productos = getProductos();
+    let productos = getProductos();
+    if (filterOnlyFavs) {
+      productos = productos.filter(p => clientFavs.has(p.id));
+    }
     const filtrados = prodBusqueda ? productos.filter(p => {
       const col = getColorById(p.colorId);
       const colName = col ? col.nombre.toLowerCase() : 'base';
@@ -3350,6 +4666,12 @@
     const el = $('productosList');
     if (!el) return;
     el.innerHTML = '';
+
+    if (filterOnlyFavs && filtrados.length === 0) {
+      el.innerHTML = '<div class="empty">❤️ No tienes productos marcados como favoritos.<br><small style="font-size:12px; color:var(--ink-soft); margin-top:6px; display:inline-block;">Haz clic en el corazón 🤍 en cualquier producto del catálogo para guardarlo en tu lista.</small></div>';
+      return;
+    }
+
     if (productos.length === 0) {
       el.innerHTML = '<div class="empty">Aún no guardas productos. Ve a la pestaña Costos para calcular y agregar tus primeros productos con foto y precio.</div>';
       return;
@@ -3371,6 +4693,13 @@
       const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
       const gananciaSeba = Math.round(gananciaTotal * (splitSeba / 100));
       const gananciaCamila = Math.round(gananciaTotal * ((100 - splitSeba) / 100));
+
+      const isFav = clientFavs.has(p.id);
+      const favBtnHTML = `
+        <button type="button" class="prod-fav-btn ${isFav ? 'active' : ''}" data-id="${p.id}" title="${isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}">
+          ${isFav ? '❤️' : '🤍'}
+        </button>
+      `;
 
       const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
 
@@ -3417,6 +4746,7 @@
       // Cabecera multimedia tipo Catálogo
       const mediaHTML = p.imagenUrl ? `
         <div class="prod-media">
+          ${favBtnHTML}
           <img src="${p.imagenUrl}" alt="${p.nombre}" class="prod-media-img" data-img="${p.imagenUrl}" data-name="${p.nombre}" data-price="${effectivePrecio || 0}" loading="lazy">
           <div class="prod-media-tag">
             <span class="color-dots-group">${dotsHTML}</span>
@@ -3426,7 +4756,8 @@
           ${(isAdmin && margen !== null) ? `<div class="prod-media-margin">+${margen}% margen</div>` : ''}
         </div>
       ` : `
-        <div class="prod-no-media">
+        <div class="prod-no-media" style="position:relative;">
+          ${favBtnHTML}
           <img src="/icon.png" class="prod-no-media-logo" alt="Pixelito3D">
           ${isAdmin ? `<button type="button" class="quick-add-photo-btn" data-id="${p.id}">📷 Agregar foto del producto</button>` : ''}
           <div class="prod-media-tag">
@@ -3561,6 +4892,15 @@
         e.stopPropagation();
         quickUploadProductId = Number(btn.dataset.id);
         $('catalog-photo-input').click();
+      });
+    });
+
+    // Botón de Favoritos (❤️)
+    el.querySelectorAll('.prod-fav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = Number(btn.dataset.id);
+        toggleFavorite(pid);
       });
     });
 
@@ -4089,13 +5429,22 @@
     setupPhotoUpload();
     setupAdminAndCartModals();
     checkExistingAdminSession();
+    await checkExistingClientSession();
     updateAdminUI();
+    updateClientUI();
     await loadAjustesFromDB();
     await loadColoresFromDB();
-    await Promise.all([loadProductosFromDB(), loadVentasFromDB()]);
+    await Promise.all([loadProductosFromDB(), loadVentasFromDB(), loadAdminPedidosFromDB()]);
     calcCostos();
     renderProductos();
     renderCaja();
+
+    // Comprobar si la app se abrió mediante un link de pedido (?pedido=PIX-...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const pedidoParam = urlParams.get('pedido');
+    if (pedidoParam) {
+      loadAndShowOrderModal(pedidoParam);
+    }
   }
   initApp();
 
