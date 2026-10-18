@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Pixelito3D">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-180.png">
-<link rel="icon" href="/icon-192.png" type="image/png">
+<link rel="icon" href="/favicon.png" type="image/png">
 <title>Pixelito3D — Panel de negocio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -423,12 +423,366 @@
   .pct-sum-bar.valid { color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; }
   .pct-sum-bar.warn { color: #b45309; background: #fffbeb; border: 1px solid #fde68a; }
   .pct-sum-bar.invalid { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
+
+  .app-logo {
+    width: 44px; height: 44px; border-radius: 12px; object-fit: cover;
+    border: 1.5px solid var(--line); box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+    flex-shrink: 0; background: #edeae3;
+  }
+
+  /* Subida de foto en Costos */
+  .photo-upload-section {
+    margin: 12px 0 16px;
+  }
+  .photo-dropzone {
+    border: 2px dashed var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-dropzone:hover, .photo-dropzone.drag-over {
+    border-color: var(--blue);
+    background: var(--blue-soft);
+  }
+  .photo-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+  }
+  .photo-empty-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .photo-empty-text strong {
+    display: block;
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .photo-empty-text span {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .photo-preview-wrap {
+    position: relative;
+    width: 100%;
+    max-height: 260px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #0f172a;
+  }
+  .photo-preview-img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    background: #f8fafc;
+  }
+  .photo-preview-actions {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+  }
+  .photo-btn {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    transition: transform 0.15s ease;
+  }
+  .photo-btn:hover { transform: scale(1.04); }
+  .photo-btn.change {
+    background: rgba(37,99,235,0.92);
+    color: #fff;
+  }
+  .photo-btn.remove {
+    background: rgba(220,38,38,0.92);
+    color: #fff;
+  }
+
+  /* Catálogo estilo profesional con fotos */
+  .prod-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    padding: 0;
+  }
+  .prod-card:hover {
+    box-shadow: 0 6px 16px rgba(15,23,42,0.08);
+  }
+  .prod-media {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: #f1f5f9;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .prod-media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+    display: block;
+  }
+  .prod-card:hover .prod-media-img {
+    transform: scale(1.025);
+  }
+  .prod-media-price {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(15, 23, 42, 0.88);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    letter-spacing: -0.01em;
+  }
+  .prod-media-price.pendiente {
+    background: rgba(180, 83, 9, 0.9);
+    font-size: 12px;
+  }
+  .prod-media-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .prod-media-margin {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(5, 150, 105, 0.92);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .prod-no-media {
+    position: relative;
+    width: 100%;
+    height: 145px;
+    background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .prod-no-media-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    opacity: 0.85;
+    border: 1px solid var(--line);
+  }
+  .quick-add-photo-btn {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    color: var(--blue-dark);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: all 0.15s ease;
+  }
+  .quick-add-photo-btn:hover {
+    background: var(--blue-soft);
+    border-color: var(--blue);
+  }
+  .prod-body {
+    padding: 14px;
+  }
+  .prod-change-photo-link {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .prod-change-photo-link:hover { color: var(--blue); }
+  .prod-caja-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--blue);
+    background: var(--blue-soft);
+    color: var(--blue-dark);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .prod-caja-btn:hover {
+    background: var(--blue);
+    color: #ffffff;
+  }
+
+  /* Miniaturas en Caja */
+  .caja-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.2s ease;
+  }
+  .caja-thumb-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 9px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #edeae3;
+    border: 1px solid var(--line);
+  }
+  .caja-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .caja-thumb-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+  }
+  .caja-thumb-mini {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  /* Lightbox modal */
+  .lightbox-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.18s ease;
+  }
+  .lightbox-content {
+    position: relative;
+    max-width: 520px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lightbox-img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    background: #0f172a;
+    display: block;
+  }
+  .lightbox-caption {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+  }
+  .lightbox-caption h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .lightbox-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--blue-dark);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.7);
+    color: #ffffff;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.15s ease;
+  }
+  .lightbox-close:hover { background: rgba(15, 23, 42, 0.95); }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes zoomIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="logo">P3D</div>
+    <img src="/icon.png" alt="Pixelito3D" class="app-logo">
     <div>
       <h1>Pixelito3D</h1>
       <p class="sub">Caja, productos, costos, ventas y ajustes</p>
@@ -493,6 +847,28 @@
         <label for="c-nombre">Nombre del producto</label>
         <div class="input-group"><input type="text" id="c-nombre" placeholder="Ej: Dragón articulado, Llavero"></div>
       </div>
+      <!-- FOTO DEL PRODUCTO -->
+      <div class="photo-upload-section">
+        <label class="eyebrow" style="margin-bottom:6px;">📸 Foto del producto (Catálogo)</label>
+        <div class="photo-dropzone" id="c-photo-dropzone">
+          <input type="file" id="c-photo-input" accept="image/*" style="display:none;">
+          <div id="c-photo-empty" class="photo-empty-state">
+            <div class="photo-empty-icon">📷</div>
+            <div class="photo-empty-text">
+              <strong>Toca para subir una foto del producto</strong>
+              <span>Sube una imagen o toma una foto · Se optimiza sola</span>
+            </div>
+          </div>
+          <div id="c-photo-preview-wrap" class="photo-preview-wrap" style="display:none;">
+            <img id="c-photo-img" src="" alt="Vista previa del producto" class="photo-preview-img">
+            <div class="photo-preview-actions">
+              <button type="button" class="photo-btn change" id="c-photo-change-btn">🔄 Cambiar foto</button>
+              <button type="button" class="photo-btn remove" id="c-photo-remove-btn">✕ Quitar foto</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <!-- SELECCIÓN DE COLOR EN COSTOS -->
       <div style="margin-top:12px;">
@@ -722,6 +1098,25 @@
   </div>
 
 </div>
+
+
+  <!-- INPUT OCULTO PARA AGREGAR/CAMBIAR FOTO DESDE EL CATÁLOGO -->
+  <input type="file" id="catalog-photo-input" accept="image/*" style="display:none;">
+
+  <!-- MODAL LIGHTBOX PARA VER FOTO EN GRANDE -->
+  <div id="img-lightbox" class="lightbox-overlay" style="display:none;">
+    <div class="lightbox-content">
+      <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Cerrar">✕</button>
+      <img id="lightbox-img" src="" alt="Foto del producto" class="lightbox-img">
+      <div class="lightbox-caption">
+        <div>
+          <h3 id="lightbox-title"></h3>
+          <div id="lightbox-sub" style="font-size:12px; color:var(--ink-soft); margin-top:2px;"></div>
+        </div>
+        <div id="lightbox-price" class="lightbox-price"></div>
+      </div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1317,6 +1712,163 @@
     }
   });
 
+  // ---------- Gestión de Fotos de Productos ----------
+  let currentProductImage = '';
+  let quickUploadProductId = null;
+
+  function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function setProductPhoto(url) {
+    currentProductImage = url || '';
+    const emptyState = $('c-photo-empty');
+    const previewWrap = $('c-photo-preview-wrap');
+    const previewImg = $('c-photo-img');
+    if (!emptyState || !previewWrap || !previewImg) return;
+    if (currentProductImage) {
+      previewImg.src = currentProductImage;
+      emptyState.style.display = 'none';
+      previewWrap.style.display = 'block';
+    } else {
+      previewImg.src = '';
+      emptyState.style.display = 'flex';
+      previewWrap.style.display = 'none';
+    }
+  }
+
+  function setupPhotoUpload() {
+    const input = $('c-photo-input');
+    const dropzone = $('c-photo-dropzone');
+    const changeBtn = $('c-photo-change-btn');
+    const removeBtn = $('c-photo-remove-btn');
+    const catalogInput = $('catalog-photo-input');
+
+    if (dropzone && input) {
+      dropzone.addEventListener('click', (e) => {
+        if (e.target === removeBtn || e.target.closest('#c-photo-remove-btn')) return;
+        input.click();
+      });
+
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try {
+          const compressed = await compressImage(file, 800, 800, 0.82);
+          setProductPhoto(compressed);
+        } catch (err) {
+          console.error(err);
+          alert('No se pudo procesar la imagen seleccionada.');
+        }
+        input.value = '';
+      });
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+      dropzone.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          try {
+            const compressed = await compressImage(e.dataTransfer.files[0], 800, 800, 0.82);
+            setProductPhoto(compressed);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      });
+    }
+
+    if (changeBtn && input) {
+      changeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        input.click();
+      });
+    }
+
+    if (removeBtn) {
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setProductPhoto('');
+      });
+    }
+
+    // Input rápido para subir/cambiar foto desde el catálogo
+    if (catalogInput) {
+      catalogInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file || !quickUploadProductId) return;
+        try {
+          const compressed = await compressImage(file, 800, 800, 0.82);
+          const p = getProductos().find(x => x.id === quickUploadProductId);
+          if (p) {
+            p.imagenUrl = compressed;
+            await updateProducto(p);
+            renderProductos();
+            renderCaja();
+          }
+        } catch (err) {
+          console.error(err);
+          alert('No se pudo actualizar la imagen.');
+        }
+        catalogInput.value = '';
+        quickUploadProductId = null;
+      });
+    }
+
+    // Lightbox modal
+    const lightbox = $('img-lightbox');
+    const lightboxClose = $('lightbox-close');
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target === lightboxClose || e.target.closest('#lightbox-close')) {
+          lightbox.style.display = 'none';
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.style.display !== 'none') {
+          lightbox.style.display = 'none';
+        }
+      });
+    }
+  }
+
+  function openLightbox(imgSrc, title, sub, price) {
+    const lightbox = $('img-lightbox');
+    if (!lightbox) return;
+    $('lightbox-img').src = imgSrc;
+    $('lightbox-title').textContent = title || 'Producto';
+    $('lightbox-sub').textContent = sub || '';
+    $('lightbox-price').textContent = price ? fmt(price) : '';
+    lightbox.style.display = 'flex';
+  }
+
   function calcCostos() {
     const gramos = parseFloat($('c-gramos')?.value) || 0;
     const horas = parseFloat($('c-horas')?.value) || 0;
@@ -1367,6 +1919,7 @@
 
     return {
       nombre: $('c-nombre')?.value.trim() || 'Producto sin nombre',
+      imagenUrl: currentProductImage || '',
       gramos,
       horas,
       tienePintura,
@@ -1385,6 +1938,7 @@
   function resetCostosForm() {
     editingId = null;
     $('c-nombre').value = '';
+    setProductPhoto('');
     $('c-gramos').value = '';
     $('c-horas').value = '';
     $('c-pintura').value = '';
@@ -1417,6 +1971,7 @@
     const entry = {
       id: editingId || Date.now(),
       nombre: c.nombre,
+      imagenUrl: c.imagenUrl || '',
       colorId: c.cConfig.tipo === 'single' ? c.cConfig.colorId : null,
       coloresConfig: JSON.parse(JSON.stringify(c.cConfig)),
       gramos: c.gramos,
@@ -1446,6 +2001,7 @@
     $('c-btn-cancelar').style.display = 'block';
 
     $('c-nombre').value = p.nombre || '';
+    setProductPhoto(p.imagenUrl || '');
     $('c-gramos').value = p.gramos || '';
     $('c-horas').value = p.horas || '';
     
@@ -1519,6 +2075,7 @@
     return {
       id: Number(r.id),
       nombre: r.nombre,
+      imagenUrl: r.imagen_url || '',
       colorId: r.color_id ? Number(r.color_id) : null,
       coloresConfig: r.colores_config || null,
       gramos: Number(r.gramos) || 0,
@@ -1535,6 +2092,7 @@
     return {
       id: p.id,
       nombre: p.nombre,
+      imagen_url: p.imagenUrl || null,
       color_id: p.colorId || null,
       colores_config: p.coloresConfig || null,
       gramos: p.gramos,
@@ -1591,7 +2149,7 @@
     if (!el) return;
     el.innerHTML = '';
     if (productos.length === 0) {
-      el.innerHTML = '<div class="empty">Aún no guardas productos. Ve a la pestaña Costos y calcula uno.</div>';
+      el.innerHTML = '<div class="empty">Aún no guardas productos. Ve a la pestaña Costos para calcular y agregar tus primeros productos con foto y precio.</div>';
       return;
     }
     if (filtrados.length === 0) {
@@ -1619,72 +2177,129 @@
 
       const card = document.createElement('div');
       card.className = 'prod-card';
+
+      // Cabecera multimedia tipo Catálogo
+      const mediaHTML = p.imagenUrl ? `
+        <div class="prod-media">
+          <img src="${p.imagenUrl}" alt="${p.nombre}" class="prod-media-img" data-img="${p.imagenUrl}" data-name="${p.nombre}" data-price="${p.precioVenta || 0}" loading="lazy">
+          <div class="prod-media-tag">
+            <span class="color-dots-group">${dotsHTML}</span>
+            <span>${c.desc}</span>
+          </div>
+          ${tienePrecio ? `<div class="prod-media-price">${fmt(p.precioVenta)}</div>` : '<div class="prod-media-price pendiente">Sin precio</div>'}
+          ${margen !== null ? `<div class="prod-media-margin">+${margen}% margen</div>` : ''}
+        </div>
+      ` : `
+        <div class="prod-no-media">
+          <img src="/icon.png" class="prod-no-media-logo" alt="Pixelito3D">
+          <button type="button" class="quick-add-photo-btn" data-id="${p.id}">📷 Agregar foto del producto</button>
+          <div class="prod-media-tag">
+            <span class="color-dots-group">${dotsHTML}</span>
+            <span>${c.desc}</span>
+          </div>
+          ${tienePrecio ? `<div class="prod-media-price">${fmt(p.precioVenta)}</div>` : '<div class="prod-media-price pendiente">Sin precio</div>'}
+        </div>
+      `;
+
       card.innerHTML = `
-        <div class="prod-card-head">
-          <div>
-            <div class="prod-name">${p.nombre}</div>
-            <div class="prod-badges">
-              <span class="badge color-tag">
-                <span class="color-dots-group">${dotsHTML}</span>
-                <span>${c.desc}</span>
-              </span>
-              <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
-              ${!tienePrecio ? '<span class="badge pendiente">Precio pendiente</span>' : ''}
+        ${mediaHTML}
+        <div class="prod-body">
+          <div class="prod-card-head">
+            <div>
+              <div class="prod-name">${p.nombre}</div>
+              <div class="prod-badges">
+                <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
+                ${p.imagenUrl ? `<button type="button" class="prod-change-photo-link" data-id="${p.id}">Cambiar foto</button>` : ''}
+              </div>
+            </div>
+            <div class="prod-actions">
+              <button class="edit" data-id="${p.id}" title="Editar">Editar</button>
+              <button class="del" data-id="${p.id}" title="Borrar">Borrar</button>
             </div>
           </div>
-          <div class="prod-actions">
-            <button class="edit" data-id="${p.id}">Editar</button>
-            <button class="del" data-id="${p.id}">Borrar</button>
+
+          <div class="prod-color-bar">
+            <label for="pcol-${p.id}">Probar otro filamento:</label>
+            <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
+              ${colorOptionsHTML}
+            </select>
           </div>
-        </div>
 
-        <div class="prod-color-bar">
-          <label for="pcol-${p.id}">Probar color:</label>
-          <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
-            ${colorOptionsHTML}
-          </select>
-        </div>
-
-        <div class="prod-mini">
-          <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
-          <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
-          <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
-          <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
-        </div>
-
-        <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
-        <div class="prod-dist-box">
-          <div class="dist-mini-head">
-            <span>🏦 Distribución para cuentas de banco</span>
-            <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
+          <div class="prod-mini">
+            <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
+            <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
+            <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
+            <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
           </div>
-          <div class="dist-mini-grid">
-            <div class="dist-mini-item inv">
-              <span class="d-label">🏦 Inversión</span>
-              <div class="d-val">${fmt(c.costoTotal)}</div>
+
+          <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
+          <div class="prod-dist-box">
+            <div class="dist-mini-head">
+              <span>🏦 Distribución para cuentas de banco</span>
+              <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
             </div>
-            <div class="dist-mini-item seba">
-              <span class="d-label">👤 Seba (${splitSeba}%)</span>
-              <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
-            </div>
-            <div class="dist-mini-item cami">
-              <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
-              <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
+            <div class="dist-mini-grid">
+              <div class="dist-mini-item inv">
+                <span class="d-label">🏦 Inversión</span>
+                <div class="d-val">${fmt(c.costoTotal)}</div>
+              </div>
+              <div class="dist-mini-item seba">
+                <span class="d-label">👤 Seba (${splitSeba}%)</span>
+                <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
+              </div>
+              <div class="dist-mini-item cami">
+                <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
+                <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="prod-foot" style="margin-top:10px;">
-          <div>
-            <span class="unit">Peso: </span><strong>${p.gramos}g</strong> · <span class="unit">Tiempo: </span><strong>${p.horas}h</strong>
+          <div class="prod-foot" style="margin-top:10px;">
+            <div>
+              <span class="unit">Peso: </span><strong>${p.gramos}g</strong> · <span class="unit">Tiempo: </span><strong>${p.horas}h</strong>
+            </div>
+            <div style="text-align:right;">
+              <div class="venta ${tienePrecio ? '' : 'pendiente'}">${tienePrecio ? fmt(p.precioVenta) : 'Sin precio aún'}</div>
+              ${tienePrecio ? `<div class="margen">${fmt(gananciaTotal)} ganancia (${margen}%)</div>` : ''}
+            </div>
           </div>
-          <div style="text-align:right;">
-            <div class="venta ${tienePrecio ? '' : 'pendiente'}">${tienePrecio ? fmt(p.precioVenta) : 'Sin precio aún'}</div>
-            ${tienePrecio ? `<div class="margen">${fmt(gananciaTotal)} ganancia · ${margen}%</div>` : ''}
-          </div>
+
+          ${tienePrecio ? `<button type="button" class="prod-caja-btn" data-id="${p.id}">🛒 Vender en Caja</button>` : ''}
         </div>
       `;
       el.appendChild(card);
+    });
+
+    // Interacciones de las tarjetas
+    el.querySelectorAll('.prod-media-img').forEach(img => {
+      img.addEventListener('click', () => {
+        openLightbox(img.dataset.img, img.dataset.name, 'Pixelito3D', Number(img.dataset.price));
+      });
+    });
+
+    el.querySelectorAll('.quick-add-photo-btn, .prod-change-photo-link').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickUploadProductId = Number(btn.dataset.id);
+        $('catalog-photo-input').click();
+      });
+    });
+
+    el.querySelectorAll('.prod-caja-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pid = Number(btn.dataset.id);
+        cajaQty[pid] = (cajaQty[pid] || 0) + 1;
+        document.querySelector('nav.tabs button[data-tab="caja"]').click();
+        renderCaja();
+        setTimeout(() => {
+          const row = document.querySelector(`.caja-row[data-id="${pid}"]`);
+          if (row) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            row.style.background = 'var(--blue-soft)';
+            setTimeout(() => { row.style.background = ''; }, 1200);
+          }
+        }, 100);
+      });
     });
 
     el.querySelectorAll('.prod-color-switcher').forEach(sel => {
@@ -1702,6 +2317,7 @@
         if (confirm('¿Seguro que deseas eliminar este producto?')) {
           await deleteProducto(parseInt(btn.dataset.id, 10));
           renderProductos();
+          renderCaja();
         }
       });
     });
@@ -1760,6 +2376,12 @@
       row.className = 'caja-row';
       row.dataset.id = p.id;
       row.innerHTML = `
+        <div class="caja-thumb-wrap">
+          ${p.imagenUrl 
+            ? `<img src="${p.imagenUrl}" class="caja-thumb" alt="${p.nombre}">` 
+            : `<div class="caja-thumb-fallback"><img src="/icon.png" class="caja-thumb-mini" alt="Pixelito3D"></div>`
+          }
+        </div>
         <div class="caja-info">
           <div class="caja-name">
             <span>${p.nombre}</span>
@@ -1985,6 +2607,7 @@
 
   // ---------- Init ----------
   async function initApp() {
+    setupPhotoUpload();
     await loadAjustesFromDB();
     await loadColoresFromDB();
     await Promise.all([loadProductosFromDB(), loadVentasFromDB()]);

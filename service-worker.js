@@ -1,5 +1,14 @@
-const CACHE_NAME = 'pixelito3d-v2';
-const CORE_ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME = 'pixelito3d-v3';
+const CORE_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icon.png',
+  '/favicon.png',
+  '/icon-180.png',
+  '/icon-192.png',
+  '/icon-512.png'
+];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
