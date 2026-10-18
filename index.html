@@ -1121,29 +1121,190 @@
     box-shadow: 0 2px 6px rgba(37,99,235,0.25);
   }
 
+  /* Estilos de Autenticación y Botón Admin */
+  .admin-login-btn {
+    background: #ffffff;
+    border: 1.5px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s ease;
+  }
+  .admin-login-btn:hover {
+    background: var(--blue-soft);
+    color: var(--blue-dark);
+    border-color: var(--blue);
+  }
+  .admin-user-pill {
+    background: var(--blue-soft);
+    border: 1px solid #bfdbfe;
+    color: var(--blue-dark);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .admin-logout-btn {
+    background: none;
+    border: none;
+    color: var(--blue-dark);
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    text-decoration: underline;
+  }
+  .admin-logout-btn:hover {
+    color: var(--red);
+  }
+
+  /* Modales: Cliente Cotización y Admin Login */
+  .client-cart-card, .admin-login-card {
+    background: #ffffff;
+    border-radius: var(--radius);
+    max-width: 480px;
+    width: 100%;
+    padding: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .client-cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .client-cart-items-list {
+    margin: 12px 0;
+    max-height: 48vh;
+    overflow-y: auto;
+  }
+  .client-cart-footer {
+    border-top: 1.5px solid var(--line);
+    padding-top: 12px;
+  }
+  .client-cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .client-total-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--blue-dark);
+  }
+
+  /* Botón Instagram con gradiente oficial */
+  .ig-quote-btn {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(220, 39, 67, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .ig-quote-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(220, 39, 67, 0.45);
+  }
+  .ig-quote-btn:active {
+    transform: translateY(0);
+  }
+  .ig-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+  .ig-hint-text {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 8px 0 10px;
+    line-height: 1.4;
+  }
+  .copy-quote-manual-btn {
+    width: 100%;
+    padding: 9px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .copy-quote-manual-btn:hover {
+    background: var(--line);
+  }
+
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <img src="/icon.png" alt="Pixelito3D" class="app-logo">
-    <div>
-      <h1>Pixelito3D</h1>
-      <p class="sub">Caja, productos, costos, ventas y ajustes</p>
+  <header style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <img src="/icon.png" alt="Pixelito3D" class="app-logo">
+      <div>
+        <h1 style="margin:0;">Pixelito3D</h1>
+        <p class="sub" id="header-sub" style="margin:1px 0 0;">Catálogo de impresiones 3D</p>
+      </div>
+    </div>
+    <div id="header-auth-section" style="flex-shrink:0;">
+      <button type="button" class="admin-login-btn" id="btn-open-admin-login">🔐 Acceso Admin</button>
+      <div id="admin-user-pill" class="admin-user-pill" style="display:none;">
+        <span>👤</span>
+        <span id="admin-user-name">Seba</span>
+        <button type="button" id="btn-admin-logout" class="admin-logout-btn" title="Cerrar sesión">Salir</button>
+      </div>
     </div>
   </header>
 
-  <!-- PESTAÑAS: 1. Caja | 2. Productos | 3. Costos | 4. Ventas | 5. Ajustes -->
-  <nav class="tabs">
-    <button data-tab="caja" class="active" id="tab-btn-caja">Caja</button>
-    <button data-tab="productos">Productos</button>
-    <button data-tab="costos">Costos</button>
-    <button data-tab="ventas">Ventas</button>
-    <button data-tab="ajustes">Ajustes</button>
+  <!-- PESTAÑAS ADMIN: 1. Caja | 2. Catálogo | 3. Costos | 4. Ventas | 5. Ajustes -->
+  <nav class="tabs" id="nav-tabs-admin" style="display:none;">
+    <button data-tab="caja" id="tab-btn-caja">🛒 Caja</button>
+    <button data-tab="productos" class="active" id="tab-btn-productos">📦 Catálogo</button>
+    <button data-tab="costos">🧮 Costos</button>
+    <button data-tab="ventas">📊 Ventas</button>
+    <button data-tab="ajustes">⚙️ Ajustes</button>
   </nav>
 
-  <!-- 1. CAJA -->
-  <div class="view active" id="view-caja">
+  <!-- PESTAÑAS PÚBLICAS CLIENTE: 1. Catálogo | 2. Mi Carrito -->
+  <nav class="tabs" id="nav-tabs-client">
+    <button data-tab="productos" class="active" id="client-tab-catalogo">🛍️ Catálogo de productos</button>
+    <button type="button" id="client-tab-carrito">🛒 Mi Pedido (<span id="client-nav-cart-count">0</span>)</button>
+  </nav>
+
+  <!-- 1. CAJA (SOLO ADMIN) -->
+  <div class="view" id="view-caja">
     <!-- CARRITO DE ESTA VENTA -->
     <div class="panel" id="caja-cart-panel">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -1181,15 +1342,15 @@
     </div>
   </div>
 
-  <!-- 2. PRODUCTOS -->
-  <div class="view" id="view-productos">
+  <!-- 2. PRODUCTOS (CATÁLOGO PÚBLICO & ADMIN) -->
+  <div class="view active" id="view-productos">
     <div class="panel">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
         <div>
           <p class="panel-title" style="margin:0 0 2px;">Catálogo de productos</p>
-          <p class="panel-sub" style="margin:0;">Toca una tarjeta para ver sus detalles o añade a la venta.</p>
+          <p class="panel-sub" id="cat-sub-title" style="margin:0;">Elige tus figuras y modelos 3D favoritos y cotiza directo con nosotros.</p>
         </div>
-        <button type="button" class="toggle-expand-all-btn" id="prod-toggle-all-btn">↕️ Expandir todos</button>
+        <button type="button" class="toggle-expand-all-btn" id="prod-toggle-all-btn" style="display:none;">↕️ Expandir todos</button>
       </div>
       <div class="search-box" style="margin-top:12px;">
         <span class="ic">🔍</span>
@@ -1487,11 +1648,91 @@
     <div class="floating-cart-info">
       <div class="floating-cart-badge" id="fc-count">0</div>
       <div>
-        <div class="floating-cart-title">Carrito de venta</div>
+        <div class="floating-cart-title" id="fc-title">Carrito de venta</div>
         <div class="floating-cart-total" id="fc-total">$0</div>
       </div>
     </div>
     <button type="button" class="floating-cart-btn" id="fc-go-btn">Ver Caja y cobrar →</button>
+  </div>
+
+  <!-- MODAL CARRITO CLIENTE (COTIZACIÓN INSTAGRAM) -->
+  <div id="modal-client-cart" class="lightbox-overlay" style="display:none;">
+    <div class="client-cart-card">
+      <div class="client-cart-header">
+        <h3 style="margin:0; font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <span>🛍️</span> Tu Pedido de Cotización
+        </h3>
+        <button type="button" id="btn-close-client-cart" class="lightbox-close" style="position:static; width:30px; height:30px; font-size:16px;">✕</button>
+      </div>
+
+      <p style="margin:10px 0 6px; font-size:12.5px; color:var(--ink-soft); line-height:1.4;">
+        Revisa tus productos y envíanos tu cotización en 1 clic directamente a nuestro Instagram <b>@3dpixelito</b>.
+      </p>
+
+      <div class="client-cart-items-list" id="client-cart-items-list">
+        <!-- items generados por JS -->
+      </div>
+
+      <div class="client-cart-footer">
+        <div class="client-cart-total-row">
+          <span>Total estimado:</span>
+          <span class="client-total-num" id="client-cart-total-val">$0</span>
+        </div>
+
+        <button type="button" id="btn-quote-instagram" class="ig-quote-btn">
+          <svg class="ig-icon" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          Enviar cotización por Instagram
+        </button>
+        <div class="ig-hint-text">Copia automáticamente el detalle de tu pedido y te abre el chat de Instagram con <b>@3dpixelito</b>.</div>
+
+        <button type="button" id="btn-copy-quote-manual" class="copy-quote-manual-btn">
+          📋 Copiar texto del pedido al portapapeles
+        </button>
+
+        <div id="quote-feedback-msg" style="display:none; font-size:12px; text-align:center; margin-top:10px; color:#10b981; font-weight:700;">
+          ✓ ¡Texto copiado! Abriendo Instagram... Pégalo en el chat con @3dpixelito.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL INICIAR SESIÓN ADMIN -->
+  <div id="modal-admin-login" class="lightbox-overlay" style="display:none;">
+    <div class="admin-login-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:10px;">
+        <h3 style="margin:0; font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <span>🔐</span> Acceso Administrador
+        </h3>
+        <button type="button" id="btn-close-admin-login" class="lightbox-close" style="position:static; width:30px; height:30px; font-size:16px;">✕</button>
+      </div>
+
+      <p style="margin:0 0 14px; font-size:12.5px; color:var(--ink-soft); line-height:1.4;">
+        Ingresa con tu usuario (<b>Seba</b> o <b>Cami</b>) para desbloquear la gestión interna de costos, catálogo, ventas y ajustes.
+      </p>
+
+      <form id="admin-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label for="admin-user-input" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Usuario:</label>
+          <input type="text" id="admin-user-input" placeholder="seba o cami" autocomplete="username" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+
+        <div>
+          <label for="admin-pass-input" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Contraseña:</label>
+          <input type="password" id="admin-pass-input" placeholder="••••••••" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+
+        <div id="admin-login-error" style="display:none; color:#dc2626; font-size:12px; font-weight:700; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 10px;">
+          Usuario o contraseña incorrectos.
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button type="button" id="btn-cancel-admin-login" class="btn-secondary" style="flex:1; padding:9px; border-radius:8px;">Cancelar</button>
+          <button type="submit" id="btn-admin-submit-login" class="btn-primary" style="flex:1; padding:9px; border-radius:8px;">Entrar</button>
+        </div>
+      </form>
+    </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1982,10 +2223,12 @@
   // ---------- Tabs ----------
   document.querySelectorAll('nav.tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (!btn.dataset.tab) return;
       document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       btn.classList.add('active');
-      $('view-' + btn.dataset.tab).classList.add('active');
+      const targetView = $('view-' + btn.dataset.tab);
+      if (targetView) targetView.classList.add('active');
       if (btn.dataset.tab === 'productos') renderProductos();
       if (btn.dataset.tab === 'caja') renderCaja();
       if (btn.dataset.tab === 'ventas') renderVentas();
@@ -2255,6 +2498,387 @@
     $('lightbox-sub').textContent = sub || '';
     $('lightbox-price').textContent = price ? fmt(price) : '';
     lightbox.style.display = 'flex';
+  }
+
+  // ---------- AUTHENTICATION & ADMIN ROLES (Seba & Cami) ----------
+  let isAdmin = false;
+  let currentAdminUser = null;
+  const ADMIN_SESSION_KEY = 'pixelito_admin_session';
+  const ADMIN_SALT = 'pixelito3d_admin_salt_2026_';
+  const TARGET_HASH = '1f43c7a0760708cb13365695efea555c7a179fcafbefbbc12502b6e0b3a4c438';
+
+  async function sha256Salted(str) {
+    const enc = new TextEncoder();
+    const data = enc.encode(ADMIN_SALT + str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function checkExistingAdminSession() {
+    try {
+      const raw = localStorage.getItem(ADMIN_SESSION_KEY);
+      if (!raw) return false;
+      const sess = JSON.parse(raw);
+      if (sess && sess.token === TARGET_HASH && sess.expires > Date.now()) {
+        isAdmin = true;
+        currentAdminUser = { user: sess.user, name: sess.name || (sess.user === 'seba' ? 'Seba' : 'Camila') };
+        return true;
+      }
+    } catch (e) {
+      console.warn('Session parse error', e);
+    }
+    isAdmin = false;
+    currentAdminUser = null;
+    return false;
+  }
+
+  function updateAdminUI() {
+    const loginBtn = $('btn-open-admin-login');
+    const userPill = $('admin-user-pill');
+    const userNameSpan = $('admin-user-name');
+    const adminNav = $('nav-tabs-admin');
+    const clientNav = $('nav-tabs-client');
+    const toggleAllBtn = $('prod-toggle-all-btn');
+    const headerSub = $('header-sub');
+    const fcTitle = $('fc-title');
+    const fcBtn = $('fc-go-btn');
+
+    if (isAdmin && currentAdminUser) {
+      if (loginBtn) loginBtn.style.display = 'none';
+      if (userPill) userPill.style.display = 'inline-flex';
+      if (userNameSpan) userNameSpan.textContent = currentAdminUser.name;
+      if (adminNav) adminNav.style.display = 'flex';
+      if (clientNav) clientNav.style.display = 'none';
+      if (toggleAllBtn) toggleAllBtn.style.display = 'inline-flex';
+      if (headerSub) headerSub.textContent = `Panel Admin · ${currentAdminUser.name}`;
+      if (fcTitle) fcTitle.textContent = 'Carrito de venta';
+      if (fcBtn) fcBtn.textContent = 'Ver Caja y cobrar →';
+    } else {
+      if (loginBtn) loginBtn.style.display = 'inline-flex';
+      if (userPill) userPill.style.display = 'none';
+      if (adminNav) adminNav.style.display = 'none';
+      if (clientNav) clientNav.style.display = 'flex';
+      if (toggleAllBtn) toggleAllBtn.style.display = 'none';
+      if (headerSub) headerSub.textContent = 'Catálogo de impresiones 3D';
+      if (fcTitle) fcTitle.textContent = 'Tu Pedido';
+      if (fcBtn) fcBtn.textContent = 'Ver mi pedido y cotizar →';
+    }
+  }
+
+  function openAdminLoginModal() {
+    const modal = $('modal-admin-login');
+    const errBox = $('admin-login-error');
+    if (!modal) return;
+    if (errBox) errBox.style.display = 'none';
+    const uInput = $('admin-user-input');
+    const pInput = $('admin-pass-input');
+    if (uInput) uInput.value = '';
+    if (pInput) pInput.value = '';
+    modal.style.display = 'flex';
+    setTimeout(() => { uInput && uInput.focus(); }, 100);
+  }
+
+  function closeAdminLoginModal() {
+    const modal = $('modal-admin-login');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function handleAdminLoginSubmit() {
+    const uInput = $('admin-user-input');
+    const pInput = $('admin-pass-input');
+    const errBox = $('admin-login-error');
+    if (!uInput || !pInput) return;
+
+    const rawUser = (uInput.value || '').trim().toLowerCase();
+    const rawPass = (pInput.value || '');
+
+    if (rawUser !== 'seba' && rawUser !== 'cami') {
+      if (errBox) {
+        errBox.textContent = 'Usuario no válido. Ingresa "seba" o "cami".';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+
+    const hashedInput = await sha256Salted(rawPass);
+    let authenticated = false;
+    let displayName = rawUser === 'seba' ? 'Seba' : 'Camila';
+
+    // Verificación en Supabase admin_users con fallback de hash
+    try {
+      const { data, error } = await db.from('admin_users').select('*').eq('username', rawUser).single();
+      if (!error && data && data.pass_hash === hashedInput) {
+        authenticated = true;
+        displayName = data.display_name || displayName;
+      }
+    } catch (e) {
+      console.warn('DB check fallback', e);
+    }
+
+    if (!authenticated && hashedInput === TARGET_HASH) {
+      authenticated = true;
+    }
+
+    if (authenticated) {
+      isAdmin = true;
+      currentAdminUser = { user: rawUser, name: displayName };
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
+        user: rawUser,
+        name: displayName,
+        token: TARGET_HASH,
+        expires: Date.now() + 30 * 24 * 3600 * 1000
+      }));
+
+      closeAdminLoginModal();
+      updateAdminUI();
+      renderProductos();
+      renderCaja();
+    } else {
+      if (errBox) {
+        errBox.textContent = 'Contraseña incorrecta. Inténtalo nuevamente.';
+        errBox.style.display = 'block';
+      }
+      pInput.value = '';
+      pInput.focus();
+    }
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+    isAdmin = false;
+    currentAdminUser = null;
+    updateAdminUI();
+
+    // Regresar a vista pública de Catálogo
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const catBtn = $('client-tab-catalogo');
+    if (catBtn) catBtn.classList.add('active');
+    const catView = $('view-productos');
+    if (catView) catView.classList.add('active');
+
+    renderProductos();
+  }
+
+  // ---------- CARRITO CLIENTE Y COTIZACIÓN INSTAGRAM ----------
+  function openClientCartModal() {
+    const modal = $('modal-client-cart');
+    if (!modal) return;
+    renderClientCartModal();
+    modal.style.display = 'flex';
+  }
+
+  function closeClientCartModal() {
+    const modal = $('modal-client-cart');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function renderClientCartModal() {
+    const listEl = $('client-cart-items-list');
+    const totalEl = $('client-cart-total-val');
+    const quoteBtn = $('btn-quote-instagram');
+    const copyBtn = $('btn-copy-quote-manual');
+    if (!listEl) return;
+
+    listEl.innerHTML = '';
+    const keys = Object.keys(cajaCart).filter(k => cajaCart[k].qty > 0);
+    const totals = computeCartTotals();
+
+    if (totalEl) totalEl.textContent = fmt(totals.totalVenta);
+
+    if (keys.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align:center; padding:30px 10px; color:var(--ink-soft);">
+          <div style="font-size:36px; margin-bottom:8px;">🛍️</div>
+          <div style="font-weight:700; font-size:14px; color:var(--ink);">Tu pedido de cotización está vacío</div>
+          <div style="font-size:12px; margin-top:4px;">Elige productos del catálogo y pulsa "+" o "Agregar al pedido" para armar tu cotización.</div>
+        </div>
+      `;
+      if (quoteBtn) { quoteBtn.disabled = true; quoteBtn.style.opacity = '0.5'; }
+      if (copyBtn) { copyBtn.disabled = true; copyBtn.style.opacity = '0.5'; }
+      return;
+    }
+
+    if (quoteBtn) { quoteBtn.disabled = false; quoteBtn.style.opacity = '1'; }
+    if (copyBtn) { copyBtn.disabled = false; copyBtn.style.opacity = '1'; }
+
+    keys.forEach(key => {
+      const item = cajaCart[key];
+      const p = getProductos().find(x => x.id === item.productId);
+      if (!p) return;
+
+      const c = computeProductCost(p, item.overrideColorId);
+      const effectivePrecio = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const subtotal = effectivePrecio * item.qty;
+      const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
+
+      const itemRow = document.createElement('div');
+      itemRow.style.cssText = 'display:flex; align-items:center; gap:10px; padding:10px; background:var(--card-subtle); border-radius:10px; border:1px solid var(--border); margin-bottom:8px;';
+      itemRow.innerHTML = `
+        <div style="width:46px; height:46px; border-radius:8px; overflow:hidden; background:#ffffff; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:1px solid var(--line);">
+          ${p.imagenUrl 
+            ? `<img src="${p.imagenUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${p.nombre}">`
+            : `<img src="/icon.png" style="width:24px; height:24px; object-fit:contain;" alt="Pixelito3D">`
+          }
+        </div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:700; font-size:13px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nombre}</div>
+          <div style="font-size:11.5px; color:var(--ink-soft); display:flex; align-items:center; gap:4px; margin-top:2px;">
+            <span class="color-dots-group">${dotsHTML}</span>
+            <span>${c.desc}</span>
+          </div>
+          <div style="font-size:12px; font-weight:700; color:var(--blue-dark); margin-top:3px;">
+            ${fmt(subtotal)} <span style="font-size:10.5px; font-weight:500; color:var(--ink-soft);">(${fmt(effectivePrecio)} c/u)</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <button type="button" class="client-modal-minus" data-pid="${p.id}" data-col="${item.overrideColorId !== undefined ? item.overrideColorId : ''}" style="width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--bg); font-weight:800; cursor:pointer;">–</button>
+          <span style="font-size:13px; font-weight:800; min-width:18px; text-align:center;">${item.qty}</span>
+          <button type="button" class="client-modal-plus" data-pid="${p.id}" data-col="${item.overrideColorId !== undefined ? item.overrideColorId : ''}" style="width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--bg); font-weight:800; cursor:pointer;">+</button>
+          <button type="button" class="client-modal-del" data-key="${key}" style="border:none; background:none; color:var(--red); font-size:16px; cursor:pointer; padding:2px 4px; margin-left:4px;" title="Eliminar">✕</button>
+        </div>
+      `;
+      listEl.appendChild(itemRow);
+    });
+
+    listEl.querySelectorAll('.client-modal-minus').forEach(b => {
+      b.addEventListener('click', () => {
+        const pid = Number(b.dataset.pid);
+        const colVal = b.dataset.col;
+        const colId = colVal !== '' ? Number(colVal) : undefined;
+        updateCartQty(pid, colId, -1);
+        renderClientCartModal();
+      });
+    });
+
+    listEl.querySelectorAll('.client-modal-plus').forEach(b => {
+      b.addEventListener('click', () => {
+        const pid = Number(b.dataset.pid);
+        const colVal = b.dataset.col;
+        const colId = colVal !== '' ? Number(colVal) : undefined;
+        updateCartQty(pid, colId, 1);
+        renderClientCartModal();
+      });
+    });
+
+    listEl.querySelectorAll('.client-modal-del').forEach(b => {
+      b.addEventListener('click', () => {
+        removeCartItem(b.dataset.key);
+        renderClientCartModal();
+      });
+    });
+  }
+
+  function buildQuoteMessage() {
+    const totals = computeCartTotals();
+    const keys = Object.keys(cajaCart).filter(k => cajaCart[k].qty > 0);
+    if (keys.length === 0) return '';
+
+    let lines = [];
+    lines.push('👋 ¡Hola Pixelito3D! Quiero cotizar los siguientes productos 3D:');
+    lines.push('');
+
+    keys.forEach((key, idx) => {
+      const item = cajaCart[key];
+      const p = getProductos().find(x => x.id === item.productId);
+      if (!p) return;
+      const c = computeProductCost(p, item.overrideColorId);
+      const price = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const subtotal = price * item.qty;
+      const paintStr = p.pintura ? ' (con pintura)' : '';
+      lines.push(`${idx + 1}. *${p.nombre}*${paintStr}`);
+      lines.push(`   • Color: ${c.desc}`);
+      lines.push(`   • Cantidad: ${item.qty} un.`);
+      lines.push(`   • Precio unit.: ${fmt(price)} | Subtotal: ${fmt(subtotal)}`);
+    });
+
+    lines.push('');
+    lines.push(`📦 *Total estimado:* ${fmt(totals.totalVenta)} (${totals.count} un.)`);
+    lines.push('');
+    lines.push('¿Me confirman disponibilidad y tiempo de entrega? ¡Muchas gracias! 😊');
+
+    return lines.join('\n');
+  }
+
+  async function copyQuoteTextToClipboard() {
+    const text = buildQuoteMessage();
+    if (!text) {
+      alert('Tu pedido está vacío. Agrega productos del catálogo para cotizar.');
+      return false;
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      return true;
+    } catch (e) {
+      console.warn('Clipboard copy error', e);
+      return false;
+    }
+  }
+
+  async function sendQuoteToInstagram() {
+    const copied = await copyQuoteTextToClipboard();
+    if (!copied) return;
+
+    const feedback = $('quote-feedback-msg');
+    if (feedback) {
+      feedback.textContent = '✓ ¡Texto de cotización copiado! Abriendo Instagram... Pégalo en el chat con @3dpixelito.';
+      feedback.style.display = 'block';
+    }
+
+    setTimeout(() => {
+      window.open('https://ig.me/m/3dpixelito', '_blank');
+    }, 350);
+  }
+
+  function setupAdminAndCartModals() {
+    $('btn-open-admin-login')?.addEventListener('click', openAdminLoginModal);
+    $('btn-close-admin-login')?.addEventListener('click', closeAdminLoginModal);
+    $('btn-cancel-admin-login')?.addEventListener('click', closeAdminLoginModal);
+    $('admin-login-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleAdminLoginSubmit();
+    });
+    $('btn-admin-logout')?.addEventListener('click', logoutAdmin);
+
+    $('client-tab-carrito')?.addEventListener('click', openClientCartModal);
+    $('btn-close-client-cart')?.addEventListener('click', closeClientCartModal);
+
+    $('btn-quote-instagram')?.addEventListener('click', sendQuoteToInstagram);
+    $('btn-copy-quote-manual')?.addEventListener('click', async () => {
+      const ok = await copyQuoteTextToClipboard();
+      if (ok) {
+        const feedback = $('quote-feedback-msg');
+        if (feedback) {
+          feedback.textContent = '✓ ¡Texto copiado al portapapeles! Puedes pegarlo en Instagram, WhatsApp o donde prefieras.';
+          feedback.style.display = 'block';
+          setTimeout(() => { feedback.style.display = 'none'; }, 5000);
+        }
+      }
+    });
+
+    $('modal-client-cart')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-client-cart')) closeClientCartModal();
+    });
+    $('modal-admin-login')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-admin-login')) closeAdminLoginModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeClientCartModal();
+        closeAdminLoginModal();
+      }
+    });
   }
 
   function calcCostos() {
@@ -2651,10 +3275,14 @@
   function onCartUpdated() {
     const totals = computeCartTotals();
 
-    // 1. Badge en la pestaña Caja
+    // 1. Badge en la pestaña Caja (Admin) y Mi Pedido (Cliente)
     const tabBtn = $('tab-btn-caja');
     if (tabBtn) {
-      tabBtn.textContent = totals.count > 0 ? `Caja (${totals.count})` : 'Caja';
+      tabBtn.textContent = totals.count > 0 ? `🛒 Caja (${totals.count})` : '🛒 Caja';
+    }
+    const clientNavCount = $('client-nav-cart-count');
+    if (clientNavCount) {
+      clientNavCount.textContent = totals.count;
     }
 
     // 2. Barra flotante de carrito
@@ -2664,13 +3292,18 @@
         fcBar.style.display = 'flex';
         $('fc-count').textContent = totals.count;
         $('fc-total').textContent = fmt(totals.totalVenta);
+        if ($('fc-title')) $('fc-title').textContent = isAdmin ? 'Carrito de venta' : 'Tu Pedido';
+        if ($('fc-go-btn')) $('fc-go-btn').textContent = isAdmin ? 'Ver Caja y cobrar →' : 'Ver mi pedido y cotizar →';
       } else {
         fcBar.style.display = 'none';
       }
     }
 
-    // 3. Renderizar el Carrito en Caja
+    // 3. Renderizar el Carrito en Caja (Admin) y en Modal (Cliente si está abierto)
     renderCajaCart();
+    if ($('modal-client-cart') && $('modal-client-cart').style.display !== 'none') {
+      renderClientCartModal();
+    }
 
     // 4. Actualizar Catálogo y Caja rápida para reflejar cantidades y chips
     renderProductos();
@@ -2744,7 +3377,7 @@
       if (productCartKeys.length > 0) {
         multiColorChipsHTML = `
           <div class="prod-cart-multicols">
-            <span class="multicols-title">En esta venta:</span>
+            <span class="multicols-title">${isAdmin ? 'En esta venta:' : 'En tu pedido:'}</span>
             ${productCartKeys.map(k => {
               const item = cajaCart[k];
               const itemCost = computeProductCost(p, item.overrideColorId);
@@ -2775,12 +3408,12 @@
             <span>${c.desc}</span>
           </div>
           ${tienePrecio ? `<div class="prod-media-price">${fmt(effectivePrecio)}</div>` : '<div class="prod-media-price pendiente">Sin precio</div>'}
-          ${margen !== null ? `<div class="prod-media-margin">+${margen}% margen</div>` : ''}
+          ${(isAdmin && margen !== null) ? `<div class="prod-media-margin">+${margen}% margen</div>` : ''}
         </div>
       ` : `
         <div class="prod-no-media">
           <img src="/icon.png" class="prod-no-media-logo" alt="Pixelito3D">
-          <button type="button" class="quick-add-photo-btn" data-id="${p.id}">📷 Agregar foto del producto</button>
+          ${isAdmin ? `<button type="button" class="quick-add-photo-btn" data-id="${p.id}">📷 Agregar foto del producto</button>` : ''}
           <div class="prod-media-tag">
             <span class="color-dots-group">${dotsHTML}</span>
             <span>${c.desc}</span>
@@ -2788,6 +3421,19 @@
           ${tienePrecio ? `<div class="prod-media-price">${fmt(effectivePrecio)}</div>` : '<div class="prod-media-price pendiente">Sin precio</div>'}
         </div>
       `;
+
+      // Selector de color de filamento
+      let colorPickerBarHTML = '';
+      if (coloresCache.length > 0) {
+        colorPickerBarHTML = `
+          <div class="prod-color-bar" style="margin:8px 0 10px; display:flex; align-items:center; gap:8px;">
+            <label for="pcol-${p.id}" style="font-size:12px; font-weight:700; color:var(--ink-soft); white-space:nowrap;">Filamento:</label>
+            <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}" style="flex:1; padding:6px 10px; border-radius:8px; border:1px solid var(--border); font-size:12.5px; background:var(--bg); color:var(--ink); font-weight:600;">
+              ${colorOptionsHTML}
+            </select>
+          </div>
+        `;
+      }
 
       card.innerHTML = `
         ${mediaHTML}
@@ -2798,14 +3444,16 @@
               <div class="prod-badges">
                 <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
                 ${isColorDifferent ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">⚖️ Precio adaptado a color</span>` : ''}
-                ${p.imagenUrl ? `<button type="button" class="prod-change-photo-link" data-id="${p.id}">Cambiar foto</button>` : ''}
+                ${(isAdmin && p.imagenUrl) ? `<button type="button" class="prod-change-photo-link" data-id="${p.id}">Cambiar foto</button>` : ''}
               </div>
             </div>
             <div style="text-align:right; flex-shrink:0;">
               <div class="venta ${tienePrecio ? '' : 'pendiente'}" style="font-size:16px; font-weight:800; color:var(--blue-dark);">${tienePrecio ? fmt(effectivePrecio) : 'Sin precio'}</div>
-              ${tienePrecio && margen !== null ? `<div class="margen" style="font-size:11px; color:var(--green-dark); font-weight:700;">+${margen}% margen</div>` : ''}
+              ${(isAdmin && tienePrecio && margen !== null) ? `<div class="margen" style="font-size:11px; color:var(--green-dark); font-weight:700;">+${margen}% margen</div>` : ''}
             </div>
           </div>
+
+          ${colorPickerBarHTML}
 
           <!-- CONTROL DE CARRITO EN CATÁLOGO -->
           ${tienePrecio ? `
@@ -2816,68 +3464,71 @@
                 <button type="button" class="prod-cart-btn prod-btn-plus" data-id="${p.id}">+</button>
               </div>
               <button type="button" class="prod-cart-action-btn ${totalProductQty > 0 ? 'in-cart' : ''}" data-id="${p.id}" id="cat-btn-add-${p.id}">
-                ${totalProductQty > 0 ? `🛒 ${totalProductQty} en venta · Ir a Caja` : `🛒 Sumar a venta (${fmt(effectivePrecio)})`}
+                ${isAdmin
+                  ? (totalProductQty > 0 ? `🛒 ${totalProductQty} en venta · Ir a Caja` : `🛒 Sumar a venta (${fmt(effectivePrecio)})`)
+                  : (totalProductQty > 0 ? `🛍️ ${totalProductQty} en pedido · Ver mi pedido` : `🛍️ Agregar al pedido (${fmt(effectivePrecio)})`)
+                }
               </button>
             </div>
             ${multiColorChipsHTML}
           ` : ''}
 
-          <!-- BOTÓN PARA DESPLEGAR DETALLES -->
-          <button type="button" class="prod-toggle-card-btn" data-id="${p.id}" style="margin-top:12px;">
-            <span>${isExpanded ? '▲ Ocultar detalles y costos' : '▼ Ver detalles, costos y bancos'}</span>
-          </button>
+          ${isAdmin ? `
+            <!-- BOTÓN PARA DESPLEGAR DETALLES (SOLO ADMIN) -->
+            <button type="button" class="prod-toggle-card-btn" data-id="${p.id}" style="margin-top:12px;">
+              <span>${isExpanded ? '▲ Ocultar detalles y costos' : '▼ Ver detalles, costos y bancos'}</span>
+            </button>
 
-          <!-- PANEL DETALLES REDESPLEGABLE -->
-          <div class="prod-details-panel" id="prod-details-${p.id}" style="display:${isExpanded ? 'block' : 'none'};">
-            <div class="prod-color-bar">
-              <label for="pcol-${p.id}">Cambiar color filamento:</label>
-              <select id="pcol-${p.id}" class="prod-color-switcher" data-id="${p.id}">
-                ${colorOptionsHTML}
-              </select>
-            </div>
-
-            <div class="prod-mini">
-              <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
-              <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
-              <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
-              <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
-            </div>
-
-            <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
-            <div class="prod-dist-box">
-              <div class="dist-mini-head">
-                <span>🏦 Reparto bancos (${isColorDifferent ? 'Color seleccionado' : 'Color base'})</span>
-                <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
+            <!-- PANEL DETALLES REDESPLEGABLE (SOLO ADMIN) -->
+            <div class="prod-details-panel" id="prod-details-${p.id}" style="display:${isExpanded ? 'block' : 'none'};">
+              <div class="prod-mini">
+                <div>Material<strong>${fmt(c.costoMaterial)}</strong></div>
+                <div>Luz<strong>${fmt(c.costoLuz)}</strong></div>
+                <div>Máquina<strong>${fmt(c.costoMaquina)}</strong></div>
+                <div>Pintura<strong>${fmt(c.costoPintura)}</strong></div>
               </div>
-              <div class="dist-mini-grid">
-                <div class="dist-mini-item inv">
-                  <span class="d-label">🏦 Inversión</span>
-                  <div class="d-val">${fmt(c.costoTotal)}</div>
+
+              <!-- 🏦 DISTRIBUCIÓN PARA BANCOS -->
+              <div class="prod-dist-box">
+                <div class="dist-mini-head">
+                  <span>🏦 Reparto bancos (${isColorDifferent ? 'Color seleccionado' : 'Color base'})</span>
+                  <span>Reparto: ${splitSeba}/${100 - splitSeba}</span>
                 </div>
-                <div class="dist-mini-item seba">
-                  <span class="d-label">👤 Seba (${splitSeba}%)</span>
-                  <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
-                </div>
-                <div class="dist-mini-item cami">
-                  <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
-                  <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
+                <div class="dist-mini-grid">
+                  <div class="dist-mini-item inv">
+                    <span class="d-label">🏦 Inversión</span>
+                    <div class="d-val">${fmt(c.costoTotal)}</div>
+                  </div>
+                  <div class="dist-mini-item seba">
+                    <span class="d-label">👤 Seba (${splitSeba}%)</span>
+                    <div class="d-val">${tienePrecio ? fmt(gananciaSeba) : '—'}</div>
+                  </div>
+                  <div class="dist-mini-item cami">
+                    <span class="d-label">👩 Camila (${100 - splitSeba}%)</span>
+                    <div class="d-val">${tienePrecio ? fmt(gananciaCamila) : '—'}</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Especificaciones en 1 línea fija + acciones -->
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--line); margin-top:8px; gap:8px;">
-              <div style="font-size:12px; color:var(--ink-soft); white-space:nowrap; display:flex; align-items:center; gap:4px;">
-                <span>Peso: <strong style="color:var(--ink);">${p.gramos}g</strong></span>
-                <span>·</span>
-                <span style="white-space:nowrap;">Tiempo: <strong style="color:var(--ink);">${p.horas}h</strong></span>
-              </div>
-              <div class="prod-actions" style="margin:0;">
-                <button class="edit" data-id="${p.id}" title="Editar">Editar</button>
-                <button class="del" data-id="${p.id}" title="Borrar">Borrar</button>
+              <!-- Especificaciones en 1 línea fija + acciones -->
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--line); margin-top:8px; gap:8px;">
+                <div style="font-size:12px; color:var(--ink-soft); white-space:nowrap; display:flex; align-items:center; gap:4px;">
+                  <span>Peso: <strong style="color:var(--ink);">${p.gramos}g</strong></span>
+                  <span>·</span>
+                  <span style="white-space:nowrap;">Tiempo: <strong style="color:var(--ink);">${p.horas}h</strong></span>
+                </div>
+                <div class="prod-actions" style="margin:0;">
+                  <button class="edit" data-id="${p.id}" title="Editar">Editar</button>
+                  <button class="del" data-id="${p.id}" title="Borrar">Borrar</button>
+                </div>
               </div>
             </div>
-          </div>
+          ` : `
+            <div style="font-size:11.5px; color:var(--ink-soft); margin-top:10px; display:flex; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed var(--line);">
+              <span>Peso estimado: <strong style="color:var(--ink);">${p.gramos}g</strong></span>
+              <span>⚡ Fabricación personalizada</span>
+            </div>
+          `}
         </div>
       `;
       el.appendChild(card);
@@ -2898,7 +3549,7 @@
       });
     });
 
-    // Botón desplegar/colapsar tarjeta
+    // Botón desplegar/colapsar tarjeta (Admin)
     el.querySelectorAll('.prod-toggle-card-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -2958,9 +3609,12 @@
         if (qty === 0) {
           updateCartQty(pid, colId, 1);
         } else {
-          // Va directo a la Caja para cobrar
-          document.querySelector('nav.tabs button[data-tab="caja"]').click();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (isAdmin) {
+            document.querySelector('nav.tabs button[data-tab="caja"]').click();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            openClientCartModal();
+          }
         }
       });
     });
@@ -3258,10 +3912,15 @@
     }
   });
 
-  // Botón flotante para ir a Caja
+  // Botón flotante de carrito (Caja para admin, Cotización modal para clientes)
   $('fc-go-btn')?.addEventListener('click', () => {
-    document.querySelector('nav.tabs button[data-tab="caja"]').click();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isAdmin) {
+      const cajaTab = document.querySelector('nav.tabs button[data-tab="caja"]');
+      if (cajaTab) cajaTab.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      openClientCartModal();
+    }
   });
 
   // Registrar venta desde el Carrito
@@ -3413,10 +4072,14 @@
   // ---------- Init ----------
   async function initApp() {
     setupPhotoUpload();
+    setupAdminAndCartModals();
+    checkExistingAdminSession();
+    updateAdminUI();
     await loadAjustesFromDB();
     await loadColoresFromDB();
     await Promise.all([loadProductosFromDB(), loadVentasFromDB()]);
     calcCostos();
+    renderProductos();
     renderCaja();
   }
   initApp();
