@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pixelito3d-v3';
+const CACHE_NAME = 'pixelito3d-v4';
 const CORE_ASSETS = [
   '/',
   '/index.html',
