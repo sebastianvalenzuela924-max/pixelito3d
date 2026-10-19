@@ -2242,6 +2242,9 @@
         <button type="button" id="btn-admin-approve-order" class="btn-primary" style="width:100%; background:#16a34a; padding:10px; font-weight:800; font-size:14px; border-radius:8px; cursor:pointer;">
           ✅ Aceptar y Registrar como Venta
         </button>
+        <button type="button" id="btn-admin-revert-order" class="btn-secondary" style="display:none; width:100%; margin-top:8px; background:#fef3c7; border:1px solid #fde68a; color:#92400e; padding:10px; font-weight:800; font-size:13.5px; border-radius:8px; cursor:pointer;">
+          ↩️ Deshacer Aprobación (Revertir a Pendiente)
+        </button>
       </div>
 
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -2250,6 +2253,9 @@
         </button>
         <button type="button" id="btn-load-order-to-cart" class="copy-quote-manual-btn" style="flex:1 1 130px; min-width:0; padding:9px 6px; font-size:12px; background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">
           🛒 Cargar a mi Carrito
+        </button>
+        <button type="button" id="btn-delete-current-order" class="copy-quote-manual-btn" style="display:none; flex:1 1 100%; min-width:0; padding:8px 6px; font-size:12px; background:#fff1f2; border:1px solid #fecdd3; color:#e11d48; font-weight:700;">
+          🗑️ Eliminar este Pedido
         </button>
       </div>
     </div>
@@ -4070,17 +4076,37 @@
 
       if (approveBtn) {
         if (isAprobado) {
-          approveBtn.disabled = true;
-          approveBtn.style.opacity = '0.6';
-          approveBtn.textContent = `✓ Ya registrado como venta (${order.aprobado_por || 'Admin'})`;
+          approveBtn.style.display = 'none';
         } else {
+          approveBtn.style.display = 'block';
           approveBtn.disabled = false;
           approveBtn.style.opacity = '1';
           approveBtn.textContent = '✅ Aceptar y Registrar como Venta';
         }
       }
+
+      const revertBtn = $('btn-admin-revert-order');
+      if (revertBtn) {
+        if (isAprobado) {
+          revertBtn.style.display = 'block';
+          revertBtn.disabled = false;
+          revertBtn.textContent = '↩️ Deshacer Aprobación (Revertir a Pendiente)';
+        } else {
+          revertBtn.style.display = 'none';
+        }
+      }
     } else if (adminPanel) {
       adminPanel.style.display = 'none';
+    }
+
+    const deleteBtn = $('btn-delete-current-order');
+    if (deleteBtn) {
+      const isOwner = currentClient && (order.cliente_id === currentClient.id || (order.cliente_contacto && order.cliente_contacto.includes(currentClient.usuario)));
+      if (isAdmin || isOwner) {
+        deleteBtn.style.display = 'block';
+      } else {
+        deleteBtn.style.display = 'none';
+      }
     }
   }
 
@@ -4121,29 +4147,32 @@
           cantidad: it.qty,
           precioVenta: it.precioUnitario,
           costoTotal: it.costoUnitario,
-          subtotal: it.subtotal
+          subtotal: it.subtotal,
+          orderId: order.id
         };
       });
 
-      const today = new Date().toISOString().slice(0, 10);
+      const ventaId = Date.now();
+      const today = new Date().toLocaleDateString('es-CL');
       const ventaRow = {
+        id: ventaId,
         fecha: today,
         items: ventaItems,
         total_venta: totalVenta,
         total_costo: totalCosto,
+        utilidad: Math.round(totalVenta - totalCosto),
         tu_parte: totalMine,
         su_parte: totalHers
       };
       const { data: vData, error: vErr } = await db.from('ventas').insert([ventaRow]).select().single();
       if (vErr) throw vErr;
-      if (vData) addVentaToCache(vData);
 
       const adminName = currentAdminUser ? currentAdminUser.name : 'Admin';
       const nowIso = new Date().toISOString();
       const { data: updatedOrder, error: oErr } = await db.from('pedidos')
         .update({
           estado: 'aprobado',
-          aprobado_por: adminName,
+          aprobado_por: `${adminName} [VID:${ventaId}]`,
           aprobado_at: nowIso
         })
         .eq('id', order.id)
@@ -4151,7 +4180,7 @@
         .single();
 
       if (oErr) throw oErr;
-      currentViewOrder = updatedOrder || { ...order, estado: 'aprobado', aprobado_por: adminName, aprobado_at: nowIso };
+      currentViewOrder = updatedOrder || { ...order, estado: 'aprobado', aprobado_por: `${adminName} [VID:${ventaId}]`, aprobado_at: nowIso };
 
       let targetClientId = order.cliente_id;
       if (!targetClientId) {
@@ -4191,6 +4220,7 @@
       renderOrderViewModal(currentViewOrder);
       await loadAdminPedidosFromDB();
       renderAdminPedidosList();
+      await loadVentasFromDB();
       renderVentas();
 
       alert(`✅ ¡Pedido ${order.id} aceptado y registrado como venta con éxito!\nSe distribuyó a Inversión, Seba y Camila.`);
@@ -4201,6 +4231,141 @@
         approveBtn.disabled = false;
         approveBtn.textContent = '✅ Aceptar y Registrar como Venta';
       }
+    }
+  }
+
+  async function revertOrderApprovalAsAdmin(orderToRevert, silent = false) {
+    if (!isAdmin) return;
+    const order = orderToRevert || currentViewOrder;
+    if (!order || order.estado !== 'aprobado') {
+      if (!silent) alert('Este pedido no está aprobado.');
+      return;
+    }
+
+    if (!silent) {
+      const ok = confirm(`¿Estás seguro de deshacer la aprobación del pedido ${order.id}?\n\n• Se cambiará el estado a Pendiente.\n• Se eliminará la venta registrada en estadísticas.\n• Se descontarán las ${order.total_piezas || 0} piezas y ${Math.round(order.total_gramos || 0)}g sumados al cliente.`);
+      if (!ok) return;
+    }
+
+    const revertBtn = $('btn-admin-revert-order');
+    if (revertBtn) {
+      revertBtn.disabled = true;
+      revertBtn.textContent = '⏳ Revirtiendo...';
+    }
+
+    try {
+      // 1. Encontrar y borrar la venta en ventas
+      const vidMatch = (order.aprobado_por || '').match(/\[VID:(\d+)\]/);
+      let ventaId = vidMatch ? parseInt(vidMatch[1], 10) : null;
+      if (!ventaId) {
+        await loadVentasFromDB();
+        const cand = ventasCache.find(v => Number(v.totalVenta) === Number(order.total_venta) && (v.items || []).some(it => it.orderId === order.id || (order.items || []).some(oi => oi.productId === it.productId)));
+        if (cand) ventaId = cand.id;
+      }
+      if (ventaId) {
+        await deleteVenta(ventaId);
+      }
+
+      // 2. Descontar piezas y gramos del cliente
+      let targetClientId = order.cliente_id;
+      if (!targetClientId) {
+        const contactStr = (order.cliente_contacto || '') + ' ' + (order.cliente_nombre || '');
+        const match = contactStr.match(/@([a-zA-Z0-9_.-]+)/);
+        if (match && match[1]) {
+          try {
+            const { data: cliFound } = await db.from('clientes').select('id').eq('usuario', match[1].toLowerCase()).maybeSingle();
+            if (cliFound && cliFound.id) targetClientId = cliFound.id;
+          } catch(e) {}
+        }
+      }
+
+      if (targetClientId) {
+        try {
+          const { data: cli } = await db.from('clientes').select('compras_piezas, gramos_comprados').eq('id', targetClientId).single();
+          if (cli) {
+            const newPieces = Math.max(0, (Number(cli.compras_piezas) || 0) - (Number(order.total_piezas) || 0));
+            const newGrams = Math.max(0, (Number(cli.gramos_comprados) || 0) - (Number(order.total_gramos) || 0));
+            await db.from('clientes').update({
+              compras_piezas: newPieces,
+              gramos_comprados: newGrams
+            }).eq('id', targetClientId);
+
+            if (currentClient && currentClient.id === targetClientId) {
+              currentClient.compras_piezas = newPieces;
+              currentClient.gramos_comprados = newGrams;
+              localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
+              updateClientUI();
+            }
+          }
+        } catch (cliErr) {
+          console.warn('Error reverting client loyalty', cliErr);
+        }
+      }
+
+      // 3. Cambiar estado a pendiente en pedidos
+      const { data: updatedOrder, error: oErr } = await db.from('pedidos')
+        .update({
+          estado: 'pendiente',
+          aprobado_por: null,
+          aprobado_at: null
+        })
+        .eq('id', order.id)
+        .select()
+        .single();
+
+      if (oErr) throw oErr;
+      currentViewOrder = updatedOrder || { ...order, estado: 'pendiente', aprobado_por: null, aprobado_at: null };
+
+      // 4. Refrescar vistas
+      if ($('modal-order-view')?.style.display !== 'none') {
+        renderOrderViewModal(currentViewOrder);
+      }
+      await loadAdminPedidosFromDB();
+      renderAdminPedidosList();
+      await loadVentasFromDB();
+      renderVentas();
+
+      if (!silent) {
+        alert(`↩️ Pedido ${order.id} revertido a Pendiente.\nLa venta fue cancelada y se ajustaron los puntos del cliente.`);
+      }
+    } catch (e) {
+      console.error(e);
+      if (!silent) alert('Error al revertir pedido: ' + (e.message || 'Error desconocido'));
+    } finally {
+      if (revertBtn) {
+        revertBtn.disabled = false;
+        revertBtn.textContent = '↩️ Deshacer Aprobación (Revertir a Pendiente)';
+      }
+    }
+  }
+
+  async function deleteCurrentViewOrder() {
+    if (!currentViewOrder || !currentViewOrder.id) return;
+    const ord = currentViewOrder;
+    if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente el pedido ${ord.id}?`)) return;
+
+    try {
+      if (isAdmin && ord.estado === 'aprobado') {
+        const revertAlso = confirm(`El pedido ${ord.id} ya está aprobado como venta. ¿Deseas también cancelar la venta y descontar los puntos acumulados del cliente?`);
+        if (revertAlso) {
+          await revertOrderApprovalAsAdmin(ord, true);
+        }
+      }
+
+      await db.from('pedidos').delete().eq('id', ord.id);
+      closeOrderViewModal();
+
+      if (isAdmin) {
+        await loadAdminPedidosFromDB();
+        renderAdminPedidosList();
+      }
+      if ($('view-client-pedidos')?.classList.contains('active')) {
+        await renderClientOrdersHistory();
+      }
+      alert(`✓ Pedido ${ord.id} eliminado con éxito.`);
+    } catch (e) {
+      console.error(e);
+      alert('Error al eliminar el pedido: ' + (e.message || 'Error desconocido'));
     }
   }
 
@@ -4304,7 +4469,11 @@
             Total: <span style="color:var(--blue-dark);">${fmt(ord.total_venta)}</span> (${ord.total_piezas || 0} piezas)
           </div>
           <div style="display:flex; gap:6px; align-items:center;">
-            ${!isAprobado ? `<button type="button" class="btn-primary btn-quick-approve" style="padding:4px 10px; font-size:11.5px; border-radius:6px; background:#16a34a; font-weight:800; cursor:pointer;">✅ Confirmar</button>` : ''}
+            ${!isAprobado 
+              ? `<button type="button" class="btn-primary btn-quick-approve" style="padding:4px 10px; font-size:11.5px; border-radius:6px; background:#16a34a; font-weight:800; cursor:pointer;">✅ Confirmar</button>` 
+              : `<button type="button" class="btn-secondary btn-quick-revert" style="padding:4px 10px; font-size:11.5px; border-radius:6px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-weight:700; cursor:pointer;" title="Deshacer aprobación y revertir a pendiente">↩️ Revertir</button>`
+            }
+            <button type="button" class="btn-secondary btn-quick-delete" style="padding:4px 8px; font-size:11.5px; border-radius:6px; background:#fff1f2; color:#e11d48; border:1px solid #fecdd3; font-weight:700; cursor:pointer;" title="Eliminar este pedido">🗑️</button>
             <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Detalle →</button>
           </div>
         </div>
@@ -4315,6 +4484,21 @@
           e.stopPropagation();
           currentViewOrder = ord;
           await approveOrderAsAdmin();
+        });
+      }
+      const revertBtn = card.querySelector('.btn-quick-revert');
+      if (revertBtn) {
+        revertBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await revertOrderApprovalAsAdmin(ord);
+        });
+      }
+      const delBtn = card.querySelector('.btn-quick-delete');
+      if (delBtn) {
+        delBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          currentViewOrder = ord;
+          await deleteCurrentViewOrder();
         });
       }
       card.addEventListener('click', () => {
@@ -4408,9 +4592,29 @@
             <div style="font-size:13px; font-weight:800; color:var(--ink);">
               Total: <span style="color:var(--blue-dark);">${fmt(ord.total_venta)}</span> (${ord.total_piezas || 0} piezas)
             </div>
-            <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Ver detalle →</button>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" class="btn-client-delete-order" style="padding:4px 8px; font-size:11.5px; border-radius:6px; background:#fff1f2; color:#e11d48; border:1px solid #fecdd3; font-weight:700; cursor:pointer;" title="Eliminar este pedido de mi historial">🗑️ Eliminar</button>
+              <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Ver detalle →</button>
+            </div>
           </div>
         `;
+        const delBtn = card.querySelector('.btn-client-delete-order');
+        if (delBtn) {
+          delBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!confirm(`¿Deseas eliminar el pedido ${ord.id} de tu historial?`)) return;
+            try {
+              delBtn.disabled = true;
+              delBtn.textContent = '⏳';
+              await db.from('pedidos').delete().eq('id', ord.id);
+              await renderClientOrdersHistory();
+            } catch (err) {
+              alert('No se pudo eliminar el pedido: ' + (err.message || 'Error desconocido'));
+              delBtn.disabled = false;
+              delBtn.textContent = '🗑️ Eliminar';
+            }
+          });
+        }
         card.addEventListener('click', () => {
           renderOrderViewModal(ord);
           $('modal-order-view').style.display = 'flex';
@@ -4567,6 +4771,8 @@
     // Modal Ver Pedido (?pedido=PIX-...)
     $('btn-close-order-view')?.addEventListener('click', closeOrderViewModal);
     $('btn-admin-approve-order')?.addEventListener('click', approveOrderAsAdmin);
+    $('btn-admin-revert-order')?.addEventListener('click', () => revertOrderApprovalAsAdmin());
+    $('btn-delete-current-order')?.addEventListener('click', deleteCurrentViewOrder);
     $('btn-load-order-to-cart')?.addEventListener('click', loadOrderProductsIntoCart);
     $('btn-copy-order-link')?.addEventListener('click', async () => {
       if (currentViewOrder && currentViewOrder.id) {
