@@ -1650,12 +1650,12 @@
         </div>
         <button type="button" class="toggle-expand-all-btn" id="prod-toggle-all-btn" style="display:none;">↕️ Expandir todos</button>
       </div>
-      <div style="display:flex; gap:8px; margin-top:12px; margin-bottom:18px; align-items:center;">
+      <div id="prod-search-row" style="display:flex; gap:8px; margin-top:12px; margin-bottom:18px; align-items:center;">
         <div class="search-box" style="flex:1; margin:0;">
           <span class="ic">🔍</span>
-          <input type="text" id="prod-buscar" placeholder="Buscar por nombre o color...">
+          <input type="text" id="prod-buscar" placeholder="Buscar por nombre...">
         </div>
-        <button type="button" id="btn-filter-favs" class="fav-filter-btn" title="Filtrar por favoritos">
+        <button type="button" id="btn-filter-favs" class="fav-filter-btn" title="Filtrar por favoritos" style="display:none;">
           <span id="fav-icon-filter">🤍</span> <span id="fav-filter-text">Favoritos</span>
         </button>
       </div>
@@ -1680,11 +1680,16 @@
           </a>
         </div>
 
-        <div style="max-width:440px; margin:0 auto; display:flex; gap:6px; align-items:center;">
-          <input type="text" id="makerworld-link-input" placeholder="O pega aquí el link de MakerWorld..." style="flex:1; min-width:0; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:12.5px; background:#ffffff; color:var(--ink);">
-          <button type="button" id="btn-send-makerworld-link" style="background:#0f172a; color:#ffffff; border:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
-            Enviar link 🚀
-          </button>
+        <div style="max-width:440px; margin:0 auto; display:flex; flex-direction:column; gap:8px;">
+          <label for="makerworld-link-input" style="font-size:12.5px; font-weight:800; color:var(--ink); display:flex; align-items:center; justify-content:center; gap:6px; margin:0;">
+            <span>🔗</span> Pega aquí el link de MakerWorld:
+          </label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="text" id="makerworld-link-input" placeholder="Pega aquí el link de MakerWorld" style="flex:1; min-width:0; padding:10px 12px; border:1.5px solid #cbd5e1; border-radius:9px; font-size:13px; background:#ffffff; color:var(--ink); box-shadow:inset 0 1px 2px rgba(0,0,0,0.04);">
+            <button type="button" id="btn-send-makerworld-link" style="background:#0f172a; color:#ffffff; border:none; padding:10px 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; flex-shrink:0; box-shadow:0 1px 2px rgba(0,0,0,0.1);">
+              Enviar 🚀
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -3448,6 +3453,16 @@
       if (catMainTitle) catMainTitle.textContent = filterOnlyFavs ? '❤️ Mis Productos Favoritos' : 'Catálogo de productos';
       if (catSubTitle) catSubTitle.textContent = 'Elige tus figuras y modelos 3D favoritos y cotiza directo con nosotros.';
     }
+
+    // Ocultar buscador de productos y banner de ideas en la sección de Favoritos
+    const searchRow = $('prod-search-row');
+    if (searchRow) {
+      searchRow.style.display = filterOnlyFavs ? 'none' : 'flex';
+    }
+    const ideaCard = document.querySelector('.custom-idea-card');
+    if (ideaCard) {
+      ideaCard.style.display = filterOnlyFavs ? 'none' : 'block';
+    }
   }
 
   function openClientAuthModal(tab = 'login') {
@@ -4745,6 +4760,9 @@
         return;
       }
       filterOnlyFavs = true;
+      prodBusqueda = '';
+      const searchInput = $('prod-buscar');
+      if (searchInput) searchInput.value = '';
       tabFav?.classList.add('active');
       tabCat?.classList.remove('active');
       tabHist?.classList.remove('active');
@@ -5423,18 +5441,76 @@
     renderProductos();
   });
 
+  // ---------- Filtro Inteligente de Productos ----------
+  function normalizeSearchText(str) {
+    if (!str) return '';
+    return str.toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9ñ]/g, ' ')
+      .trim();
+  }
+
+  function isFuzzyWordMatch(w1, w2) {
+    if (Math.abs(w1.length - w2.length) > 1) return false;
+    let edits = 0, i = 0, j = 0;
+    while (i < w1.length && j < w2.length) {
+      if (w1[i] !== w2[j]) {
+        edits++;
+        if (edits > 1) return false;
+        if (w1.length > w2.length) i++;
+        else if (w1.length < w2.length) j++;
+        else { i++; j++; }
+      } else {
+        i++; j++;
+      }
+    }
+    if (i < w1.length || j < w2.length) edits++;
+    return edits <= 1;
+  }
+
+  function matchesProductSmart(p, query) {
+    const qTokens = normalizeSearchText(query).split(/\s+/).filter(Boolean);
+    if (!qTokens.length) return true;
+
+    const normName = normalizeSearchText(p.nombre);
+    const nameWords = normName.split(/\s+/).filter(Boolean);
+
+    const col = getColorById(p.colorId);
+    const colName = col ? col.nombre : '';
+    const cnfDesc = (p.coloresConfig && p.coloresConfig.items)
+      ? p.coloresConfig.items.map(it => getColorById(it.colorId)?.nombre || '').join(' ')
+      : '';
+    const fullSearchable = normName + ' ' + normalizeSearchText(colName) + ' ' + normalizeSearchText(cnfDesc);
+
+    return qTokens.every(tok => {
+      // 1. Coincidencia directa de subcadena
+      if (fullSearchable.includes(tok)) return true;
+
+      // 2. Variaciones singular/plural en español
+      if (tok.endsWith('es') && tok.length > 3 && fullSearchable.includes(tok.slice(0, -2))) return true;
+      if (tok.endsWith('s') && tok.length > 3 && fullSearchable.includes(tok.slice(0, -1))) return true;
+
+      // 3. Raíz común (ej: lapiz -> lapic/lapices)
+      if (tok.length >= 4 && nameWords.some(w => w.startsWith(tok.slice(0, -1)) || tok.startsWith(w.slice(0, -1)))) return true;
+
+      // 4. Tolerancia a errores de 1 letra en palabras de >= 4 caracteres
+      if (tok.length >= 4 && nameWords.some(w => isFuzzyWordMatch(w, tok))) return true;
+
+      return false;
+    });
+  }
+
   // ---------- Render Productos (Catálogo) ----------
   function renderProductos() {
     let productos = getProductos();
     if (filterOnlyFavs) {
       productos = productos.filter(p => clientFavs.has(p.id));
     }
-    const filtrados = prodBusqueda ? productos.filter(p => {
-      const col = getColorById(p.colorId);
-      const colName = col ? col.nombre.toLowerCase() : 'base';
-      const cnfDesc = (p.coloresConfig && p.coloresConfig.items) ? p.coloresConfig.items.map(it => getColorById(it.colorId)?.nombre || '').join(' ').toLowerCase() : '';
-      return p.nombre.toLowerCase().includes(prodBusqueda) || colName.includes(prodBusqueda) || cnfDesc.includes(prodBusqueda);
-    }) : productos;
+    const filtrados = (prodBusqueda && !filterOnlyFavs)
+      ? productos.filter(p => matchesProductSmart(p, prodBusqueda))
+      : productos;
 
     const el = $('productosList');
     if (!el) return;
@@ -5452,9 +5528,7 @@
         </div>
       `;
       $('btn-empty-go-catalogo')?.addEventListener('click', () => {
-        filterOnlyFavs = false;
-        updateClientUI();
-        renderProductos();
+        switchClientTab('catalogo');
       });
       return;
     }
