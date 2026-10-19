@@ -1660,6 +1660,33 @@
         </button>
       </div>
       <div id="productosList" style="margin-top:6px; display:flex; flex-direction:column; gap:16px;"></div>
+
+      <!-- SECCIÓN MODELOS A PEDIDO / IDEAS MAKERWORLD -->
+      <div class="custom-idea-card" style="margin-top:28px; padding:20px 16px; background:linear-gradient(135deg, #f8fafc, #eff6ff); border:1.5px dashed #93c5fd; border-radius:14px; text-align:center;">
+        <div style="font-size:30px; margin-bottom:6px;">💡✨</div>
+        <h4 style="margin:0 0 6px; font-size:16px; font-weight:800; color:var(--ink);">
+          ¿Necesitas otro producto o tienes alguna idea?
+        </h4>
+        <p style="margin:0 auto 14px; font-size:12.5px; color:var(--ink-soft); max-width:440px; line-height:1.5;">
+          ¡Imprimimos lo que imagines! Si encuentras un modelo que te guste en <b>MakerWorld</b> o en internet, compártenos el link o cuéntanos tu idea y te cotizamos al tiro.
+        </p>
+
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px;">
+          <a href="https://makerworld.com/es" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; background:#ffffff; color:#0f172a; border:1px solid #cbd5e1; padding:9px 14px; border-radius:8px; font-weight:700; font-size:13px; text-decoration:none; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            <span>🌐</span> Explorar MakerWorld ↗
+          </a>
+          <a href="https://ig.me/m/3dpixelito?text=%C2%A1Hola%20Pixelito3D!%20Tengo%20una%20idea%20para%20un%20producto%20o%20modelo%20a%20pedido%3A%20" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:6px; background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#ffffff; padding:9px 14px; border-radius:8px; font-weight:700; font-size:13px; text-decoration:none; box-shadow:0 2px 6px rgba(220,39,67,0.25);">
+            <span>💬</span> Háblanos por Instagram ↗
+          </a>
+        </div>
+
+        <div style="max-width:440px; margin:0 auto; display:flex; gap:6px; align-items:center;">
+          <input type="text" id="makerworld-link-input" placeholder="O pega aquí el link de MakerWorld..." style="flex:1; min-width:0; padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; font-size:12.5px; background:#ffffff; color:var(--ink);">
+          <button type="button" id="btn-send-makerworld-link" style="background:#0f172a; color:#ffffff; border:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
+            Enviar link 🚀
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -4821,6 +4848,23 @@
           btn.title = 'Mostrar contraseña';
         }
       });
+    });
+
+    // Modelos a pedido / MakerWorld
+    $('btn-send-makerworld-link')?.addEventListener('click', () => {
+      const input = $('makerworld-link-input');
+      const val = (input?.value || '').trim();
+      const msg = val
+        ? `¡Hola Pixelito3D! Encontré este modelo en MakerWorld y me gustaría cotizarlo:\n${val}`
+        : `¡Hola Pixelito3D! Tengo una idea para un producto o modelo que me gustaría cotizar:`;
+      window.open(`https://ig.me/m/3dpixelito?text=${encodeURIComponent(msg)}`, '_blank');
+      if (input) input.value = '';
+    });
+    $('makerworld-link-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        $('btn-send-makerworld-link')?.click();
+      }
     });
 
     // Carrito Cliente & Compartir Link
