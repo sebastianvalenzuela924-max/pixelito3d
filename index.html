@@ -65,26 +65,30 @@
   .app-header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
     flex: 1 1 auto;
   }
+  .app-header-left .app-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    flex-shrink: 0;
+  }
   .app-header-left h1 {
-    font-size: 16.5px;
+    font-size: 16px;
     margin: 0;
     font-weight: 800;
     letter-spacing: -0.01em;
+    line-height: 1.2;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .app-header-left .sub {
     color: var(--ink-soft);
     font-size: 11.5px;
     margin: 1px 0 0;
+    line-height: 1.2;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .header-auth-section {
     display: flex;
@@ -92,7 +96,53 @@
     justify-content: flex-end;
     gap: 6px;
     flex: 0 0 auto;
-    max-width: 60%;
+  }
+  .header-prize-btn {
+    background: #fef3c7;
+    border: 1.5px solid #fde047;
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+    padding: 0;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .header-prize-btn:hover {
+    transform: scale(1.08);
+    background: #fef08a;
+  }
+  .header-user-btn {
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .header-user-btn:hover {
+    background: #dcfce7;
+    border-color: #4ade80;
+  }
+  .header-user-btn #client-user-name {
+    max-width: 95px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
   }
   @media (max-width: 480px) {
     .app-header {
@@ -112,8 +162,15 @@
       padding: 5px 8px !important;
       font-size: 11px !important;
     }
-    .client-user-pill, .admin-user-pill {
-      padding: 2px 7px !important;
+    .header-user-btn {
+      padding: 4px 8px !important;
+      font-size: 11.5px !important;
+    }
+    .header-user-btn #client-user-name {
+      max-width: 75px !important;
+    }
+    .admin-user-pill {
+      padding: 3px 8px !important;
       font-size: 11px !important;
       gap: 4px !important;
     }
@@ -1498,24 +1555,29 @@
       <img src="/icon.png" alt="Pixelito3D" class="app-logo">
       <div style="min-width:0;">
         <h1>Pixelito3D</h1>
-        <p class="sub" id="header-sub">Catálogo de impresiones 3D</p>
+        <p class="sub" id="header-sub">Impresiones 3D</p>
       </div>
     </div>
     <div id="header-auth-section" class="header-auth-section">
-      <!-- CLIENTE (OPCIONAL) -->
+      <!-- CLIENTE GUEST -->
       <button type="button" class="client-auth-btn" id="btn-open-client-auth">👤 Mi Cuenta</button>
-      <div id="client-user-pill" class="client-user-pill" style="display:none;">
-        <span id="client-loyalty-icon">⭐</span>
-        <span id="client-user-name" style="max-width:75px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Cliente</span>
-        <button type="button" id="btn-open-client-profile" class="client-profile-btn" title="Ver perfil y premios">🎁 Premios</button>
-        <button type="button" id="btn-client-logout" class="admin-logout-btn" title="Cerrar sesión">Salir</button>
+
+      <!-- CLIENTE LOGUEADO: Botón icono de premio + Nombre de usuario que abre perfil y salir -->
+      <div id="client-user-group" style="display:none; align-items:center; gap:6px;">
+        <button type="button" id="btn-open-client-profile" class="header-prize-btn" title="Ver mis premios y club de fidelidad">
+          <span id="client-loyalty-icon">🎁</span>
+        </button>
+        <button type="button" id="client-user-pill" class="header-user-btn" title="Toca para ver tu cuenta, premios o salir">
+          <span>👤</span>
+          <span id="client-user-name">Cliente</span>
+        </button>
       </div>
 
       <!-- ADMIN (SEBA & CAMI) -->
       <button type="button" class="admin-login-btn" id="btn-open-admin-login">🔐 Admin</button>
       <div id="admin-user-pill" class="admin-user-pill" style="display:none;">
         <span>👑</span>
-        <span id="admin-user-name" style="max-width:65px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Seba</span>
+        <span id="admin-user-name">Seba</span>
         <button type="button" id="btn-admin-logout" class="admin-logout-btn" title="Cerrar sesión">Salir</button>
       </div>
     </div>
@@ -1531,11 +1593,12 @@
     <button data-tab="ajustes">⚙️ Ajustes</button>
   </nav>
 
-  <!-- PESTAÑAS PÚBLICAS CLIENTE: 1. Catálogo | 2. Mis Favoritos | 3. Mi Pedido -->
+  <!-- PESTAÑAS PÚBLICAS CLIENTE: 1. Catálogo | 2. Mi Pedido | 3. Favoritos | 4. Historial de pedidos -->
   <nav class="tabs" id="nav-tabs-client">
     <button type="button" class="active" id="client-tab-catalogo">🛍️ Catálogo</button>
-    <button type="button" id="client-tab-favoritos" style="display:none;">❤️ Mis Favoritos (<span id="client-nav-fav-count">0</span>)</button>
     <button type="button" id="client-tab-carrito">🛒 Mi Pedido (<span id="client-nav-cart-count">0</span>)</button>
+    <button type="button" id="client-tab-favoritos">❤️ Favoritos (<span id="client-nav-fav-count">0</span>)</button>
+    <button type="button" id="client-tab-historial">📜 Historial de pedidos</button>
   </nav>
 
   <!-- 1. CAJA (SOLO ADMIN) -->
@@ -1597,6 +1660,22 @@
         </button>
       </div>
       <div id="productosList" style="margin-top:6px; display:flex; flex-direction:column; gap:16px;"></div>
+    </div>
+  </div>
+
+  <!-- HISTORIAL DE PEDIDOS CLIENTE (PÚBLICO) -->
+  <div class="view" id="view-client-pedidos">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div>
+          <p class="panel-title" style="margin:0 0 2px;">📜 Mis Pedidos y Cotizaciones</p>
+          <p class="panel-sub" style="margin:0;">Revisa el estado de tus pedidos cotizados y tus piezas acumuladas para premios.</p>
+        </div>
+        <button type="button" class="btn-secondary" id="btn-refresh-client-pedidos" style="padding:6px 12px; font-size:12px; border-radius:8px;">🔄 Actualizar</button>
+      </div>
+      <div id="client-pedidos-list">
+        <!-- Render dinámico -->
+      </div>
     </div>
   </div>
 
@@ -1963,20 +2042,8 @@
         <div class="ig-hint-text">Copia automáticamente el detalle y abre <b>@3dpixelito</b>. En el chat solo mantén presionado y toca <b>"Pegar"</b>.</div>
 
         <button type="button" id="btn-copy-quote-manual" class="copy-quote-manual-btn">
-          📋 Copiar texto del pedido al portapapeles
+          📋 Copiar texto del pedido (con link incluido)
         </button>
-
-        <button type="button" id="btn-share-cart-link" class="copy-quote-manual-btn" style="margin-top:6px; background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">
-          🔗 Compartir pedido con Link directo
-        </button>
-
-        <div id="cart-link-result-box" style="display:none; margin-top:10px; padding:10px 12px; background:#f8fafc; border:1px solid #bfdbfe; border-radius:8px; text-align:left;">
-          <div style="font-weight:700; font-size:12px; color:var(--ink); display:flex; justify-content:space-between;">
-            <span>Link de tu pedido:</span>
-            <span style="color:#10b981;">✓ ¡Copiado!</span>
-          </div>
-          <div id="cart-link-url" style="word-break:break-all; font-family:monospace; background:#ffffff; padding:6px 8px; border-radius:6px; border:1px solid var(--line); margin-top:4px; font-size:11.5px; color:var(--blue-dark);"></div>
-        </div>
       </div>
     </div>
   </div>
@@ -2119,8 +2186,11 @@
         <button type="button" id="btn-view-my-favs" class="copy-quote-manual-btn">
           ❤️ Ver mis productos favoritos (<span id="cli-favs-count">0</span>)
         </button>
-        <button type="button" id="btn-logout-client" class="copy-quote-manual-btn" style="color:var(--red);">
-          Cerrar mi sesión
+        <button type="button" id="btn-view-my-history" class="copy-quote-manual-btn">
+          📜 Ver historial de mis pedidos
+        </button>
+        <button type="button" id="btn-logout-client" class="copy-quote-manual-btn" style="color:var(--red); font-weight:800;">
+          🚪 Cerrar mi sesión (Salir)
         </button>
       </div>
     </div>
@@ -2995,7 +3065,7 @@
     const fcTitle = $('fc-title');
     const fcBtn = $('fc-go-btn');
     const clientAuthBtn = $('btn-open-client-auth');
-    const clientUserPill = $('client-user-pill');
+    const clientUserGroup = $('client-user-group');
 
     if (isAdmin && currentAdminUser) {
       if (loginBtn) loginBtn.style.display = 'none';
@@ -3010,14 +3080,14 @@
 
       // Ocultar sección cliente en cabecera mientras sea admin para mantener la pantalla limpia
       if (clientAuthBtn) clientAuthBtn.style.display = 'none';
-      if (clientUserPill) clientUserPill.style.display = 'none';
+      if (clientUserGroup) clientUserGroup.style.display = 'none';
     } else {
       if (loginBtn) loginBtn.style.display = 'inline-flex';
       if (userPill) userPill.style.display = 'none';
       if (adminNav) adminNav.style.display = 'none';
       if (clientNav) clientNav.style.display = 'flex';
       if (toggleAllBtn) toggleAllBtn.style.display = 'none';
-      if (headerSub) headerSub.textContent = 'Catálogo de impresiones 3D';
+      if (headerSub) headerSub.textContent = 'Impresiones 3D';
       if (fcTitle) fcTitle.textContent = 'Tu Pedido';
       if (fcBtn) fcBtn.textContent = 'Ver mi pedido y cotizar →';
 
@@ -3204,7 +3274,7 @@
 
   function updateClientUI() {
     const openAuthBtn = $('btn-open-client-auth');
-    const userPill = $('client-user-pill');
+    const userGroup = $('client-user-group');
     const userNameEl = $('client-user-name');
     const loyaltyIcon = $('client-loyalty-icon');
     const favCountEl = $('cli-favs-count');
@@ -3218,6 +3288,7 @@
     const catSubTitle = $('cat-sub-title');
 
     if (favCountEl) favCountEl.textContent = clientFavs.size;
+    if (clientNavFavCount) clientNavFavCount.textContent = clientFavs.size;
 
     if (favFilterBtn) {
       if (filterOnlyFavs) {
@@ -3233,7 +3304,7 @@
 
     if (currentClient) {
       if (!isAdmin && openAuthBtn) openAuthBtn.style.display = 'none';
-      if (!isAdmin && userPill) userPill.style.display = 'inline-flex';
+      if (!isAdmin && userGroup) userGroup.style.display = 'inline-flex';
       const name = currentClient.nombre || currentClient.usuario || 'Cliente';
       if (userNameEl) userNameEl.textContent = name;
 
@@ -3244,22 +3315,19 @@
       const profUser = $('cli-prof-user');
       if (profUser) profUser.textContent = '@' + (currentClient.usuario || '') + (currentClient.contacto ? ' · ' + currentClient.contacto : '');
 
-      // Pestaña de favoritos en navegación cliente
-      if (clientFavTab) {
-        clientFavTab.style.display = 'inline-flex';
-        if (clientNavFavCount) clientNavFavCount.textContent = clientFavs.size;
-      }
-
-      if (filterOnlyFavs) {
-        if (clientFavTab) clientFavTab.classList.add('active');
-        if (clientCatTab) clientCatTab.classList.remove('active');
-        if (catMainTitle) catMainTitle.textContent = '❤️ Mis Productos Favoritos';
-        if (catSubTitle) catSubTitle.textContent = 'Tus figuras y modelos 3D guardados en tu cuenta.';
-      } else {
-        if (clientFavTab) clientFavTab.classList.remove('active');
-        if (clientCatTab) clientCatTab.classList.add('active');
-        if (catMainTitle) catMainTitle.textContent = 'Catálogo de productos';
-        if (catSubTitle) catSubTitle.textContent = 'Elige tus figuras y modelos 3D favoritos y cotiza directo con nosotros.';
+      const isHistActive = $('client-tab-historial')?.classList.contains('active');
+      if (!isHistActive) {
+        if (filterOnlyFavs) {
+          if (clientFavTab) clientFavTab.classList.add('active');
+          if (clientCatTab) clientCatTab.classList.remove('active');
+          if (catMainTitle) catMainTitle.textContent = '❤️ Mis Productos Favoritos';
+          if (catSubTitle) catSubTitle.textContent = 'Tus figuras y modelos 3D guardados en tu cuenta.';
+        } else {
+          if (clientFavTab) clientFavTab.classList.remove('active');
+          if (clientCatTab) clientCatTab.classList.add('active');
+          if (catMainTitle) catMainTitle.textContent = 'Catálogo de productos';
+          if (catSubTitle) catSubTitle.textContent = 'Elige tus figuras y modelos 3D favoritos y cotiza directo con nosotros.';
+        }
       }
 
       const pieces = Number(currentClient.compras_piezas) || 0;
@@ -3294,7 +3362,7 @@
           `;
           rewardBox.style.background = '#dcfce7';
           rewardBox.style.borderColor = '#86efac';
-          if (loyaltyIcon) loyaltyIcon.textContent = '🎁';
+          if (loyaltyIcon) loyaltyIcon.textContent = '🎉';
         } else {
           rewardBox.innerHTML = `
             <div style="font-weight:700; color:#1e40af; margin-bottom:2px;">
@@ -3306,15 +3374,13 @@
           `;
           rewardBox.style.background = '#ffffff';
           rewardBox.style.borderColor = '#bfdbfe';
-          if (loyaltyIcon) loyaltyIcon.textContent = '⭐';
+          if (loyaltyIcon) loyaltyIcon.textContent = '🎁';
         }
       }
     } else {
       if (!isAdmin && openAuthBtn) openAuthBtn.style.display = 'inline-flex';
-      if (userPill) userPill.style.display = 'none';
-      if (clientFavTab) clientFavTab.style.display = 'none';
-      if (clientCatTab) clientCatTab.classList.add('active');
-      if (catMainTitle) catMainTitle.textContent = 'Catálogo de productos';
+      if (userGroup) userGroup.style.display = 'none';
+      if (catMainTitle) catMainTitle.textContent = filterOnlyFavs ? '❤️ Mis Productos Favoritos' : 'Catálogo de productos';
       if (catSubTitle) catSubTitle.textContent = 'Elige tus figuras y modelos 3D favoritos y cotiza directo con nosotros.';
     }
   }
@@ -3404,7 +3470,11 @@
       }
       closeClientAuthModal();
       updateClientUI();
-      renderProductos();
+      if ($('view-client-pedidos')?.classList.contains('active')) {
+        renderClientOrdersHistory();
+      } else {
+        renderProductos();
+      }
     } catch (e) {
       console.error(e);
       if (errBox) {
@@ -3475,7 +3545,11 @@
       localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
       closeClientAuthModal();
       updateClientUI();
-      renderProductos();
+      if ($('view-client-pedidos')?.classList.contains('active')) {
+        renderClientOrdersHistory();
+      } else {
+        renderProductos();
+      }
       alert(`🎉 ¡Bienvenido a Pixelito3D, ${nombre}! Tu cuenta ha sido creada con éxito.`);
     } catch (e) {
       console.error(e);
@@ -3489,7 +3563,22 @@
   function logoutClient() {
     localStorage.removeItem(CLIENT_SESSION_KEY);
     currentClient = null;
+    filterOnlyFavs = false;
     closeClientProfileModal();
+
+    // Revertir a vista de catálogo
+    const tabCat = $('client-tab-catalogo');
+    const tabFav = $('client-tab-favoritos');
+    const tabHist = $('client-tab-historial');
+    const viewProd = $('view-productos');
+    const viewHist = $('view-client-pedidos');
+
+    tabCat?.classList.add('active');
+    tabFav?.classList.remove('active');
+    tabHist?.classList.remove('active');
+    if (viewProd) viewProd.classList.add('active');
+    if (viewHist) viewHist.classList.remove('active');
+
     updateClientUI();
     renderProductos();
   }
@@ -3673,8 +3762,8 @@
     const row = {
       id: orderId,
       cliente_id: currentClient ? currentClient.id : null,
-      cliente_nombre: currentClient ? (currentClient.nombre || currentClient.usuario) : 'Cliente Web',
-      cliente_contacto: currentClient ? (currentClient.contacto || '') : '',
+      cliente_nombre: currentClient ? (currentClient.nombre ? `${currentClient.nombre} (@${currentClient.usuario})` : `@${currentClient.usuario}`) : 'Cliente Web',
+      cliente_contacto: currentClient ? (`@${currentClient.usuario}${currentClient.contacto ? ' · ' + currentClient.contacto : ''}`) : '',
       items: items,
       total_venta: totalVenta,
       total_costo: totalCosto,
@@ -4064,18 +4153,30 @@
       if (oErr) throw oErr;
       currentViewOrder = updatedOrder || { ...order, estado: 'aprobado', aprobado_por: adminName, aprobado_at: nowIso };
 
-      if (order.cliente_id) {
+      let targetClientId = order.cliente_id;
+      if (!targetClientId) {
+        const contactStr = (order.cliente_contacto || '') + ' ' + (order.cliente_nombre || '');
+        const match = contactStr.match(/@([a-zA-Z0-9_.-]+)/);
+        if (match && match[1]) {
+          try {
+            const { data: cliFound } = await db.from('clientes').select('id').eq('usuario', match[1].toLowerCase()).maybeSingle();
+            if (cliFound && cliFound.id) targetClientId = cliFound.id;
+          } catch(e) {}
+        }
+      }
+
+      if (targetClientId) {
         try {
-          const { data: cli } = await db.from('clientes').select('compras_piezas, gramos_comprados').eq('id', order.cliente_id).single();
+          const { data: cli } = await db.from('clientes').select('compras_piezas, gramos_comprados').eq('id', targetClientId).single();
           if (cli) {
             const newPieces = (Number(cli.compras_piezas) || 0) + (Number(order.total_piezas) || 0);
             const newGrams = (Number(cli.gramos_comprados) || 0) + (Number(order.total_gramos) || 0);
             await db.from('clientes').update({
               compras_piezas: newPieces,
               gramos_comprados: newGrams
-            }).eq('id', order.cliente_id);
+            }).eq('id', targetClientId);
 
-            if (currentClient && currentClient.id === order.cliente_id) {
+            if (currentClient && currentClient.id === targetClientId) {
               currentClient.compras_piezas = newPieces;
               currentClient.gramos_comprados = newGrams;
               localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
@@ -4202,15 +4303,172 @@
           <div style="font-size:13px; font-weight:800; color:var(--ink);">
             Total: <span style="color:var(--blue-dark);">${fmt(ord.total_venta)}</span> (${ord.total_piezas || 0} piezas)
           </div>
-          <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Ver detalle →</button>
+          <div style="display:flex; gap:6px; align-items:center;">
+            ${!isAprobado ? `<button type="button" class="btn-primary btn-quick-approve" style="padding:4px 10px; font-size:11.5px; border-radius:6px; background:#16a34a; font-weight:800; cursor:pointer;">✅ Confirmar</button>` : ''}
+            <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Detalle →</button>
+          </div>
         </div>
       `;
+      const quickBtn = card.querySelector('.btn-quick-approve');
+      if (quickBtn) {
+        quickBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          currentViewOrder = ord;
+          await approveOrderAsAdmin();
+        });
+      }
       card.addEventListener('click', () => {
         renderOrderViewModal(ord);
         $('modal-order-view').style.display = 'flex';
       });
       listEl.appendChild(card);
     });
+  }
+
+  // ---------- Historial de Pedidos Cliente ----------
+  async function renderClientOrdersHistory() {
+    const listEl = $('client-pedidos-list');
+    if (!listEl) return;
+
+    if (!currentClient) {
+      listEl.innerHTML = `
+        <div style="text-align:center; padding:32px 14px; background:#ffffff; border-radius:12px; border:1px solid var(--border);">
+          <div style="font-size:36px; margin-bottom:8px;">👤</div>
+          <div style="font-weight:800; font-size:15px; color:var(--ink);">Inicia sesión para ver tu historial</div>
+          <p style="font-size:12.5px; color:var(--ink-soft); margin:6px auto 16px; max-width:320px; line-height:1.4;">
+            Crea tu cuenta o inicia sesión para revisar todos tus pedidos cotizados y tus avances para la impresión 3D gratis de hasta 100g.
+          </p>
+          <button type="button" id="btn-login-from-history" class="btn-primary" style="padding:10px 18px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
+            👤 Iniciar Sesión / Crear Cuenta
+          </button>
+        </div>
+      `;
+      $('btn-login-from-history')?.addEventListener('click', () => openClientAuthModal('login'));
+      return;
+    }
+
+    listEl.innerHTML = `
+      <div style="text-align:center; padding:24px; color:var(--ink-soft);">
+        <div style="font-size:24px; margin-bottom:6px;">⏳</div>
+        <div>Cargando tus pedidos...</div>
+      </div>
+    `;
+
+    try {
+      const { data, error } = await db.from('pedidos')
+        .select('*')
+        .or(`cliente_id.eq.${currentClient.id},cliente_contacto.ilike.%@${currentClient.usuario}%`)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        listEl.innerHTML = `
+          <div style="text-align:center; padding:32px 14px; background:#ffffff; border-radius:12px; border:1px solid var(--border);">
+            <div style="font-size:36px; margin-bottom:8px;">📦</div>
+            <div style="font-weight:800; font-size:15px; color:var(--ink);">Aún no tienes pedidos registrados</div>
+            <p style="font-size:12.5px; color:var(--ink-soft); margin:6px auto 16px; max-width:320px; line-height:1.4;">
+              Agrega productos a tu carrito y envíanos tu cotización por Instagram. Aparecerán aquí para que sigas su estado.
+            </p>
+            <button type="button" id="btn-history-go-catalog" class="btn-primary" style="padding:10px 18px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
+              🛍️ Ir al Catálogo de productos
+            </button>
+          </div>
+        `;
+        $('btn-history-go-catalog')?.addEventListener('click', () => {
+          $('client-tab-catalogo')?.click();
+        });
+        return;
+      }
+
+      listEl.innerHTML = '';
+      data.forEach(ord => {
+        const isAprobado = ord.estado === 'aprobado';
+        const d = ord.created_at ? new Date(ord.created_at).toLocaleDateString('es-CL', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+        const card = document.createElement('div');
+        card.className = 'venta-card';
+        card.style.cursor = 'pointer';
+
+        const statusPill = isAprobado
+          ? `<span style="background:#dcfce7; color:#15803d; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟢 Confirmado · Sumó para premio</span>`
+          : `<span style="background:#fef3c7; color:#92400e; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟡 Pendiente de Confirmación</span>`;
+
+        const itemsTxt = (ord.items || []).map(it => `• ${it.nombre} (${it.colorDesc || 'Base'}) x${it.qty}`).join('<br>');
+
+        card.innerHTML = `
+          <div class="venta-head">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <strong style="font-size:13.5px; color:var(--blue-dark);">${ord.id}</strong>
+              <span style="font-size:12px; color:var(--ink-soft);">${d}</span>
+            </div>
+            <div>${statusPill}</div>
+          </div>
+          <div class="venta-items" style="margin:6px 0 10px; font-size:12px; color:var(--ink-soft);">${itemsTxt}</div>
+          <div class="venta-foot">
+            <div style="font-size:13px; font-weight:800; color:var(--ink);">
+              Total: <span style="color:var(--blue-dark);">${fmt(ord.total_venta)}</span> (${ord.total_piezas || 0} piezas)
+            </div>
+            <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:11.5px; border-radius:6px;">Ver detalle →</button>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          renderOrderViewModal(ord);
+          $('modal-order-view').style.display = 'flex';
+        });
+        listEl.appendChild(card);
+      });
+    } catch (e) {
+      console.warn('Error loading client orders', e);
+      listEl.innerHTML = `<div style="color:var(--red); padding:16px; text-align:center;">Error al cargar tu historial.</div>`;
+    }
+  }
+
+  function switchClientTab(tabName) {
+    const tabCat = $('client-tab-catalogo');
+    const tabFav = $('client-tab-favoritos');
+    const tabHist = $('client-tab-historial');
+    const viewProd = $('view-productos');
+    const viewHist = $('view-client-pedidos');
+
+    if (tabName === 'catalogo') {
+      filterOnlyFavs = false;
+      tabCat?.classList.add('active');
+      tabFav?.classList.remove('active');
+      tabHist?.classList.remove('active');
+      if (viewProd) viewProd.classList.add('active');
+      if (viewHist) viewHist.classList.remove('active');
+      updateClientUI();
+      renderProductos();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (tabName === 'favoritos') {
+      if (!currentClient) {
+        alert('Debes iniciar sesión con tu cuenta para ver y guardar tus productos favoritos.');
+        openClientAuthModal('login');
+        return;
+      }
+      filterOnlyFavs = true;
+      tabFav?.classList.add('active');
+      tabCat?.classList.remove('active');
+      tabHist?.classList.remove('active');
+      if (viewProd) viewProd.classList.add('active');
+      if (viewHist) viewHist.classList.remove('active');
+      updateClientUI();
+      renderProductos();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (tabName === 'historial') {
+      if (!currentClient) {
+        alert('Debes iniciar sesión con tu cuenta para ver tu historial de pedidos.');
+        openClientAuthModal('login');
+        return;
+      }
+      tabHist?.classList.add('active');
+      tabCat?.classList.remove('active');
+      tabFav?.classList.remove('active');
+      if (viewProd) viewProd.classList.remove('active');
+      if (viewHist) viewHist.classList.add('active');
+      renderClientOrdersHistory();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   function setupAdminAndCartModals() {
@@ -4237,29 +4495,28 @@
       e.preventDefault();
       handleClientRegisterSubmit();
     });
+
+    // Perfil Cliente y Logout
+    $('client-user-pill')?.addEventListener('click', openClientProfileModal);
     $('btn-open-client-profile')?.addEventListener('click', openClientProfileModal);
     $('btn-close-client-profile')?.addEventListener('click', closeClientProfileModal);
     $('btn-client-logout')?.addEventListener('click', logoutClient);
     $('btn-logout-client')?.addEventListener('click', logoutClient);
     $('btn-view-my-favs')?.addEventListener('click', () => {
       closeClientProfileModal();
-      filterOnlyFavs = true;
-      updateClientUI();
-      renderProductos();
-      $('view-productos')?.scrollIntoView({ behavior: 'smooth' });
+      switchClientTab('favoritos');
+    });
+    $('btn-view-my-history')?.addEventListener('click', () => {
+      closeClientProfileModal();
+      switchClientTab('historial');
     });
 
-    // Pestañas de Navegación Cliente (Catálogo / Mis Favoritos)
-    $('client-tab-catalogo')?.addEventListener('click', () => {
-      filterOnlyFavs = false;
-      updateClientUI();
-      renderProductos();
-    });
-    $('client-tab-favoritos')?.addEventListener('click', () => {
-      filterOnlyFavs = true;
-      updateClientUI();
-      renderProductos();
-    });
+    // Pestañas de Navegación Cliente: 1. Catálogo | 2. Mi Pedido | 3. Favoritos | 4. Historial
+    $('client-tab-catalogo')?.addEventListener('click', () => switchClientTab('catalogo'));
+    $('client-tab-carrito')?.addEventListener('click', openClientCartModal);
+    $('client-tab-favoritos')?.addEventListener('click', () => switchClientTab('favoritos'));
+    $('client-tab-historial')?.addEventListener('click', () => switchClientTab('historial'));
+    $('btn-refresh-client-pedidos')?.addEventListener('click', renderClientOrdersHistory);
 
     // Filtro Favoritos en Catálogo (Requiere cuenta)
     $('btn-filter-favs')?.addEventListener('click', () => {
@@ -4269,8 +4526,11 @@
         return;
       }
       filterOnlyFavs = !filterOnlyFavs;
-      updateClientUI();
-      renderProductos();
+      if (filterOnlyFavs) {
+        switchClientTab('favoritos');
+      } else {
+        switchClientTab('catalogo');
+      }
     });
 
     // Carrito Cliente & Compartir Link
