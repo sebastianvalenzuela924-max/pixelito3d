@@ -2016,6 +2016,17 @@
       </div>
 
       <div class="client-cart-footer">
+        <!-- CAMPO NOMBRE O CONTACTO (PARA VISITANTES O CLIENTES) -->
+        <div id="cart-guest-name-box" style="margin-bottom:12px; background:var(--card-subtle); border:1px solid var(--border); border-radius:8px; padding:10px 12px; text-align:left;">
+          <label for="cart-guest-name-input" style="display:block; font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px;">
+            👤 Tu Nombre o Instagram:
+          </label>
+          <input type="text" id="cart-guest-name-input" placeholder="Ej: Juan o @juan_3d" style="width:100%; box-sizing:border-box; padding:8px 10px; border-radius:6px; border:1px solid var(--border); font-size:13px; background:var(--bg); color:var(--ink);">
+          <div style="font-size:11px; color:var(--ink-soft); margin-top:3px;">
+            Escribe tu nombre para saber de quién es la cotización al recibirla en Instagram.
+          </div>
+        </div>
+
         <div class="client-cart-total-row">
           <span>Total estimado:</span>
           <span class="client-total-num" id="client-cart-total-val">$0</span>
@@ -2070,7 +2081,10 @@
 
         <div>
           <label for="admin-pass-input" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Contraseña:</label>
-          <input type="password" id="admin-pass-input" placeholder="••••••••" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+          <div style="position:relative; display:flex; align-items:center;">
+            <input type="password" id="admin-pass-input" placeholder="••••••••" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding:9px 38px 9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+            <button type="button" class="btn-toggle-password" data-target="admin-pass-input" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:16px; padding:4px; color:var(--ink-soft);" title="Mostrar / ocultar contraseña">👁️</button>
+          </div>
         </div>
 
         <div id="admin-login-error" style="display:none; color:#dc2626; font-size:12px; font-weight:700; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 10px;">
@@ -2104,11 +2118,14 @@
       <form id="client-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:12px;">
         <div>
           <label for="cli-login-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Usuario o Email:</label>
-          <input type="text" id="cli-login-user" placeholder="tu usuario" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+          <input type="text" id="cli-login-user" placeholder="tu usuario o tu correo" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
         </div>
         <div>
           <label for="cli-login-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Contraseña:</label>
-          <input type="password" id="cli-login-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+          <div style="position:relative; display:flex; align-items:center;">
+            <input type="password" id="cli-login-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 38px 9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+            <button type="button" class="btn-toggle-password" data-target="cli-login-pass" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:16px; padding:4px; color:var(--ink-soft);" title="Mostrar / ocultar contraseña">👁️</button>
+          </div>
         </div>
         <div id="cli-login-error" style="display:none; color:#dc2626; font-size:12px; font-weight:700; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 10px;"></div>
         <button type="submit" id="btn-submit-client-login" class="btn-primary" style="padding:10px; border-radius:8px; margin-top:4px;">Entrar a Mi Cuenta</button>
@@ -2125,12 +2142,15 @@
           <input type="text" id="cli-reg-user" placeholder="Ej: matias3d" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
         </div>
         <div>
-          <label for="cli-reg-contact" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Instagram o WhatsApp (para contactarte):</label>
-          <input type="text" id="cli-reg-contact" placeholder="@tu_instagram o +569..." style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);">
+          <label for="cli-reg-contact" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Correo, Instagram o WhatsApp (para contactarte):</label>
+          <input type="text" id="cli-reg-contact" placeholder="tu@correo.com o @tu_ig" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);">
         </div>
         <div>
           <label for="cli-reg-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Crea una Contraseña:</label>
-          <input type="password" id="cli-reg-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+          <div style="position:relative; display:flex; align-items:center;">
+            <input type="password" id="cli-reg-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 38px 9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+            <button type="button" class="btn-toggle-password" data-target="cli-reg-pass" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:16px; padding:4px; color:var(--ink-soft);" title="Mostrar / ocultar contraseña">👁️</button>
+          </div>
         </div>
         <div id="cli-reg-error" style="display:none; color:#dc2626; font-size:12px; font-weight:700; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 10px;"></div>
         <div style="font-size:11.5px; color:var(--ink-soft); line-height:1.4;">
@@ -3207,6 +3227,11 @@
   let currentViewOrder = null;
 
   function loadLocalFavorites() {
+    if (!currentClient) {
+      clientFavs.clear();
+      localStorage.removeItem(CLIENT_FAVS_KEY);
+      return;
+    }
     try {
       const raw = localStorage.getItem(CLIENT_FAVS_KEY);
       if (raw) {
@@ -3250,7 +3275,6 @@
   }
 
   async function checkExistingClientSession() {
-    loadLocalFavorites();
     try {
       const raw = localStorage.getItem(CLIENT_SESSION_KEY);
       if (raw) {
@@ -3263,6 +3287,7 @@
               currentClient = data;
               localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(data));
               if (Array.isArray(data.favoritos)) {
+                clientFavs.clear();
                 data.favoritos.forEach(id => clientFavs.add(Number(id)));
                 localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(Array.from(clientFavs)));
               }
@@ -3272,8 +3297,15 @@
           }
         }
       }
+      if (!currentClient) {
+        // Usuario sin cuenta activa: limpiar cualquier favorito residual previo
+        clientFavs.clear();
+        localStorage.removeItem(CLIENT_FAVS_KEY);
+      }
     } catch (e) {
       console.warn('Client session error', e);
+      clientFavs.clear();
+      localStorage.removeItem(CLIENT_FAVS_KEY);
     }
     updateClientUI();
   }
@@ -3434,7 +3466,7 @@
     const errBox = $('cli-login-error');
     if (!uInput || !pInput) return;
 
-    const u = (uInput.value || '').trim().toLowerCase();
+    const u = (uInput.value || '').trim();
     const p = (pInput.value || '');
 
     if (!u || !p) {
@@ -3449,12 +3481,12 @@
     try {
       const { data, error } = await db.from('clientes')
         .select('*')
-        .or(`usuario.eq.${u},contacto.eq.${u}`)
+        .or(`usuario.ilike.${u},contacto.ilike.${u}`)
         .maybeSingle();
 
       if (error || !data) {
         if (errBox) {
-          errBox.textContent = 'Usuario no encontrado. ¿Quieres crear una cuenta?';
+          errBox.textContent = 'Usuario o correo no encontrado. ¿Quieres crear una cuenta?';
           errBox.style.display = 'block';
         }
         return;
@@ -3570,6 +3602,8 @@
     localStorage.removeItem(CLIENT_SESSION_KEY);
     currentClient = null;
     filterOnlyFavs = false;
+    clientFavs.clear();
+    localStorage.removeItem(CLIENT_FAVS_KEY);
     closeClientProfileModal();
 
     // Revertir a vista de catálogo
@@ -3620,7 +3654,20 @@
     const quoteBtn = $('btn-quote-instagram');
     const copyBtn = $('btn-copy-quote-manual');
     const shareLinkBtn = $('btn-share-cart-link');
+    const nameInput = $('cart-guest-name-input');
     if (!listEl) return;
+
+    if (nameInput) {
+      if (currentClient) {
+        nameInput.value = currentClient.nombre ? `${currentClient.nombre} (@${currentClient.usuario})` : `@${currentClient.usuario}`;
+        nameInput.disabled = true;
+      } else {
+        nameInput.disabled = false;
+        if (!nameInput.value) {
+          nameInput.value = localStorage.getItem('pixelito_guest_name') || '';
+        }
+      }
+    }
 
     listEl.innerHTML = '';
     const keys = Object.keys(cajaCart).filter(k => cajaCart[k].qty > 0);
@@ -3763,13 +3810,30 @@
       });
     });
 
+    const rawManualName = ($('cart-guest-name-input')?.value || '').trim();
+    if (rawManualName) {
+      try { localStorage.setItem('pixelito_guest_name', rawManualName); } catch (e) {}
+    }
+
+    let clienteNombre = 'Cliente Web';
+    let clienteContacto = '';
+    if (currentClient) {
+      clienteNombre = currentClient.nombre ? `${currentClient.nombre} (@${currentClient.usuario})` : `@${currentClient.usuario}`;
+      clienteContacto = `@${currentClient.usuario}${currentClient.contacto ? ' · ' + currentClient.contacto : ''}`;
+    } else if (rawManualName) {
+      clienteNombre = rawManualName;
+      if (rawManualName.startsWith('@')) {
+        clienteContacto = rawManualName;
+      }
+    }
+
     const orderId = generateOrderId();
     lastActiveOrderId = orderId;
     const row = {
       id: orderId,
       cliente_id: currentClient ? currentClient.id : null,
-      cliente_nombre: currentClient ? (currentClient.nombre ? `${currentClient.nombre} (@${currentClient.usuario})` : `@${currentClient.usuario}`) : 'Cliente Web',
-      cliente_contacto: currentClient ? (`@${currentClient.usuario}${currentClient.contacto ? ' · ' + currentClient.contacto : ''}`) : '',
+      cliente_nombre: clienteNombre,
+      cliente_contacto: clienteContacto,
       items: items,
       total_venta: totalVenta,
       total_costo: totalCosto,
@@ -3834,8 +3898,11 @@
 
     let lines = [];
     lines.push('👋 ¡Hola Pixelito3D! Quiero cotizar los siguientes productos 3D:');
+    const rawManualName = ($('cart-guest-name-input')?.value || '').trim();
     if (currentClient) {
       lines.push(`👤 Cliente: *${currentClient.nombre || currentClient.usuario}* (@${currentClient.usuario})`);
+    } else if (rawManualName) {
+      lines.push(`👤 Cliente / Nombre: *${rawManualName}*`);
     }
     lines.push('');
 
@@ -4737,9 +4804,33 @@
       }
     });
 
+    // Visibilidad de contraseñas (👁️ / 🙈)
+    document.querySelectorAll('.btn-toggle-password').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = btn.dataset.target;
+        const input = $(targetId);
+        if (!input) return;
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.textContent = '🙈';
+          btn.title = 'Ocultar contraseña';
+        } else {
+          input.type = 'password';
+          btn.textContent = '👁️';
+          btn.title = 'Mostrar contraseña';
+        }
+      });
+    });
+
     // Carrito Cliente & Compartir Link
     $('client-tab-carrito')?.addEventListener('click', openClientCartModal);
     $('btn-close-client-cart')?.addEventListener('click', closeClientCartModal);
+    $('cart-guest-name-input')?.addEventListener('input', (e) => {
+      if (!currentClient) {
+        try { localStorage.setItem('pixelito_guest_name', e.target.value.trim()); } catch (err) {}
+      }
+    });
     $('btn-quote-instagram')?.addEventListener('click', sendQuoteToInstagram);
     $('btn-share-cart-link')?.addEventListener('click', handleShareCartLinkClick);
     $('btn-copy-quote-manual')?.addEventListener('click', async () => {
