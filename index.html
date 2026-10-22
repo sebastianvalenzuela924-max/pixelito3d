@@ -1931,7 +1931,24 @@
         <span class="val" id="out-total-venta" style="color:var(--blue-dark); font-size:20px;">$0</span>
       </div>
 
-      <button class="primary" id="c-btn-guardar" style="margin-top:16px;">💾 Guardar producto en catálogo</button>
+      <!-- Control de visibilidad en tienda pública -->
+      <div style="margin-top:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div>
+          <strong style="font-size:13px; color:var(--ink); display:block;">👁️ Visibilidad en Catálogo</strong>
+          <span style="font-size:11.5px; color:var(--ink-soft);" id="c-visibilidad-desc">Si lo desactivas, los clientes NO lo verán en la tienda (útil para pedidos personalizados o sin stock).</span>
+        </div>
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12.5px; font-weight:700; white-space:nowrap; background:#fff; padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1;">
+          <input type="checkbox" id="c-visible" checked style="width:17px; height:17px; accent-color:#16a34a; cursor:pointer;">
+          <span id="c-visible-label" style="color:#15803d;">Visible en tienda</span>
+        </label>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+        <button class="primary" id="c-btn-guardar" style="font-size:14px; padding:11px;">💾 Guardar producto</button>
+        <button type="button" id="c-btn-registrar-venta-directa" class="btn-primary" style="background:#15803d; border-color:#15803d; font-size:13.5px; font-weight:800; padding:11px; border-radius:8px; color:#fff; cursor:pointer; box-shadow:0 2px 6px rgba(21,128,61,0.25);">
+          🛒 Registrar Venta Directa (con estos costos y reparto)
+        </button>
+      </div>
       <button class="link" id="c-btn-cancelar" style="display:none;">Cancelar edición</button>
     </div>
   </div>
@@ -5211,6 +5228,98 @@
       if (e.target === $('modal-retiro-inversion')) closeRetiroInversionModal();
     });
 
+    // Control de visibilidad en Costos
+    $('c-visible')?.addEventListener('change', (e) => {
+      const lbl = $('c-visible-label');
+      if (lbl) {
+        lbl.textContent = e.target.checked ? 'Visible en tienda' : 'Oculto en tienda';
+        lbl.style.color = e.target.checked ? '#15803d' : '#92400e';
+      }
+    });
+
+    // Registrar Venta Directa desde Costos (para trabajos personalizados o sin añadir a catálogo)
+    $('c-btn-registrar-venta-directa')?.addEventListener('click', async () => {
+      const c = calcCostos();
+      const rawVal = parseFloat($('c-precio')?.value);
+      const finalPrecio = (!isNaN(rawVal) && rawVal > 0) ? Math.round(rawVal) : (c.precioVenta > 0 ? Math.round(c.precioVenta) : 0);
+
+      if (!finalPrecio || finalPrecio <= 0) {
+        alert('Por favor ingresa un precio de venta válido mayor a $0 en la calculadora antes de registrar la venta.');
+        $('c-precio')?.focus();
+        return;
+      }
+
+      const nombreVenta = c.nombre || 'Trabajo personalizado 3D';
+      const eff = computeEffectivePrecioKg(cConfig);
+      const conf = confirm(
+        '¿Deseas registrar esta venta en Finanzas?\n\n' +
+        '• Producto / Detalle: ' + nombreVenta + '\n' +
+        '• Total cobrado: $' + fmt(finalPrecio) + '\n' +
+        '• Inversión (costo producción): $' + fmt(c.costoProduccion) + '\n' +
+        '• Parte Seba: $' + fmt(c.gananciaSeba) + ' (' + c.splitMine + '%)\n' +
+        '• Parte Cami: $' + fmt(c.gananciaCamila) + ' (' + (100 - c.splitMine) + '%)\n\n' +
+        'Se marcará como venta realizada de inmediato.'
+      );
+      if (!conf) return;
+
+      const directBtn = $('c-btn-registrar-venta-directa');
+      if (directBtn) { directBtn.disabled = true; directBtn.textContent = '⏳ Registrando venta...'; }
+
+      try {
+        const v = {
+          id: Date.now(),
+          fecha: new Date().toLocaleDateString('es-CL'),
+          items: [{
+            nombre: nombreVenta,
+            cantidad: 1,
+            precioUnitario: finalPrecio,
+            color: eff.desc,
+            dots: cConfig.items?.map(it => getColorById(it.colorId)?.hex).filter(Boolean) || [eff.hex]
+          }],
+          totalVenta: finalPrecio,
+          totalCosto: c.costoProduccion,
+          tuParte: c.gananciaSeba,
+          suParte: c.gananciaCamila
+        };
+        await insertVenta(v);
+
+        // Guardar o actualizar producto respetando visibilidad si el usuario lo desea
+        const saveAlso = confirm('¿Deseas además guardar este producto en tu lista de productos de la app?\n(Si presionas Aceptar se guardará respetando si lo marcaste Visible u Oculto; si presionas Cancelar solo queda registrada la venta en finanzas).');
+        if (saveAlso) {
+          const entry = {
+            id: editingId || Date.now(),
+            nombre: c.nombre,
+            imagenUrl: c.imagenUrl || '',
+            colorId: c.cConfig.tipo === 'single' ? c.cConfig.colorId : null,
+            coloresConfig: JSON.parse(JSON.stringify(c.cConfig)),
+            gramos: c.gramos,
+            horas: c.horas,
+            pintura: c.tienePintura,
+            pinturaManual: c.tienePintura ? c.costoPintura : null,
+            precioVenta: finalPrecio,
+            splitMine: c.splitMine,
+            descuento: c.descuento || 0,
+            visible: $('c-visible') ? $('c-visible').checked : false,
+            fecha: new Date().toLocaleDateString('es-CL')
+          };
+          if (editingId) await updateProducto(entry);
+          else await insertProducto(entry);
+        }
+
+        renderVentas();
+        alert('✅ ¡Venta registrada con éxito! Ya puedes verla en Finanzas & Ventas.');
+        resetCostosForm();
+        document.querySelector('nav.tabs button[data-tab="ventas"]')?.click();
+      } catch (err) {
+        alert('Error al registrar venta: ' + err.message);
+      } finally {
+        if (directBtn) {
+          directBtn.disabled = false;
+          directBtn.textContent = '🛒 Registrar Venta Directa (con estos costos y reparto)';
+        }
+      }
+    });
+
     $('btn-refresh-pedidos')?.addEventListener('click', async () => {
       await loadAdminPedidosFromDB();
       renderAdminPedidosList();
@@ -5381,6 +5490,8 @@
     if ($('c-descuento')) $('c-descuento').value = '';
     if ($('c-descuento-preview')) $('c-descuento-preview').style.display = 'none';
     document.querySelectorAll('#c-descuento-presets button').forEach(b => b.classList.toggle('active', b.dataset.pct === '0'));
+    if ($('c-visible')) $('c-visible').checked = true;
+    if ($('c-visible-label')) { $('c-visible-label').textContent = 'Visible en tienda'; $('c-visible-label').style.color = '#15803d'; }
     $('c-titulo').textContent = 'Calculadora de costos y precio';
     $('c-btn-guardar').textContent = '💾 Guardar producto en catálogo';
     $('c-btn-cancelar').style.display = 'none';
@@ -5412,6 +5523,7 @@
       precioVenta: finalPrecioVenta,
       splitMine: c.splitMine,
       descuento: c.descuento || 0,
+      visible: $('c-visible') ? $('c-visible').checked : true,
       fecha: new Date().toLocaleDateString('es-CL')
     };
 
@@ -5470,6 +5582,12 @@
     document.querySelectorAll('#c-descuento-presets button').forEach(b => {
       b.classList.toggle('active', String(b.dataset.pct) === String(p.descuento || 0));
     });
+    const isVis = p.visible !== false;
+    if ($('c-visible')) $('c-visible').checked = isVis;
+    if ($('c-visible-label')) {
+      $('c-visible-label').textContent = isVis ? 'Visible en tienda' : 'Oculto en tienda';
+      $('c-visible-label').style.color = isVis ? '#15803d' : '#92400e';
+    }
     if (p.precioVenta && p.precioVenta > c.costoTotal && c.costoTotal > 0) {
       const ganancia = p.precioVenta - c.costoTotal;
       cMargen = Math.min(300, Math.round((ganancia / c.costoTotal) * 100));
@@ -5566,6 +5684,7 @@
       precioVenta: (r.precio_venta === null || r.precio_venta === undefined) ? null : Number(r.precio_venta),
       splitMine: Number(r.split_mine) || 60,
       descuento: Number(r.descuento) || 0,
+      visible: r.visible !== false,
       fecha: r.fecha
     };
   }
@@ -5584,6 +5703,7 @@
       precio_venta: p.precioVenta,
       split_mine: p.splitMine,
       descuento: Number(p.descuento) || 0,
+      visible: p.visible !== false,
       fecha: p.fecha
     };
   }
@@ -5810,6 +5930,10 @@
   // ---------- Render Productos (Catálogo) ----------
   function renderProductos() {
     let productos = getProductos();
+    // Clientes normales solo ven productos con visible !== false
+    if (!isAdmin) {
+      productos = productos.filter(p => p.visible !== false);
+    }
     if (filterOnlyFavs) {
       productos = productos.filter(p => clientFavs.has(p.id));
     }
@@ -5966,7 +6090,10 @@
         <div class="prod-body">
           <div class="prod-card-head">
             <div style="flex:1; min-width:0;">
-              <div class="prod-name">${p.nombre}</div>
+              <div class="prod-name" style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+                <span>${p.nombre}</span>
+                ${(isAdmin && p.visible === false) ? '<span style="background:#fef3c7; color:#92400e; font-size:10px; font-weight:800; padding:1px 6px; border-radius:4px; border:1px solid #fde68a;">🙈 Oculto para clientes</span>' : ''}
+              </div>
               <div class="prod-badges">
                 <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
                 ${isColorDifferent ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">⚖️ Precio adaptado a color</span>` : ''}
@@ -6043,7 +6170,10 @@
                   <span>·</span>
                   <span style="white-space:nowrap;">Tiempo: <strong style="color:var(--ink);">${p.horas}h</strong></span>
                 </div>
-                <div class="prod-actions" style="margin:0;">
+                <div class="prod-actions" style="margin:0; display:flex; gap:4px; align-items:center;">
+                  <button type="button" class="btn-toggle-vis" data-id="${p.id}" style="background:${p.visible !== false ? '#f1f5f9' : '#fef3c7'}; color:${p.visible !== false ? 'var(--ink)' : '#92400e'}; border:1px solid ${p.visible !== false ? '#cbd5e1' : '#fde68a'}; font-size:11px; font-weight:700; padding:4px 8px; border-radius:6px; cursor:pointer;" title="${p.visible !== false ? 'Ocultar de la vista de clientes' : 'Mostrar a clientes en la tienda'}">
+                    ${p.visible !== false ? '🙈 Ocultar a clientes' : '👁️ Mostrar a clientes'}
+                  </button>
                   <button class="edit" data-id="${p.id}" title="Editar">Editar</button>
                   <button class="del" data-id="${p.id}" title="Borrar">Borrar</button>
                 </div>
@@ -6178,6 +6308,20 @@
       btn.addEventListener('click', () => {
         const p = getProductos().find(p => p.id === parseInt(btn.dataset.id, 10));
         if (p) editarProducto(p);
+      });
+    });
+
+    el.querySelectorAll('.prod-actions .btn-toggle-vis').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = parseInt(btn.dataset.id, 10);
+        const p = getProductos().find(p => p.id === id);
+        if (p) {
+          p.visible = !(p.visible !== false);
+          btn.textContent = '⏳ ...';
+          await updateProducto(p);
+          renderProductos();
+        }
       });
     });
   }
