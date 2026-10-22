@@ -1873,6 +1873,24 @@
         <div class="input-group"><span class="unit" style="font-weight:700; font-size:16px;">$</span><input type="number" id="c-precio" step="100" placeholder="0" style="font-size:18px; font-weight:800; color:var(--blue-dark); width:130px;"></div>
       </div>
 
+      <div class="field" style="margin-top:12px;">
+        <label for="c-descuento"><strong>🏷️ Descuento del producto (%)</strong> <span style="font-size:12px; font-weight:normal; color:var(--ink-soft);">(Opcional para ofertas / liquidación)</span></label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="number" id="c-descuento" min="0" max="95" step="5" placeholder="0" style="font-size:15px; font-weight:700; max-width:110px;" />
+          <span style="font-size:15px; font-weight:700; color:var(--ink);">% OFF</span>
+        </div>
+        <div class="preset-row" id="c-descuento-presets" style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
+          <button type="button" class="preset-btn active" data-pct="0">0% (Sin dcto)</button>
+          <button type="button" class="preset-btn" data-pct="10">10%</button>
+          <button type="button" class="preset-btn" data-pct="15">15%</button>
+          <button type="button" class="preset-btn" data-pct="20">20%</button>
+          <button type="button" class="preset-btn" data-pct="25">25%</button>
+          <button type="button" class="preset-btn" data-pct="30">30%</button>
+          <button type="button" class="preset-btn" data-pct="50">50%</button>
+        </div>
+        <div id="c-descuento-preview" style="display:none; margin-top:8px; padding:8px 12px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; font-size:12.5px; color:#991b1b;"></div>
+      </div>
+
       <div style="margin-top:16px;">
         <label class="eyebrow">Reparto de ganancia <span id="c-sugerencia-split" style="text-transform:none;color:var(--ink-soft);font-weight:500;">— sugerido 60/40</span></label>
         <div class="seg-row">
@@ -1921,19 +1939,62 @@
   <!-- 4. VENTAS -->
   <div class="view" id="view-ventas">
     <div class="panel">
-      <p class="panel-title">Resumen de ventas</p>
-      <div class="stat-row">
-        <div class="stat-card blue"><p class="stat-label">Ventas totales</p><p class="stat-value" id="v-totalVenta">$0</p></div>
-        <div class="stat-card blue"><p class="stat-label">🏦 Inversión total</p><p class="stat-value" id="v-totalCosto">$0</p></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div>
+          <p class="panel-title" style="margin:0 0 2px;">Finanzas & Caja General</p>
+          <p style="font-size:12.5px; color:var(--ink-soft); margin:0;">Control de ventas web, ingresos manuales y compras con fondo de inversión.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-primary" id="btn-open-ingreso-manual" style="background:#16a34a; border-color:#16a34a; font-size:12.5px; padding:8px 12px; border-radius:8px; font-weight:700; color:#fff; cursor:pointer;">➕ Añadir Ingreso</button>
+          <button type="button" class="btn-primary" id="btn-open-retiro-inversion" style="background:#dc2626; border-color:#dc2626; font-size:12.5px; padding:8px 12px; border-radius:8px; font-weight:700; color:#fff; cursor:pointer;">➖ Compra con Inversión</button>
+        </div>
       </div>
+
+      <div class="stat-row">
+        <div class="stat-card blue" style="border-top:3px solid var(--blue-dark);">
+          <p class="stat-label">Total Recaudación</p>
+          <p class="stat-value" id="v-totalVenta">$0</p>
+          <p style="font-size:11px; color:var(--ink-soft); margin:2px 0 0;" id="v-totalVentaSub">Ventas web + Ingresos</p>
+        </div>
+        <div class="stat-card green" style="border-top:3px solid #16a34a; background:#f0fdf4;">
+          <p class="stat-label" style="color:#166534;">🏦 Saldo Disponible Inversión</p>
+          <p class="stat-value" id="v-saldoInversion" style="color:#15803d; font-weight:800;">$0</p>
+          <p style="font-size:11px; color:#166534; margin:2px 0 0;" id="v-inversionSub">Fondo generado - Compras</p>
+        </div>
+      </div>
+
       <div class="stat-row" style="margin-top:10px;">
-        <div class="stat-card green"><p class="stat-label">👤 Seba acumulado</p><p class="stat-value" id="v-totalMine">$0</p></div>
-        <div class="stat-card purple"><p class="stat-label">👩 Camila acumulado</p><p class="stat-value" id="v-totalHers">$0</p></div>
+        <div class="stat-card blue" style="border-top:3px solid #2563eb;">
+          <p class="stat-label">👤 Seba Acumulado</p>
+          <p class="stat-value" id="v-totalMine">$0</p>
+          <p style="font-size:11px; color:var(--ink-soft); margin:2px 0 0;" id="v-sebaSub">Ventas + Repartos</p>
+        </div>
+        <div class="stat-card purple" style="border-top:3px solid #d946ef;">
+          <p class="stat-label">👩 Camila Acumulado</p>
+          <p class="stat-value" id="v-totalHers">$0</p>
+          <p style="font-size:11px; color:var(--ink-soft); margin:2px 0 0;" id="v-camiSub">Ventas + Repartos</p>
+        </div>
+      </div>
+
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat-card red" style="border-top:3px solid #dc2626; background:#fef2f2; width:100%;">
+          <p class="stat-label" style="color:#991b1b;">🛒 Total Gastado en Insumos</p>
+          <p class="stat-value" id="v-totalGastosInv" style="color:#dc2626; font-weight:800;">$0</p>
+          <p style="font-size:11px; color:#991b1b; margin:2px 0 0;">Filamentos, repuestos y compras del negocio</p>
+        </div>
       </div>
     </div>
+
     <div class="panel">
-      <p class="panel-title">Historial de ventas</p>
-      <p class="panel-sub">Registro detallado de ventas realizadas con desglose para cada cuenta bancaria.</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <p class="panel-title" style="margin:0;">Historial de Movimientos</p>
+        <div class="seg-row" id="finanzas-filter-tabs" style="margin:0; display:flex; gap:4px;">
+          <button type="button" class="preset-btn active" data-filter="todos" id="btn-fil-todos">Todos</button>
+          <button type="button" class="preset-btn" data-filter="ventas" id="btn-fil-ventas">🛒 Ventas</button>
+          <button type="button" class="preset-btn" data-filter="ingresos" id="btn-fil-ingresos">💵 Ingresos</button>
+          <button type="button" class="preset-btn" data-filter="retiros" id="btn-fil-retiros">📉 Compras Inversión</button>
+        </div>
+      </div>
       <div id="ventasList"></div>
     </div>
   </div>
@@ -2310,6 +2371,147 @@
           🗑️ Eliminar este Pedido
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL INGRESO MANUAL -->
+  <div id="modal-ingreso-manual" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center; padding:16px;">
+    <div class="modal-card" style="max-width:440px; width:100%; background:#fff; border-radius:14px; padding:20px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="margin:0; font-size:17px; font-weight:800; color:var(--ink);">💵 Registrar Ingreso Manual</h3>
+        <button type="button" id="btn-close-ingreso-manual" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-soft);">×</button>
+      </div>
+      <p style="font-size:12.5px; color:var(--ink-soft); margin:0 0 14px;">Ingresa un monto recibido (feria, transferencia, seña) y repártelo automáticamente entre Seba, Camila e Inversión.</p>
+
+      <form id="admin-ingreso-form" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label style="font-size:12px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Monto total recibido ($):</label>
+          <input type="number" id="ing-monto" min="1" placeholder="Ej: 25000" style="width:100%; font-size:16px; font-weight:800; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;" required />
+        </div>
+
+        <div>
+          <label style="font-size:12px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Concepto / Detalle:</label>
+          <input type="text" id="ing-concepto" placeholder="Ej: Venta en feria plaza, seña llaveros, etc." style="width:100%; font-size:13px; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;" required />
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div>
+            <label style="font-size:11.5px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Categoría:</label>
+            <select id="ing-categoria" style="width:100%; font-size:12.5px; padding:7px 8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
+              <option value="feria">🎪 Feria presencial</option>
+              <option value="transferencia">💳 Transferencia directa</option>
+              <option value="abono">📦 Anticipo / Abono</option>
+              <option value="otro">✨ Otro ingreso</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11.5px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Fecha:</label>
+            <input type="date" id="ing-fecha" style="width:100%; font-size:12.5px; padding:7px 8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;" />
+          </div>
+        </div>
+
+        <!-- División automática de ingresos -->
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:800; color:var(--ink);">División de este ingreso:</span>
+            <span id="ing-reparto-status" style="font-size:11px; font-weight:800; color:#15803d;">Suma: 100% ✓</span>
+          </div>
+
+          <div style="display:flex; gap:4px; margin-bottom:10px;">
+            <button type="button" class="preset-btn" id="btn-split-40-40-20" style="flex:1; font-size:10.5px; padding:4px 2px;">40 / 40 / 20</button>
+            <button type="button" class="preset-btn" id="btn-split-50-50-0" style="flex:1; font-size:10.5px; padding:4px 2px;">50 / 50 / 0</button>
+            <button type="button" class="preset-btn" id="btn-split-0-0-100" style="flex:1; font-size:10.5px; padding:4px 2px;">100% Inv</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; text-align:center;">
+            <div style="background:#eff6ff; padding:8px 4px; border-radius:8px; border:1px solid #bfdbfe;">
+              <span style="font-size:11px; font-weight:700; color:#1d4ed8; display:block;">👤 Seba</span>
+              <div style="display:flex; align-items:center; justify-content:center; gap:2px; margin:4px 0;">
+                <input type="number" id="ing-pct-seba" min="0" max="100" value="40" style="width:42px; text-align:center; font-weight:800; font-size:12px; padding:2px; border-radius:4px; border:1px solid #93c5fd;" />
+                <span style="font-size:10px; font-weight:700;">%</span>
+              </div>
+              <strong id="ing-monto-seba" style="font-size:12px; color:#1e40af;">$0</strong>
+            </div>
+
+            <div style="background:#fdf2f8; padding:8px 4px; border-radius:8px; border:1px solid #fbcfe8;">
+              <span style="font-size:11px; font-weight:700; color:#be185d; display:block;">👩 Camila</span>
+              <div style="display:flex; align-items:center; justify-content:center; gap:2px; margin:4px 0;">
+                <input type="number" id="ing-pct-cami" min="0" max="100" value="40" style="width:42px; text-align:center; font-weight:800; font-size:12px; padding:2px; border-radius:4px; border:1px solid #f472b6;" />
+                <span style="font-size:10px; font-weight:700;">%</span>
+              </div>
+              <strong id="ing-monto-cami" style="font-size:12px; color:#9d174d;">$0</strong>
+            </div>
+
+            <div style="background:#f0fdf4; padding:8px 4px; border-radius:8px; border:1px solid #bbf7d0;">
+              <span style="font-size:11px; font-weight:700; color:#15803d; display:block;">🏦 Inversión</span>
+              <div style="display:flex; align-items:center; justify-content:center; gap:2px; margin:4px 0;">
+                <input type="number" id="ing-pct-inv" min="0" max="100" value="20" style="width:42px; text-align:center; font-weight:800; font-size:12px; padding:2px; border-radius:4px; border:1px solid #86efac;" />
+                <span style="font-size:10px; font-weight:700;">%</span>
+              </div>
+              <strong id="ing-monto-inv" style="font-size:12px; color:#166534;">$0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="ing-error-box" style="display:none; color:#dc2626; font-size:12px; font-weight:600; text-align:center;"></div>
+
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button type="button" id="btn-cancel-ingreso-manual" class="btn-secondary" style="flex:1; padding:9px; border-radius:8px; font-weight:600; cursor:pointer;">Cancelar</button>
+          <button type="submit" id="btn-save-ingreso-manual" class="btn-primary" style="flex:1; padding:9px; background:#16a34a; border-color:#16a34a; border-radius:8px; font-weight:700; color:#fff; cursor:pointer;">✅ Guardar Ingreso</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL RETIRO DE INVERSIÓN / COMPRA DE INSUMOS -->
+  <div id="modal-retiro-inversion" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center; padding:16px;">
+    <div class="modal-card" style="max-width:440px; width:100%; background:#fff; border-radius:14px; padding:20px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="margin:0; font-size:17px; font-weight:800; color:#991b1b;">📉 Compra con Dinero de Inversión</h3>
+        <button type="button" id="btn-close-retiro-inversion" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-soft);">×</button>
+      </div>
+      <p style="font-size:12.5px; color:var(--ink-soft); margin:0 0 12px;">Registra un gasto pagado con el dinero acumulado del fondo de inversión (filamentos, repuestos, insumos).</p>
+
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:#166534; font-weight:600;">Saldo disponible actual en inversión:</span>
+        <strong id="ret-saldo-disp" style="font-size:15px; color:#15803d; font-weight:800;">$0</strong>
+      </div>
+
+      <form id="admin-retiro-form" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label style="font-size:12px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Monto de la compra ($):</label>
+          <input type="number" id="ret-monto" min="1" placeholder="Ej: 18990" style="width:100%; font-size:16px; font-weight:800; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;" required />
+        </div>
+
+        <div>
+          <label style="font-size:12px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">¿Qué compraste? (Detalle del insumo):</label>
+          <input type="text" id="ret-concepto" placeholder="Ej: 2x Filamento PLA Creality Negro, Boquilla 0.4mm, etc." style="width:100%; font-size:13px; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;" required />
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div>
+            <label style="font-size:11.5px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Categoría:</label>
+            <select id="ret-categoria" style="width:100%; font-size:12.5px; padding:7px 8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;">
+              <option value="filamento">🧵 Filamento / Resina</option>
+              <option value="repuestos">⚙️ Repuestos / Boquillas</option>
+              <option value="mantenimiento">🔧 Alcohol / Limpieza</option>
+              <option value="empaque">📦 Cajas / Empaque</option>
+              <option value="otro">✨ Otro insumo</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11.5px; font-weight:700; color:var(--ink); display:block; margin-bottom:4px;">Fecha:</label>
+            <input type="date" id="ret-fecha" style="width:100%; font-size:12.5px; padding:7px 8px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box;" />
+          </div>
+        </div>
+
+        <div id="ret-error-box" style="display:none; color:#dc2626; font-size:12px; font-weight:600; text-align:center;"></div>
+
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button type="button" id="btn-cancel-retiro-inversion" class="btn-secondary" style="flex:1; padding:9px; border-radius:8px; font-weight:600; cursor:pointer;">Cancelar</button>
+          <button type="submit" id="btn-save-retiro-inversion" class="btn-primary" style="flex:1; padding:9px; background:#dc2626; border-color:#dc2626; border-radius:8px; font-weight:700; color:#fff; cursor:pointer;">🛒 Confirmar Compra</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -3741,7 +3943,7 @@
       if (!p) return;
 
       const c = computeProductCost(p, item.overrideColorId);
-      const effectivePrecio = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const effectivePrecio = getFinalProductSalePrice(p, item.overrideColorId);
       const subtotal = effectivePrecio * item.qty;
       const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
 
@@ -3824,7 +4026,7 @@
       const p = getProductos().find(x => x.id === item.productId);
       if (!p) return;
       const c = computeProductCost(p, item.overrideColorId);
-      const price = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const price = getFinalProductSalePrice(p, item.overrideColorId);
       const subtotal = price * item.qty;
       const costoSubtotal = c.costoTotal * item.qty;
 
@@ -3953,7 +4155,7 @@
       const p = getProductos().find(x => x.id === item.productId);
       if (!p) return;
       const c = computeProductCost(p, item.overrideColorId);
-      const price = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const price = getFinalProductSalePrice(p, item.overrideColorId);
       const subtotal = price * item.qty;
       const paintStr = p.pintura ? ' (con pintura)' : '';
       lines.push(`${idx + 1}. *${p.nombre}*${paintStr}`);
@@ -4940,6 +5142,75 @@
     });
 
     // Pestaña Admin Pedidos
+    // Finanzas: Ingreso Manual & Retiro Inversión & Filtros
+    $('btn-open-ingreso-manual')?.addEventListener('click', openIngresoManualModal);
+    $('btn-close-ingreso-manual')?.addEventListener('click', closeIngresoManualModal);
+    $('btn-cancel-ingreso-manual')?.addEventListener('click', closeIngresoManualModal);
+    $('admin-ingreso-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleSaveIngresoManual();
+    });
+
+    ['ing-monto', 'ing-pct-seba', 'ing-pct-cami', 'ing-pct-inv'].forEach(id => {
+      $(id)?.addEventListener('input', updateIngresoBreakdown);
+    });
+
+    $('btn-split-40-40-20')?.addEventListener('click', () => setIngresoSplitPreset(40, 40, 20));
+    $('btn-split-50-50-0')?.addEventListener('click', () => setIngresoSplitPreset(50, 50, 0));
+    $('btn-split-0-0-100')?.addEventListener('click', () => setIngresoSplitPreset(0, 0, 100));
+
+    $('btn-open-retiro-inversion')?.addEventListener('click', openRetiroInversionModal);
+    $('btn-close-retiro-inversion')?.addEventListener('click', closeRetiroInversionModal);
+    $('btn-cancel-retiro-inversion')?.addEventListener('click', closeRetiroInversionModal);
+    $('admin-retiro-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleSaveRetiroInversion();
+    });
+
+    // Pestañas de filtro en Finanzas
+    $('btn-fil-todos')?.addEventListener('click', () => {
+      currentMovsFilter = 'todos';
+      document.querySelectorAll('#finanzas-filter-tabs button').forEach(b => b.classList.remove('active'));
+      $('btn-fil-todos')?.classList.add('active');
+      renderVentas();
+    });
+    $('btn-fil-ventas')?.addEventListener('click', () => {
+      currentMovsFilter = 'ventas';
+      document.querySelectorAll('#finanzas-filter-tabs button').forEach(b => b.classList.remove('active'));
+      $('btn-fil-ventas')?.classList.add('active');
+      renderVentas();
+    });
+    $('btn-fil-ingresos')?.addEventListener('click', () => {
+      currentMovsFilter = 'ingresos';
+      document.querySelectorAll('#finanzas-filter-tabs button').forEach(b => b.classList.remove('active'));
+      $('btn-fil-ingresos')?.classList.add('active');
+      renderVentas();
+    });
+    $('btn-fil-retiros')?.addEventListener('click', () => {
+      currentMovsFilter = 'retiros';
+      document.querySelectorAll('#finanzas-filter-tabs button').forEach(b => b.classList.remove('active'));
+      $('btn-fil-retiros')?.classList.add('active');
+      renderVentas();
+    });
+
+    // Presets de descuento en calculadora de productos
+    document.querySelectorAll('#c-descuento-presets button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pct = btn.dataset.pct;
+        if ($('c-descuento')) $('c-descuento').value = (pct === '0' ? '' : pct);
+        document.querySelectorAll('#c-descuento-presets button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        calcCostos();
+      });
+    });
+
+    $('modal-ingreso-manual')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-ingreso-manual')) closeIngresoManualModal();
+    });
+    $('modal-retiro-inversion')?.addEventListener('click', (e) => {
+      if (e.target === $('modal-retiro-inversion')) closeRetiroInversionModal();
+    });
+
     $('btn-refresh-pedidos')?.addEventListener('click', async () => {
       await loadAdminPedidosFromDB();
       renderAdminPedidosList();
@@ -5056,6 +5327,19 @@
 
     updateMargenPresets(cMargen);
 
+    const dctoVal = Math.max(0, Math.min(95, parseInt($('c-descuento')?.value, 10) || 0));
+    const prevEl = $('c-descuento-preview');
+    if (prevEl) {
+      if (dctoVal > 0 && precioVenta > 0) {
+        const pConDcto = Math.round(precioVenta * (1 - dctoVal / 100));
+        const ahorro = precioVenta - pConDcto;
+        prevEl.style.display = 'block';
+        prevEl.innerHTML = '🔥 <strong>' + dctoVal + '% OFF aplicado:</strong> El cliente pagará <strong>$' + fmt(pConDcto) + '</strong> (ahorras $' + fmt(ahorro) + ')';
+      } else {
+        prevEl.style.display = 'none';
+      }
+    }
+
     return {
       nombre: $('c-nombre')?.value.trim() || 'Producto sin nombre',
       imagenUrl: currentProductImage || '',
@@ -5069,10 +5353,11 @@
       gananciaSeba,
       gananciaCamila,
       splitMine,
+      descuento: dctoVal,
       cConfig
     };
   }
-  ['c-gramos','c-horas','c-pintura'].forEach(id => $(id)?.addEventListener('input', calcCostos));
+  ['c-gramos','c-horas','c-pintura','c-descuento'].forEach(id => $(id)?.addEventListener('input', calcCostos));
 
   function resetCostosForm() {
     editingId = null;
@@ -5093,6 +5378,9 @@
     $('c-pintura-aviso').textContent = '💡 Sin pintura: Reparto sugerido 60% Seba / 40% Camila.';
     $('c-sugerencia-split').textContent = '— sugerido 60/40 sin pintar';
     document.querySelectorAll('#view-costos [data-split]').forEach(b => b.classList.toggle('active', b.dataset.split === '60'));
+    if ($('c-descuento')) $('c-descuento').value = '';
+    if ($('c-descuento-preview')) $('c-descuento-preview').style.display = 'none';
+    document.querySelectorAll('#c-descuento-presets button').forEach(b => b.classList.toggle('active', b.dataset.pct === '0'));
     $('c-titulo').textContent = 'Calculadora de costos y precio';
     $('c-btn-guardar').textContent = '💾 Guardar producto en catálogo';
     $('c-btn-cancelar').style.display = 'none';
@@ -5123,6 +5411,7 @@
       pinturaManual: c.tienePintura ? c.costoPintura : null,
       precioVenta: finalPrecioVenta,
       splitMine: c.splitMine,
+      descuento: c.descuento || 0,
       fecha: new Date().toLocaleDateString('es-CL')
     };
 
@@ -5177,6 +5466,10 @@
 
     manualPrecioVenta = p.precioVenta ? Math.round(p.precioVenta) : null;
     const c = computeProductCost(p);
+    if ($('c-descuento')) $('c-descuento').value = (p.descuento && p.descuento > 0) ? p.descuento : '';
+    document.querySelectorAll('#c-descuento-presets button').forEach(b => {
+      b.classList.toggle('active', String(b.dataset.pct) === String(p.descuento || 0));
+    });
     if (p.precioVenta && p.precioVenta > c.costoTotal && c.costoTotal > 0) {
       const ganancia = p.precioVenta - c.costoTotal;
       cMargen = Math.min(300, Math.round((ganancia / c.costoTotal) * 100));
@@ -5213,6 +5506,16 @@
   }
 
   // ---------- Cálculo proporcional del precio de venta según margen de color ----------
+  function getFinalProductSalePrice(p, overrideColorId) {
+    const base = getEffectiveProductSalePrice(p, overrideColorId);
+    if (!base || base <= 0) return 0;
+    const dcto = Number(p.descuento) || 0;
+    if (dcto > 0 && dcto < 100) {
+      return Math.max(0, Math.round(base * (1 - dcto / 100)));
+    }
+    return base;
+  }
+
   function getEffectiveProductSalePrice(p, overrideColorId) {
     if (!p.precioVenta || p.precioVenta <= 0) return 0;
     const baseCostObj = computeProductCost(p); // Costo con el color original del producto
@@ -5262,6 +5565,7 @@
       pinturaManual: (r.pintura_manual === null || r.pintura_manual === undefined) ? null : Number(r.pintura_manual),
       precioVenta: (r.precio_venta === null || r.precio_venta === undefined) ? null : Number(r.precio_venta),
       splitMine: Number(r.split_mine) || 60,
+      descuento: Number(r.descuento) || 0,
       fecha: r.fecha
     };
   }
@@ -5279,6 +5583,7 @@
       pintura_manual: p.pinturaManual,
       precio_venta: p.precioVenta,
       split_mine: p.splitMine,
+      descuento: Number(p.descuento) || 0,
       fecha: p.fecha
     };
   }
@@ -5367,7 +5672,7 @@
       if (!p) continue;
 
       const c = computeProductCost(p, item.overrideColorId);
-      const effectivePrecio = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const effectivePrecio = getFinalProductSalePrice(p, item.overrideColorId);
       const q = item.qty;
 
       const ventaLinea = effectivePrecio * q;
@@ -5546,7 +5851,9 @@
       const isExpanded = !!catalogExpanded[p.id];
       const overrideColorId = (p.id in prodActiveColors) ? prodActiveColors[p.id] : undefined;
       const c = computeProductCost(p, overrideColorId);
-      const effectivePrecio = getEffectiveProductSalePrice(p, overrideColorId);
+      const basePrecio = getEffectiveProductSalePrice(p, overrideColorId);
+      const effectivePrecio = getFinalProductSalePrice(p, overrideColorId);
+      const tieneDcto = (Number(p.descuento) || 0) > 0 && effectivePrecio < basePrecio;
       const tienePrecio = effectivePrecio > 0;
       const gananciaTotal = tienePrecio ? Math.max(0, effectivePrecio - c.costoTotal) : 0;
       const margen = (tienePrecio && c.costoTotal > 0) ? Math.round((gananciaTotal / c.costoTotal) * 100) : null;
@@ -5607,17 +5914,24 @@
       // Cabecera multimedia tipo Catálogo
       const mediaHTML = p.imagenUrl ? `
         <div class="prod-media">
+          ${tieneDcto ? `<span class="prod-discount-badge">🔥 ${p.descuento}% DCTO</span>` : ''}
           ${favBtnHTML}
           <img src="${p.imagenUrl}" alt="${p.nombre}" class="prod-media-img" data-img="${p.imagenUrl}" data-name="${p.nombre}" data-price="${effectivePrecio || 0}" loading="lazy">
           <div class="prod-media-tag">
             <span class="color-dots-group">${dotsHTML}</span>
             <span>${c.desc}</span>
           </div>
-          ${tienePrecio ? `<div class="prod-media-price">${fmt(effectivePrecio)}</div>` : '<div class="prod-media-price pendiente">Sin precio</div>'}
+          ${tienePrecio ? (tieneDcto ? `
+            <div class="prod-media-price discount">
+              <span class="price-old">${fmt(basePrecio)}</span>
+              <span class="price-current">${fmt(effectivePrecio)}</span>
+            </div>
+          ` : `<div class="prod-media-price">${fmt(effectivePrecio)}</div>`) : '<div class="prod-media-price pendiente">Sin precio</div>'}
           ${(isAdmin && margen !== null) ? `<div class="prod-media-margin">+${margen}% margen</div>` : ''}
         </div>
       ` : `
         <div class="prod-no-media" style="position:relative;">
+          ${tieneDcto ? `<span class="prod-discount-badge">🔥 ${p.descuento}% DCTO</span>` : ''}
           ${favBtnHTML}
           <img src="/icon.png" class="prod-no-media-logo" alt="Pixelito3D">
           ${isAdmin ? `<button type="button" class="quick-add-photo-btn" data-id="${p.id}">📷 Agregar foto del producto</button>` : ''}
@@ -5625,7 +5939,12 @@
             <span class="color-dots-group">${dotsHTML}</span>
             <span>${c.desc}</span>
           </div>
-          ${tienePrecio ? `<div class="prod-media-price">${fmt(effectivePrecio)}</div>` : '<div class="prod-media-price pendiente">Sin precio</div>'}
+          ${tienePrecio ? (tieneDcto ? `
+            <div class="prod-media-price discount">
+              <span class="price-old">${fmt(basePrecio)}</span>
+              <span class="price-current">${fmt(effectivePrecio)}</span>
+            </div>
+          ` : `<div class="prod-media-price">${fmt(effectivePrecio)}</div>`) : '<div class="prod-media-price pendiente">Sin precio</div>'}
         </div>
       `;
 
@@ -5889,7 +6208,7 @@
       if (!p) return;
 
       const c = computeProductCost(p, item.overrideColorId);
-      const effectivePrecio = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const effectivePrecio = getFinalProductSalePrice(p, item.overrideColorId);
       const q = item.qty;
       const subtotalVenta = effectivePrecio * q;
 
@@ -6002,7 +6321,7 @@
     filtrados.forEach(p => {
       const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : undefined;
       const c = computeProductCost(p, activeColorId);
-      const effectivePrecio = getEffectiveProductSalePrice(p, activeColorId);
+      const effectivePrecio = getFinalProductSalePrice(p, activeColorId);
       const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
 
       let colorSelectOptions = `<option value="" ${activeColorId === undefined ? 'selected' : ''}>Original: ${c.desc}</option>`;
@@ -6156,7 +6475,7 @@
       if (!p) return;
 
       const c = computeProductCost(p, item.overrideColorId);
-      const effectivePrecio = getEffectiveProductSalePrice(p, item.overrideColorId);
+      const effectivePrecio = getFinalProductSalePrice(p, item.overrideColorId);
       const q = item.qty;
 
       const ventaLinea = effectivePrecio * q;
@@ -6230,56 +6549,465 @@
     ventasCache = ventasCache.filter(v => v.id !== id);
   }
 
-  function renderVentas() {
+// ---------- Movimientos (Ingresos Manuales & Compras de Inversión) ----------
+  let movimientosCache = [];
+  let currentMovsFilter = 'todos';
+
+  function rowToMovimiento(r) {
+    return {
+      id: Number(r.id),
+      tipo: r.tipo,
+      concepto: r.concepto,
+      monto: Number(r.monto) || 0,
+      fecha: r.fecha,
+      createdAt: r.created_at,
+      parteSeba: Number(r.parte_seba) || 0,
+      parteCamila: Number(r.parte_camila) || 0,
+      parteInversion: Number(r.parte_inversion) || 0,
+      pctSeba: Number(r.pct_seba) || 0,
+      pctCamila: Number(r.pct_camila) || 0,
+      pctInversion: Number(r.pct_inversion) || 0,
+      categoria: r.categoria || 'insumos',
+      registradoPor: r.registrado_por || 'Admin'
+    };
+  }
+
+  function movimientoToRow(m) {
+    return {
+      id: m.id,
+      tipo: m.tipo,
+      concepto: m.concepto,
+      monto: m.monto,
+      fecha: m.fecha,
+      parte_seba: m.parteSeba,
+      parte_camila: m.parteCamila,
+      parte_inversion: m.parteInversion,
+      pct_seba: m.pctSeba,
+      pct_camila: m.pctCamila,
+      pct_inversion: m.pctInversion,
+      categoria: m.categoria,
+      registrado_por: m.registradoPor
+    };
+  }
+
+  async function loadMovimientosFromDB() {
+    try {
+      const { data, error } = await db.from('movimientos').select('*').order('created_at', { ascending: false });
+      movimientosCache = (!error && data) ? data.map(rowToMovimiento) : [];
+    } catch (e) {
+      console.warn('Error loading movimientos', e);
+      movimientosCache = [];
+    }
+  }
+
+  async function insertMovimiento(m) {
+    try {
+      await db.from('movimientos').insert(movimientoToRow(m));
+    } catch (e) {
+      console.error('Error inserting movimiento', e);
+    }
+    movimientosCache.unshift(m);
+  }
+
+  async function deleteMovimiento(id) {
+    try {
+      await db.from('movimientos').delete().eq('id', id);
+    } catch (e) {
+      console.error('Error deleting movimiento', e);
+    }
+    movimientosCache = movimientosCache.filter(m => m.id !== id);
+  }
+
+  // Modales de Ingreso Manual y Retiro de Inversión
+  function openIngresoManualModal() {
+    const modal = $('modal-ingreso-manual');
+    if (!modal) return;
+    $('ing-monto').value = '';
+    $('ing-concepto').value = '';
+    const today = new Date().toISOString().split('T')[0];
+    if ($('ing-fecha')) $('ing-fecha').value = today;
+    setIngresoSplitPreset(40, 40, 20);
+    if ($('ing-error-box')) $('ing-error-box').style.display = 'none';
+    modal.style.display = 'flex';
+    setTimeout(() => $('ing-monto')?.focus(), 80);
+  }
+
+  function closeIngresoManualModal() {
+    const modal = $('modal-ingreso-manual');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function setIngresoSplitPreset(seba, cami, inv) {
+    if ($('ing-pct-seba')) $('ing-pct-seba').value = seba;
+    if ($('ing-pct-cami')) $('ing-pct-cami').value = cami;
+    if ($('ing-pct-inv')) $('ing-pct-inv').value = inv;
+    updateIngresoBreakdown();
+  }
+
+  function updateIngresoBreakdown() {
+    const monto = Math.max(0, parseInt($('ing-monto')?.value, 10) || 0);
+    const pctSeba = Math.max(0, parseInt($('ing-pct-seba')?.value, 10) || 0);
+    const pctCami = Math.max(0, parseInt($('ing-pct-cami')?.value, 10) || 0);
+    const pctInv = Math.max(0, parseInt($('ing-pct-inv')?.value, 10) || 0);
+
+    const sebaMonto = Math.round(monto * (pctSeba / 100));
+    const camiMonto = Math.round(monto * (pctCami / 100));
+    const invMonto = Math.round(monto * (pctInv / 100));
+
+    if ($('ing-monto-seba')) $('ing-monto-seba').textContent = fmt(sebaMonto);
+    if ($('ing-monto-cami')) $('ing-monto-cami').textContent = fmt(camiMonto);
+    if ($('ing-monto-inv')) $('ing-monto-inv').textContent = fmt(invMonto);
+
+    const totalPct = pctSeba + pctCami + pctInv;
+    const statusEl = $('ing-reparto-status');
+    if (statusEl) {
+      if (totalPct === 100) {
+        statusEl.textContent = 'Suma: 100% ✓';
+        statusEl.style.color = '#15803d';
+      } else {
+        statusEl.textContent = 'Suma: ' + totalPct + '% (¡Ajusta para sumar 100%!)';
+        statusEl.style.color = '#dc2626';
+      }
+    }
+  }
+
+  async function handleSaveIngresoManual() {
+    const monto = parseInt($('ing-monto')?.value, 10);
+    const concepto = ($('ing-concepto')?.value || '').trim();
+    const fechaVal = $('ing-fecha')?.value;
+    const errBox = $('ing-error-box');
+
+    if (!monto || monto <= 0) {
+      if (errBox) { errBox.textContent = 'Por favor ingresa un monto válido.'; errBox.style.display = 'block'; }
+      return;
+    }
+    if (!concepto) {
+      if (errBox) { errBox.textContent = 'Por favor escribe el motivo o concepto del ingreso.'; errBox.style.display = 'block'; }
+      return;
+    }
+
+    const pctSeba = Math.max(0, parseInt($('ing-pct-seba')?.value, 10) || 0);
+    const pctCami = Math.max(0, parseInt($('ing-pct-cami')?.value, 10) || 0);
+    const pctInv = Math.max(0, parseInt($('ing-pct-inv')?.value, 10) || 0);
+
+    const sebaMonto = Math.round(monto * (pctSeba / 100));
+    const camiMonto = Math.round(monto * (pctCami / 100));
+    const invMonto = Math.round(monto * (pctInv / 100));
+
+    let fStr = new Date().toLocaleDateString('es-CL');
+    if (fechaVal) {
+      const parts = fechaVal.split('-');
+      if (parts.length === 3) fStr = parts[2] + '-' + parts[1] + '-' + parts[0];
+    }
+
+    const saveBtn = $('btn-save-ingreso-manual');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Guardando...'; }
+
+    try {
+      const m = {
+        id: Date.now(),
+        tipo: 'ingreso_manual',
+        concepto,
+        monto,
+        fecha: fStr,
+        parteSeba: sebaMonto,
+        parteCamila: camiMonto,
+        parteInversion: invMonto,
+        pctSeba,
+        pctCamila,
+        pctInversion,
+        categoria: 'ingreso',
+        registradoPor: currentAdminUser ? currentAdminUser.name : 'Admin'
+      };
+      await insertMovimiento(m);
+      closeIngresoManualModal();
+      renderVentas();
+    } catch (e) {
+      if (errBox) { errBox.textContent = 'Error al guardar: ' + e.message; errBox.style.display = 'block'; }
+    } finally {
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✅ Guardar Ingreso'; }
+    }
+  }
+
+  // Retiro de Inversión / Compras
+  function openRetiroInversionModal() {
+    const modal = $('modal-retiro-inversion');
+    if (!modal) return;
+    $('ret-monto').value = '';
+    $('ret-concepto').value = '';
+    const today = new Date().toISOString().split('T')[0];
+    if ($('ret-fecha')) $('ret-fecha').value = today;
+    if ($('ret-error-box')) $('ret-error-box').style.display = 'none';
+
+    // Saldo disponible actual
+    const fin = computeFinanzasResumen();
+    if ($('ret-saldo-disp')) $('ret-saldo-disp').textContent = fmt(fin.saldoInversionDisponible);
+
+    modal.style.display = 'flex';
+    setTimeout(() => $('ret-monto')?.focus(), 80);
+  }
+
+  function closeRetiroInversionModal() {
+    const modal = $('modal-retiro-inversion');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function handleSaveRetiroInversion() {
+    const monto = parseInt($('ret-monto')?.value, 10);
+    const concepto = ($('ret-concepto')?.value || '').trim();
+    const categoria = $('ret-categoria')?.value || 'insumos';
+    const fechaVal = $('ret-fecha')?.value;
+    const errBox = $('ret-error-box');
+
+    if (!monto || monto <= 0) {
+      if (errBox) { errBox.textContent = 'Por favor ingresa un monto válido.'; errBox.style.display = 'block'; }
+      return;
+    }
+    if (!concepto) {
+      if (errBox) { errBox.textContent = 'Por favor indica qué compraste con el dinero de inversión.'; errBox.style.display = 'block'; }
+      return;
+    }
+
+    let fStr = new Date().toLocaleDateString('es-CL');
+    if (fechaVal) {
+      const parts = fechaVal.split('-');
+      if (parts.length === 3) fStr = parts[2] + '-' + parts[1] + '-' + parts[0];
+    }
+
+    const saveBtn = $('btn-save-retiro-inversion');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Guardando...'; }
+
+    try {
+      const m = {
+        id: Date.now(),
+        tipo: 'retiro_inversion',
+        concepto,
+        monto,
+        fecha: fStr,
+        parteSeba: 0,
+        parteCamila: 0,
+        parteInversion: monto,
+        pctSeba: 0,
+        pctCamila: 0,
+        pctInversion: 100,
+        categoria,
+        registradoPor: currentAdminUser ? currentAdminUser.name : 'Admin'
+      };
+      await insertMovimiento(m);
+      closeRetiroInversionModal();
+      renderVentas();
+    } catch (e) {
+      if (errBox) { errBox.textContent = 'Error al registrar compra: ' + e.message; errBox.style.display = 'block'; }
+    } finally {
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '🛒 Confirmar Compra'; }
+    }
+  }
+
+  function computeFinanzasResumen() {
     const ventas = getVentas();
-    const totalVenta = ventas.reduce((s, v) => s + (v.totalVenta || 0), 0);
-    const totalCosto = ventas.reduce((s, v) => s + (v.totalCosto || 0), 0);
-    const totalMine = ventas.reduce((s, v) => s + (v.tuParte || 0), 0);
-    const totalHers = ventas.reduce((s, v) => s + (v.suParte || 0), 0);
-    $('v-totalVenta').textContent = fmt(totalVenta);
-    $('v-totalCosto').textContent = fmt(totalCosto);
-    $('v-totalMine').textContent = fmt(totalMine);
-    $('v-totalHers').textContent = fmt(totalHers);
+    const movimientos = movimientosCache;
+
+    const totalVentasProd = ventas.reduce((s, v) => s + (v.totalVenta || 0), 0);
+    const totalCostosProd = ventas.reduce((s, v) => s + (v.totalCosto || 0), 0);
+    const totalMineProd = ventas.reduce((s, v) => s + (v.tuParte || 0), 0);
+    const totalHersProd = ventas.reduce((s, v) => s + (v.suParte || 0), 0);
+
+    const ingresos = movimientos.filter(m => m.tipo === 'ingreso_manual');
+    const totalIngresos = ingresos.reduce((s, m) => s + (m.monto || 0), 0);
+    const totalIngresosMine = ingresos.reduce((s, m) => s + (m.parteSeba || 0), 0);
+    const totalIngresosHers = ingresos.reduce((s, m) => s + (m.parteCamila || 0), 0);
+    const totalIngresosInv = ingresos.reduce((s, m) => s + (m.parteInversion || 0), 0);
+
+    const retiros = movimientos.filter(m => m.tipo === 'retiro_inversion');
+    const totalGastosInv = retiros.reduce((s, m) => s + (m.monto || 0), 0);
+
+    const totalRecaudacion = totalVentasProd + totalIngresos;
+    const totalInversionGenerada = totalCostosProd + totalIngresosInv;
+    const saldoInversionDisponible = Math.max(0, totalInversionGenerada - totalGastosInv);
+    const totalMineAcumulado = totalMineProd + totalIngresosMine;
+    const totalHersAcumulado = totalHersProd + totalIngresosHers;
+
+    return {
+      totalVentasProd,
+      totalCostosProd,
+      totalMineProd,
+      totalHersProd,
+      totalIngresos,
+      totalIngresosMine,
+      totalIngresosHers,
+      totalIngresosInv,
+      totalGastosInv,
+      totalRecaudacion,
+      totalInversionGenerada,
+      saldoInversionDisponible,
+      totalMineAcumulado,
+      totalHersAcumulado
+    };
+  }
+
+  function renderVentas() {
+    const fin = computeFinanzasResumen();
+    const ventas = getVentas();
+    const movimientos = movimientosCache;
+
+    if ($('v-totalVenta')) $('v-totalVenta').textContent = fmt(fin.totalRecaudacion);
+    if ($('v-totalVentaSub')) $('v-totalVentaSub').textContent = 'Ventas web: ' + fmt(fin.totalVentasProd) + ' · Ingresos manuales: ' + fmt(fin.totalIngresos);
+    
+    if ($('v-saldoInversion')) $('v-saldoInversion').textContent = fmt(fin.saldoInversionDisponible);
+    if ($('v-inversionSub')) $('v-inversionSub').textContent = 'Fondo generado: ' + fmt(fin.totalInversionGenerada) + ' · Compras: ' + fmt(fin.totalGastosInv);
+    
+    if ($('v-totalMine')) $('v-totalMine').textContent = fmt(fin.totalMineAcumulado);
+    if ($('v-sebaSub')) $('v-sebaSub').textContent = 'Ventas: ' + fmt(fin.totalMineProd) + ' · Ingresos: ' + fmt(fin.totalIngresosMine);
+    
+    if ($('v-totalHers')) $('v-totalHers').textContent = fmt(fin.totalHersAcumulado);
+    if ($('v-camiSub')) $('v-camiSub').textContent = 'Ventas: ' + fmt(fin.totalHersProd) + ' · Ingresos: ' + fmt(fin.totalIngresosHers);
+    
+    if ($('v-totalGastosInv')) $('v-totalGastosInv').textContent = fmt(fin.totalGastosInv);
+    if ($('ret-saldo-disp')) $('ret-saldo-disp').textContent = fmt(fin.saldoInversionDisponible);
+
+    // Contadores en pestañas de filtro
+    const nVentas = ventas.length;
+    const nIng = movimientos.filter(m => m.tipo === 'ingreso_manual').length;
+    const nRet = movimientos.filter(m => m.tipo === 'retiro_inversion').length;
+    const nTotal = nVentas + nIng + nRet;
+
+    if ($('btn-fil-todos')) $('btn-fil-todos').textContent = 'Todos (' + nTotal + ')';
+    if ($('btn-fil-ventas')) $('btn-fil-ventas').textContent = '🛒 Ventas (' + nVentas + ')';
+    if ($('btn-fil-ingresos')) $('btn-fil-ingresos').textContent = '💵 Ingresos (' + nIng + ')';
+    if ($('btn-fil-retiros')) $('btn-fil-retiros').textContent = '📉 Compras (' + nRet + ')';
 
     const el = $('ventasList');
     if (!el) return;
     el.innerHTML = '';
-    if (ventas.length === 0) {
-      el.innerHTML = '<div class="empty">Aún no registras ventas. Usa la pestaña Caja para anotar una.</div>';
+
+    // Unificar lista de transacciones
+    let items = [];
+    ventas.forEach(v => {
+      items.push({
+        tipoItem: 'venta',
+        timestamp: v.id || 0,
+        fecha: v.fecha,
+        data: v
+      });
+    });
+    movimientos.forEach(m => {
+      items.push({
+        tipoItem: m.tipo,
+        timestamp: m.id || 0,
+        fecha: m.fecha,
+        data: m
+      });
+    });
+
+    items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    if (currentMovsFilter === 'ventas') items = items.filter(it => it.tipoItem === 'venta');
+    else if (currentMovsFilter === 'ingresos') items = items.filter(it => it.tipoItem === 'ingreso_manual');
+    else if (currentMovsFilter === 'retiros') items = items.filter(it => it.tipoItem === 'retiro_inversion');
+
+    if (items.length === 0) {
+      el.innerHTML = '<div class="empty">No hay transacciones registradas en esta vista.</div>';
       return;
     }
-    ventas.forEach(v => {
-      const itemsTxt = (v.items || []).map(i => {
-        const dots = (i.dots || []).map(d => `<span class="color-dot" style="background:${d}; margin-right:2px;"></span>`).join('');
-        const colTxt = i.colorDesc || i.color || '';
-        return `<span>${dots}<strong>${i.nombre}</strong> (${colTxt}) x${i.cantidad}</span>`;
-      }).join('<br>');
 
+    items.forEach(it => {
       const card = document.createElement('div');
       card.className = 'venta-card';
-      card.innerHTML = `
-        <div class="venta-head">
-          <span>${v.fecha}</span>
-          <span>Total venta <strong>${fmt(v.totalVenta)}</strong></span>
-        </div>
-        <div class="venta-items">${itemsTxt}</div>
-        <div class="venta-foot">
-          <div class="venta-split">
-            <span>🏦 Inversión <strong>${fmt(v.totalCosto)}</strong></span> · 
-            <span>👤 Seba <strong>${fmt(v.tuParte)}</strong></span> · 
-            <span>👩 Camila <strong>${fmt(v.suParte)}</strong></span>
+      
+      if (it.tipoItem === 'venta') {
+        const v = it.data;
+        const itemsTxt = (v.items || []).map(i => {
+          const dots = (i.dots || []).map(d => `<span class="color-dot" style="background:${d}; margin-right:2px;"></span>`).join('');
+          const colTxt = i.colorDesc || i.color || '';
+          return `<span>${dots}<strong>${i.nombre}</strong> (${colTxt}) x${i.cantidad}</span>`;
+        }).join('<br>');
+
+        card.innerHTML = `
+          <div class="venta-head">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="background:#e0f2fe; color:#0369a1; font-weight:800; font-size:11px; padding:2px 8px; border-radius:999px;">🛒 Venta</span>
+              <span>${v.fecha}</span>
+            </div>
+            <span>Total venta <strong>${fmt(v.totalVenta)}</strong></span>
           </div>
-        </div>
-        <button class="prod-actions del" data-id="${v.id}" style="margin-top:8px; background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar venta</button>
-      `;
+          <div class="venta-items">${itemsTxt}</div>
+          <div class="venta-foot">
+            <div class="venta-split">
+              <span>🏦 Inversión <strong>${fmt(v.totalCosto)}</strong></span> · 
+              <span>👤 Seba <strong>${fmt(v.tuParte)}</strong></span> · 
+              <span>👩 Camila <strong>${fmt(v.suParte)}</strong></span>
+            </div>
+          </div>
+          <button class="prod-actions del btn-del-transaccion" data-tipo="venta" data-id="${v.id}" style="margin-top:8px; background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar venta</button>
+        `;
+      } else if (it.tipoItem === 'ingreso_manual') {
+        const m = it.data;
+        card.style.borderLeft = '4px solid #16a34a';
+        card.innerHTML = `
+          <div class="venta-head">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="background:#dcfce7; color:#15803d; font-weight:800; font-size:11px; padding:2px 8px; border-radius:999px;">💵 Ingreso Manual</span>
+              <span>${m.fecha}</span>
+            </div>
+            <span style="color:#15803d; font-size:15px; font-weight:800;">+${fmt(m.monto)}</span>
+          </div>
+          <div class="venta-items" style="font-size:13px; font-weight:700; color:var(--ink); margin:6px 0;">
+            ${m.concepto}
+          </div>
+          <div class="venta-foot" style="background:#f8fafc; padding:8px 10px; border-radius:8px; border:1px solid #e2e8f0;">
+            <div class="venta-split">
+              <span>👤 Seba <strong>${fmt(m.parteSeba)}</strong> (${m.pctSeba}%)</span> · 
+              <span>👩 Camila <strong>${fmt(m.parteCamila)}</strong> (${m.pctCamila}%)</span> · 
+              <span>🏦 Inversión <strong>${fmt(m.parteInversion)}</strong> (${m.pctInversion}%)</span>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <span style="font-size:11px; color:var(--ink-soft);">Registrado por: ${m.registradoPor || 'Admin'}</span>
+            <button class="prod-actions del btn-del-transaccion" data-tipo="ingreso" data-id="${m.id}" style="background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar ingreso</button>
+          </div>
+        `;
+      } else if (it.tipoItem === 'retiro_inversion') {
+        const m = it.data;
+        card.style.borderLeft = '4px solid #dc2626';
+        card.innerHTML = `
+          <div class="venta-head">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="background:#fee2e2; color:#991b1b; font-weight:800; font-size:11px; padding:2px 8px; border-radius:999px;">📉 Compra con Inversión</span>
+              <span>${m.fecha}</span>
+            </div>
+            <span style="color:#dc2626; font-size:15px; font-weight:800;">-${fmt(m.monto)}</span>
+          </div>
+          <div class="venta-items" style="font-size:13.5px; font-weight:800; color:#991b1b; margin:6px 0;">
+            🛒 ${m.concepto}
+          </div>
+          <div style="font-size:11.5px; color:var(--ink-soft); display:flex; gap:8px; align-items:center;">
+            <span>Categoría: <b>${m.categoria || 'insumos'}</b></span>
+            <span>· Pagado con dinero de inversión</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <span style="font-size:11px; color:var(--ink-soft);">Registrado por: ${m.registradoPor || 'Admin'}</span>
+            <button class="prod-actions del btn-del-transaccion" data-tipo="retiro" data-id="${m.id}" style="background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar compra</button>
+          </div>
+        `;
+      }
+
       el.appendChild(card);
     });
 
-    el.querySelectorAll('button[data-id]').forEach(btn => {
+    el.querySelectorAll('.btn-del-transaccion').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (confirm('¿Deseas eliminar esta venta del historial?')) {
-          await deleteVenta(parseInt(btn.dataset.id, 10));
-          renderVentas();
+        const tipo = btn.dataset.tipo;
+        const id = parseInt(btn.dataset.id, 10);
+        if (tipo === 'venta') {
+          if (confirm('¿Deseas eliminar esta venta del historial?')) {
+            await deleteVenta(id);
+            renderVentas();
+          }
+        } else if (tipo === 'ingreso' || tipo === 'retiro') {
+          if (confirm('¿Deseas eliminar este registro del historial?')) {
+            await deleteMovimiento(id);
+            renderVentas();
+          }
         }
       });
     });
@@ -6295,7 +7023,7 @@
     updateClientUI();
     await loadAjustesFromDB();
     await loadColoresFromDB();
-    await Promise.all([loadProductosFromDB(), loadVentasFromDB(), loadAdminPedidosFromDB()]);
+    await Promise.all([loadProductosFromDB(), loadVentasFromDB(), loadAdminPedidosFromDB(), loadMovimientosFromDB()]);
     calcCostos();
     renderProductos();
     renderCaja();
