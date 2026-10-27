@@ -1554,6 +1554,13 @@
   .split-seg button.active { background:var(--blue); color:#fff; }
   .split-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:8px 0 2px; }
   .split-row .split-lbl { font-size:11.5px; font-weight:700; color:var(--ink-soft); }
+  .venta-desglose { font-size:11.5px; color:var(--ink-soft); margin-top:6px; display:flex; flex-wrap:wrap; gap:4px 12px; }
+  .venta-desglose b { color:var(--ink); }
+  .desg-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+  .desg-card { border:1px solid var(--line); border-radius:10px; padding:9px 11px; background:var(--bg-panel); }
+  .desg-card .t { font-size:11.5px; font-weight:700; color:var(--ink-soft); }
+  .desg-card .v { font-size:16px; font-weight:800; color:var(--ink); margin-top:2px; }
+  .desg-card .p { font-size:11px; color:var(--ink-faint); }
   .split-row .split-hint { font-size:10.5px; color:var(--ink-faint); width:100%; }
 </style>
 </head>
@@ -2009,6 +2016,8 @@
           <p style="font-size:11px; color:#991b1b; margin:2px 0 0;">Filamentos, repuestos y compras del negocio</p>
         </div>
       </div>
+
+      <div id="v-desglose-inversion" style="margin-top:14px;"></div>
     </div>
 
     <div class="panel">
@@ -4596,6 +4605,10 @@
           cantidad: it.qty,
           precioVenta: it.precioUnitario,
           costoTotal: it.costoUnitario,
+          costoDesglose: (() => {
+            const pp = getProductos().find(x => x.id === Number(it.productId));
+            return pp ? costDesglose(pp, (it.overrideColorId === null || it.overrideColorId === undefined) ? undefined : Number(it.overrideColorId)) : null;
+          })(),
           subtotal: it.subtotal,
           splitMine: sMine,
           orderId: order.id
@@ -5398,6 +5411,11 @@
           items: [{
             nombre: nombreVenta,
             cantidad: 1,
+            costoUnit: c.costoProduccion,
+            costoDesglose: {
+              filamento: Math.max(0, c.costoProduccion - Math.round(c.costoLuz) - Math.round(c.costoMaquina) - Math.round(c.costoPintura)),
+              luz: Math.round(c.costoLuz), maquina: Math.round(c.costoMaquina), pintura: Math.round(c.costoPintura)
+            },
             precioUnitario: finalPrecio,
             color: eff.desc,
             dots: cConfig.items?.map(it => getColorById(it.colorId)?.hex).filter(Boolean) || [eff.hex]
@@ -5582,6 +5600,9 @@
       horas,
       tienePintura,
       costoPintura,
+      costoMaterial,
+      costoLuz,
+      costoMaquina,
       costoProduccion,
       precioVenta,
       gananciaTotal,
@@ -5737,6 +5758,14 @@
       return Object.assign({}, r, { costoMaterial: 0, costoLuz: 0, costoMaquina: 0, costoPintura: 0, costoTotal: 0, precioKg: 0 });
     }
     return r;
+  }
+
+  // Desglose del costo de producción: filamento, luz, máquina y pintura (por unidad)
+  function costDesglose(p, overrideColorId) {
+    const c = computeProductCostReal(p, overrideColorId);
+    const luz = Math.round(c.costoLuz), maquina = Math.round(c.costoMaquina), pintura = Math.round(c.costoPintura);
+    const filamento = Math.max(0, Math.round(c.costoTotal) - luz - maquina - pintura);
+    return { filamento, luz, maquina, pintura };
   }
 
   function computeProductCostReal(p, overrideColorId) {
@@ -6356,6 +6385,17 @@
             ${multiColorChipsHTML}
           ` : ''}
 
+          ${isAdmin && tienePrecio ? `
+            <div class="split-row" style="margin-top:10px;">
+              <span class="split-lbl">Reparto:</span>
+              <div class="split-seg">
+                <button type="button" class="prod-split-btn ${splitSeba === 60 ? 'active' : ''}" data-id="${p.id}" data-split="60">60/40</button>
+                <button type="button" class="prod-split-btn ${splitSeba === 50 ? 'active' : ''}" data-id="${p.id}" data-split="50">50/50</button>
+              </div>
+              <span style="font-size:12px; color:var(--ink-soft);">👤 Seba <b style="color:#047857;">${fmt(gananciaSeba)}</b> · 👩 Camila <b style="color:#be185d;">${fmt(gananciaCamila)}</b></span>
+            </div>
+          ` : ''}
+
           ${isAdmin ? `
             <!-- BOTÓN PARA DESPLEGAR DETALLES (SOLO ADMIN) -->
             <button type="button" class="prod-toggle-card-btn" data-id="${p.id}" style="margin-top:12px;">
@@ -6445,6 +6485,18 @@
     });
 
     // Botón desplegar/colapsar tarjeta (Admin)
+    el.querySelectorAll('.prod-split-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const prod = getProductos().find(x => x.id === Number(btn.dataset.id));
+        if (!prod) return;
+        prod.splitMine = Number(btn.dataset.split) === 50 ? 50 : 60;
+        renderProductos();
+        renderCaja();
+        await updateProducto(prod);
+      });
+    });
+
     el.querySelectorAll('.prod-toggle-card-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -6883,6 +6935,7 @@
         cantidad: q,
         precioUnit: effectivePrecio,
         costoUnit: Math.round(c.costoTotal),
+        costoDesglose: costDesglose(p, item.overrideColorId),
         splitMine: splitSeba
       });
 
@@ -7244,6 +7297,70 @@
     };
   }
 
+  // Reparte el costo (inversión) de una venta en filamento / luz / máquina / pintura.
+  // Ventas antiguas sin desglose: se estima con el costo actual del producto.
+  function saleBreakdown(v) {
+    const tot = { filamento: 0, luz: 0, maquina: 0, pintura: 0 };
+    let estimado = false, otros = 0;
+    const its = v.items || [];
+    its.forEach(i => {
+      const q = Number(i.cantidad !== undefined ? i.cantidad : i.qty) || 1;
+      let unit = Number(i.costoUnit !== undefined ? i.costoUnit : i.costoTotal);
+      if (!isFinite(unit)) unit = (its.length === 1) ? (Number(v.totalCosto) || 0) / q : NaN;
+      let d = i.costoDesglose;
+      if (!d) {
+        const nom = String(i.nombre || '').toLowerCase();
+        const p = productosCache.find(x => (i.productId && x.id === Number(i.productId)) || String(x.nombre || '').toLowerCase() === nom);
+        if (p && isFinite(unit) && unit > 0) {
+          const r = costDesglose(p);
+          const sum = r.filamento + r.luz + r.maquina + r.pintura;
+          if (sum > 0) {
+            const k = unit / sum;
+            d = { filamento: r.filamento * k, luz: r.luz * k, maquina: r.maquina * k, pintura: r.pintura * k };
+            estimado = true;
+          }
+        }
+      }
+      if (d) { Object.keys(tot).forEach(k => { tot[k] += (Number(d[k]) || 0) * q; }); }
+      else if (isFinite(unit)) otros += unit * q;
+    });
+    return Object.assign(tot, { estimado, otros });
+  }
+
+  function desgloseHTML(b) {
+    const parts = [['🧵 Filamento', b.filamento], ['⚡ Luz', b.luz], ['⚙️ Máquina', b.maquina], ['🎨 Pintura', b.pintura], ['❔ Sin detalle', b.otros]]
+      .filter(x => x[1] >= 0.5)
+      .map(x => `<span>${x[0]} <b>${fmt(x[1])}</b></span>`);
+    if (!parts.length) return '';
+    return `<div class="venta-desglose">${parts.join('')}${b.estimado ? '<span style="font-style:italic;">(estimado)</span>' : ''}</div>`;
+  }
+
+  function renderDesgloseInversion(ventas) {
+    const box = $('v-desglose-inversion');
+    if (!box) return;
+    const t = { filamento: 0, luz: 0, maquina: 0, pintura: 0, otros: 0 };
+    let est = false;
+    ventas.forEach(v => {
+      const b = saleBreakdown(v);
+      ['filamento', 'luz', 'maquina', 'pintura', 'otros'].forEach(k => { t[k] += b[k]; });
+      if (b.estimado) est = true;
+    });
+    const total = t.filamento + t.luz + t.maquina + t.pintura + t.otros;
+    if (total < 1) { box.innerHTML = ''; return; }
+    const card = (ic, name, val) => `<div class="desg-card"><div class="t">${ic} ${name}</div><div class="v">${fmt(val)}</div><div class="p">${Math.round((val / total) * 100)}% de la inversión</div></div>`;
+    box.innerHTML = `
+      <p class="eyebrow" style="margin:0;">¿En qué se va la inversión de las ventas?</p>
+      <div class="desg-grid">
+        ${card('🧵', 'Filamento', t.filamento)}
+        ${card('⚡', 'Luz', t.luz)}
+        ${card('⚙️', 'Máquina', t.maquina)}
+        ${card('🎨', 'Pintura', t.pintura)}
+        ${t.otros >= 1 ? card('❔', 'Sin detalle', t.otros) : ''}
+      </div>
+      ${est ? '<p style="font-size:11px; color:var(--ink-faint); margin:6px 0 0;">Las ventas anteriores a esta función se estiman con el costo actual de cada producto.</p>' : ''}
+    `;
+  }
+
   function renderVentas() {
     const fin = computeFinanzasResumen();
     const ventas = getVentas();
@@ -7274,6 +7391,8 @@
     if ($('btn-fil-ventas')) $('btn-fil-ventas').textContent = '🛒 Ventas (' + nVentas + ')';
     if ($('btn-fil-ingresos')) $('btn-fil-ingresos').textContent = '💵 Ingresos (' + nIng + ')';
     if ($('btn-fil-retiros')) $('btn-fil-retiros').textContent = '📉 Compras (' + nRet + ')';
+
+    renderDesgloseInversion(ventas);
 
     const el = $('ventasList');
     if (!el) return;
@@ -7336,6 +7455,7 @@
               <span>👤 Seba <strong>${fmt(v.tuParte)}</strong></span> · 
               <span>👩 Camila <strong>${fmt(v.suParte)}</strong></span>
             </div>
+            ${desgloseHTML(saleBreakdown(v))}
           </div>
           <button class="prod-actions del btn-del-transaccion" data-tipo="venta" data-id="${v.id}" style="margin-top:8px; background:none; border:none; color:var(--red); font-size:12px; font-weight:600; cursor:pointer;">Borrar venta</button>
         `;
