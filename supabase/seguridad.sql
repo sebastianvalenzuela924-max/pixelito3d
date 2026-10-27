@@ -51,6 +51,9 @@ select id, 'cami', 'Camila' from auth.users where email = 'cami@pixelito3d.app';
 alter table public.clientes add column if not exists auth_id uuid unique references auth.users(id) on delete cascade;
 alter table public.clientes drop column if exists pass_hash;
 
+-- Cuentas antiguas (sin Auth): liberar el nombre de usuario para que puedan registrarse de nuevo
+update public.clientes set usuario = usuario || '_antiguo' where auth_id is null and usuario not like '%\_antiguo';
+
 -- pedidos.items debe ser jsonb
 alter table public.pedidos alter column items type jsonb using items::jsonb;
 
