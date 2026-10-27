@@ -2236,8 +2236,8 @@
       <!-- FORM INICIAR SESIÓN -->
       <form id="client-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:12px;">
         <div>
-          <label for="cli-login-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Usuario:</label>
-          <input type="text" id="cli-login-user" placeholder="tu nombre de usuario" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+          <label for="cli-login-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Correo:</label>
+          <input type="email" id="cli-login-user" autocomplete="email" placeholder="tu@correo.com" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
         </div>
         <div>
           <label for="cli-login-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Contraseña:</label>
@@ -2261,8 +2261,12 @@
           <input type="text" id="cli-reg-user" placeholder="Ej: matias3d" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
         </div>
         <div>
-          <label for="cli-reg-contact" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Correo, Instagram o WhatsApp (para contactarte):</label>
-          <input type="text" id="cli-reg-contact" placeholder="tu@correo.com o @tu_ig" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);">
+          <label for="cli-reg-email" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Tu correo (con él inicias sesión):</label>
+          <input type="email" id="cli-reg-email" autocomplete="email" placeholder="tu@correo.com" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+        </div>
+        <div>
+          <label for="cli-reg-contact" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Instagram o WhatsApp (opcional, para contactarte):</label>
+          <input type="text" id="cli-reg-contact" placeholder="@tu_ig o +56 9 ..." style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);">
         </div>
         <div>
           <label for="cli-reg-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Crea una Contraseña:</label>
@@ -3317,7 +3321,6 @@
   let currentAdminUser = null;
   // Autenticación real con Supabase Auth (sin contraseñas ni hashes en el código).
   const ADMIN_EMAIL_DOMAIN = 'pixelito3d.app';
-  const CLIENT_EMAIL_DOMAIN = 'clientes.pixelito3d.app';
 
   // ---------- Utilidades de seguridad (evitar XSS con datos que vienen de clientes) ----------
   function esc(v) {
@@ -3748,7 +3751,7 @@
     }
   }
 
-  function clientEmailFor(usuario) { return `${usuario}@${CLIENT_EMAIL_DOMAIN}`; }
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
   async function handleClientLoginSubmit() {
     const uInput = $('cli-login-user');
@@ -3761,13 +3764,13 @@
     const p = (pInput.value || '');
 
     if (!u || !p) { showErr('Por favor completa todos los campos.'); return; }
-    if (!/^[a-z0-9._-]{3,30}$/.test(u)) { showErr('Ingresa tu nombre de usuario (solo letras, números, punto, guion o guion bajo).'); return; }
+    if (!EMAIL_RE.test(u)) { showErr('Ingresa el correo con el que creaste tu cuenta.'); return; }
 
     try {
-      const { data, error } = await db.auth.signInWithPassword({ email: clientEmailFor(u), password: p });
+      const { data, error } = await db.auth.signInWithPassword({ email: u, password: p });
       if (error || !data || !data.session) {
         await new Promise(r => setTimeout(r, 700));
-        showErr('Usuario o contraseña incorrectos.');
+        showErr('Correo o contraseña incorrectos.');
         return;
       }
       const { data: row } = await db.from('clientes').select('*').eq('auth_id', data.session.user.id).maybeSingle();
@@ -3799,6 +3802,7 @@
   async function handleClientRegisterSubmit() {
     const nameInput = $('cli-reg-name');
     const userInput = $('cli-reg-user');
+    const emailInput = $('cli-reg-email');
     const contactInput = $('cli-reg-contact');
     const passInput = $('cli-reg-pass');
     const errBox = $('cli-reg-error');
@@ -3806,22 +3810,29 @@
 
     const nombre = (nameInput?.value || '').trim().slice(0, 60);
     const usuario = (userInput?.value || '').trim().toLowerCase();
+    const email = (emailInput?.value || '').trim().toLowerCase();
     const contacto = (contactInput?.value || '').trim().slice(0, 120);
     const pass = (passInput?.value || '');
 
-    if (!nombre || !usuario || !pass) { showErr('Nombre, usuario y contraseña son obligatorios.'); return; }
+    if (!nombre || !usuario || !pass || !email) { showErr('Nombre, usuario, correo y contraseña son obligatorios.'); return; }
+    if (!EMAIL_RE.test(email)) { showErr('Escribe un correo válido (ej: tu@gmail.com).'); return; }
     if (!/^[a-z0-9._-]{3,30}$/.test(usuario)) { showErr('El usuario debe tener 3 a 30 caracteres: letras, números, punto, guion o guion bajo.'); return; }
     if (pass.length < 8) { showErr('La contraseña debe tener al menos 8 caracteres.'); return; }
 
     try {
-      const { data: su, error: suErr } = await db.auth.signUp({ email: clientEmailFor(usuario), password: pass });
+      // Verificar antes que el usuario esté libre (evita dejar cuentas a medio crear)
+      const { data: libre, error: libreErr } = await db.rpc('usuario_disponible', { p_usuario: usuario });
+      if (!libreErr && libre === false) { showErr('Ese nombre de usuario ya está registrado. Elige otro.'); return; }
+
+      const { data: su, error: suErr } = await db.auth.signUp({ email, password: pass });
       if (suErr) {
-        if (/registered|exists/i.test(suErr.message || '')) showErr('Ese nombre de usuario ya está registrado. Elige otro.');
+        if (/registered|exists/i.test(suErr.message || '')) showErr('Ese correo ya tiene una cuenta. Inicia sesión.');
+        else if (/invalid/i.test(suErr.message || '')) showErr('Ese correo no es válido. Revisa que esté bien escrito.');
         else showErr('No se pudo crear la cuenta: ' + (suErr.message || 'Inténtalo de nuevo'));
         return;
       }
       if (!su || !su.session) {
-        showErr('No se pudo iniciar la sesión automáticamente. Intenta iniciar sesión con tu usuario y contraseña.');
+        showErr('Tu cuenta se creó, pero hay que confirmar el correo antes de entrar. Avísanos por Instagram si no te llega.');
         return;
       }
 

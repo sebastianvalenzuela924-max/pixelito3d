@@ -228,3 +228,11 @@ update public.pedidos
 set items = coalesce((select jsonb_agg(i - 'costoUnitario' - 'horas' - 'pinturaManual')
                       from jsonb_array_elements(items) i), '[]'::jsonb)
 where estado = 'pendiente';
+
+-- Comprobar si un usuario de cliente está libre (para registrarse sin dejar cuentas a medias)
+create or replace function public.usuario_disponible(p_usuario text)
+returns boolean language sql stable security definer set search_path = public as $$
+  select not exists (select 1 from public.clientes where lower(usuario) = lower(p_usuario));
+$$;
+revoke all on function public.usuario_disponible(text) from public;
+grant execute on function public.usuario_disponible(text) to anon, authenticated;
