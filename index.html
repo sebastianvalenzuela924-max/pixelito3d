@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://ywocbwnfgglfksbzkngw.supabase.co; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#2563eb">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1546,6 +1548,13 @@
       max-width: 100%;
     }
   }
+
+  .split-seg { display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--bg-panel); }
+  .split-seg button { border:0; background:transparent; padding:5px 11px; font-size:12px; font-weight:700; color:var(--ink-soft); cursor:pointer; font-family:inherit; }
+  .split-seg button.active { background:var(--blue); color:#fff; }
+  .split-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:8px 0 2px; }
+  .split-row .split-lbl { font-size:11.5px; font-weight:700; color:var(--ink-soft); }
+  .split-row .split-hint { font-size:10.5px; color:var(--ink-faint); width:100%; }
 </style>
 </head>
 <body>
@@ -2227,8 +2236,8 @@
       <!-- FORM INICIAR SESIÓN -->
       <form id="client-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:12px;">
         <div>
-          <label for="cli-login-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Usuario o Email:</label>
-          <input type="text" id="cli-login-user" placeholder="tu usuario o tu correo" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+          <label for="cli-login-user" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Usuario:</label>
+          <input type="text" id="cli-login-user" placeholder="tu nombre de usuario" style="width:100%; box-sizing:border-box; padding:9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
         </div>
         <div>
           <label for="cli-login-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Contraseña:</label>
@@ -2258,7 +2267,7 @@
         <div>
           <label for="cli-reg-pass" style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--ink);">Crea una Contraseña:</label>
           <div style="position:relative; display:flex; align-items:center;">
-            <input type="password" id="cli-reg-pass" placeholder="••••••••" style="width:100%; box-sizing:border-box; padding:9px 38px 9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
+            <input type="password" id="cli-reg-pass" placeholder="Mínimo 8 caracteres" minlength="8" autocomplete="new-password" style="width:100%; box-sizing:border-box; padding:9px 38px 9px 12px; border-radius:8px; border:1px solid var(--border); font-size:14px; background:var(--bg); color:var(--ink);" required>
             <button type="button" class="btn-toggle-password" data-target="cli-reg-pass" style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:16px; padding:4px; color:var(--ink-soft);" title="Mostrar / ocultar contraseña">👁️</button>
           </div>
         </div>
@@ -2532,7 +2541,7 @@
     </div>
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/vendor/supabase.js"></script>
 <script>
   const $ = id => document.getElementById(id);
   const fmt = n => '$' + Math.round(n || 0).toLocaleString('es-CL');
@@ -2572,7 +2581,7 @@
 
   async function loadColoresFromDB() {
     try {
-      const { data, error } = await db.from('colores').select('*').order('nombre', { ascending: true });
+      const { data, error } = await db.from(isAdmin ? 'colores' : 'colores_publico').select('*').order('nombre', { ascending: true });
       if (!error && data) {
         coloresCache = data.map(c => ({
           id: Number(c.id),
@@ -2612,6 +2621,7 @@
     renderColoresAjustes();
     populateColorControls();
     calcCostos();
+    scheduleCatalogSync();
   }
 
   async function updateColor(id, nombre, precioKg, hex) {
@@ -2625,6 +2635,7 @@
     renderColoresAjustes();
     populateColorControls();
     calcCostos();
+    scheduleCatalogSync();
   }
 
   async function deleteColor(id) {
@@ -2635,6 +2646,7 @@
     renderColoresAjustes();
     populateColorControls();
     calcCostos();
+    scheduleCatalogSync();
   }
 
   function renderColoresAjustes() {
@@ -2703,6 +2715,7 @@
   let ajustes = Object.assign({}, defaultAjustes);
 
   async function loadAjustesFromDB() {
+    if (!isAdmin) return;
     try {
       const { data, error } = await db.from('ajustes').select('*').eq('id', 1).single();
       if (!error && data) {
@@ -2727,6 +2740,7 @@
       vida_util: ajustes.vidaUtil,
       updated_at: new Date().toISOString()
     }).eq('id', 1).then(() => {}).catch(() => {});
+    scheduleCatalogSync();
   }
 
   function loadAjustesUI() {
@@ -3301,34 +3315,58 @@
   // ---------- AUTHENTICATION & ADMIN ROLES (Seba & Cami) ----------
   let isAdmin = false;
   let currentAdminUser = null;
-  const ADMIN_SESSION_KEY = 'pixelito_admin_session';
-  const ADMIN_SALT = 'pixelito3d_admin_salt_2026_';
-  const TARGET_HASH = '1f43c7a0760708cb13365695efea555c7a179fcafbefbbc12502b6e0b3a4c438';
+  // Autenticación real con Supabase Auth (sin contraseñas ni hashes en el código).
+  const ADMIN_EMAIL_DOMAIN = 'pixelito3d.app';
+  const CLIENT_EMAIL_DOMAIN = 'clientes.pixelito3d.app';
 
-  async function sha256Salted(str) {
-    const enc = new TextEncoder();
-    const data = enc.encode(ADMIN_SALT + str);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  // ---------- Utilidades de seguridad (evitar XSS con datos que vienen de clientes) ----------
+  function esc(v) {
+    return String(v === null || v === undefined ? '' : v).replace(/[&<>"']/g, ch => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+    ));
+  }
+  function safeColor(c) { return /^#[0-9a-fA-F]{3,8}$/.test(String(c || '')) ? c : '#94a3b8'; }
+  function safeImg(u) {
+    u = String(u || '');
+    if (/^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(u)) return u;
+    if (/^https:\/\/[^\s"'<>]+$/.test(u)) return u;
+    return '';
   }
 
-  function checkExistingAdminSession() {
+  async function checkExistingAdminSession() {
+    isAdmin = false;
+    currentAdminUser = null;
     try {
-      const raw = localStorage.getItem(ADMIN_SESSION_KEY);
-      if (!raw) return false;
-      const sess = JSON.parse(raw);
-      if (sess && sess.token === TARGET_HASH && sess.expires > Date.now()) {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return false;
+      const { data, error } = await db.from('admin_users')
+        .select('username, display_name')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      if (!error && data) {
         isAdmin = true;
-        currentAdminUser = { user: sess.user, name: sess.name || (sess.user === 'seba' ? 'Seba' : 'Camila') };
+        currentAdminUser = { user: data.username, name: data.display_name || data.username };
         return true;
       }
     } catch (e) {
-      console.warn('Session parse error', e);
+      console.warn('Session check error', e);
     }
-    isAdmin = false;
-    currentAdminUser = null;
     return false;
+  }
+
+  // Carga todos los datos según el rol actual (admin ve todo, público solo el catálogo)
+  async function loadAllData() {
+    await loadAjustesFromDB();
+    await loadColoresFromDB();
+    await Promise.all([loadProductosFromDB(), loadVentasFromDB(), loadAdminPedidosFromDB(), loadMovimientosFromDB()]);
+    calcCostos();
+    renderProductos();
+    renderCaja();
+    if (isAdmin) {
+      try { renderVentas(); } catch (e) {}
+      try { renderAdminPedidosList(); } catch (e) {}
+      scheduleCatalogSync();
+    }
   }
 
   function updateAdminUI() {
@@ -3390,70 +3428,67 @@
     if (modal) modal.style.display = 'none';
   }
 
+  let adminLoginBusy = false;
   async function handleAdminLoginSubmit() {
+    if (adminLoginBusy) return;
     const uInput = $('admin-user-input');
     const pInput = $('admin-pass-input');
     const errBox = $('admin-login-error');
     if (!uInput || !pInput) return;
+    const showErr = (msg) => {
+      if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; }
+    };
 
     const rawUser = (uInput.value || '').trim().toLowerCase();
     const rawPass = (pInput.value || '');
 
     if (rawUser !== 'seba' && rawUser !== 'cami') {
-      if (errBox) {
-        errBox.textContent = 'Usuario no válido. Ingresa "seba" o "cami".';
-        errBox.style.display = 'block';
-      }
+      showErr('Usuario no válido. Ingresa "seba" o "cami".');
       return;
     }
+    if (!rawPass) { showErr('Ingresa tu contraseña.'); return; }
 
-    const hashedInput = await sha256Salted(rawPass);
-    let authenticated = false;
-    let displayName = rawUser === 'seba' ? 'Seba' : 'Camila';
-
-    // Verificación en Supabase admin_users con fallback de hash
+    adminLoginBusy = true;
+    const submitBtn = $('btn-admin-submit-login');
+    if (submitBtn) submitBtn.disabled = true;
     try {
-      const { data, error } = await db.from('admin_users').select('*').eq('username', rawUser).single();
-      if (!error && data && data.pass_hash === hashedInput) {
-        authenticated = true;
-        displayName = data.display_name || displayName;
+      const { data, error } = await db.auth.signInWithPassword({ email: `${rawUser}@${ADMIN_EMAIL_DOMAIN}`, password: rawPass });
+      if (error || !data || !data.session) {
+        await new Promise(r => setTimeout(r, 900));
+        showErr('Usuario o contraseña incorrectos.');
+        pInput.value = '';
+        pInput.focus();
+        return;
       }
-    } catch (e) {
-      console.warn('DB check fallback', e);
-    }
-
-    if (!authenticated && hashedInput === TARGET_HASH) {
-      authenticated = true;
-    }
-
-    if (authenticated) {
-      isAdmin = true;
-      currentAdminUser = { user: rawUser, name: displayName };
-      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
-        user: rawUser,
-        name: displayName,
-        token: TARGET_HASH,
-        expires: Date.now() + 30 * 24 * 3600 * 1000
-      }));
-
+      const ok = await checkExistingAdminSession();
+      if (!ok) {
+        await db.auth.signOut();
+        showErr('Esta cuenta no tiene permisos de administrador.');
+        return;
+      }
+      currentClient = null;
+      clientFavs.clear();
+      localStorage.removeItem(CLIENT_FAVS_KEY);
+      pInput.value = '';
       closeAdminLoginModal();
       updateAdminUI();
-      renderProductos();
-      renderCaja();
-    } else {
-      if (errBox) {
-        errBox.textContent = 'Contraseña incorrecta. Inténtalo nuevamente.';
-        errBox.style.display = 'block';
-      }
-      pInput.value = '';
-      pInput.focus();
+      await loadAllData();
+    } catch (e) {
+      console.error(e);
+      showErr('No se pudo iniciar sesión. Revisa tu conexión e inténtalo de nuevo.');
+    } finally {
+      adminLoginBusy = false;
+      if (submitBtn) submitBtn.disabled = false;
     }
   }
 
-  function logoutAdmin() {
-    localStorage.removeItem(ADMIN_SESSION_KEY);
+  async function logoutAdmin() {
+    try { await db.auth.signOut(); } catch (e) {}
     isAdmin = false;
     currentAdminUser = null;
+    ventasCache = [];
+    adminPedidosCache = [];
+    movimientosCache = [];
     updateAdminUI();
 
     // Regresar a vista pública de Catálogo
@@ -3464,14 +3499,13 @@
     const catView = $('view-productos');
     if (catView) catView.classList.add('active');
 
-    renderProductos();
+    await loadAllData();
   }
 
   // ---------- CLIENT ACCOUNTS, FAVORITES & LOYALTY ----------
   let currentClient = null;
   let clientFavs = new Set();
   let filterOnlyFavs = false;
-  const CLIENT_SESSION_KEY = 'pixelito_client_session';
   const CLIENT_FAVS_KEY = 'pixelito_local_favs';
   let adminPedidosCache = [];
   let pedidosFilterMode = 'pendientes'; // 'pendientes' | 'aprobados' | 'todos'
@@ -3527,24 +3561,17 @@
 
   async function checkExistingClientSession() {
     try {
-      const raw = localStorage.getItem(CLIENT_SESSION_KEY);
-      if (raw) {
-        const sess = JSON.parse(raw);
-        if (sess && sess.id) {
-          currentClient = sess;
-          try {
-            const { data, error } = await db.from('clientes').select('*').eq('id', sess.id).single();
-            if (!error && data) {
-              currentClient = data;
-              localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(data));
-              if (Array.isArray(data.favoritos)) {
-                clientFavs.clear();
-                data.favoritos.forEach(id => clientFavs.add(Number(id)));
-                localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(Array.from(clientFavs)));
-              }
+      if (!isAdmin) {
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+          const { data } = await db.from('clientes').select('*').eq('auth_id', session.user.id).maybeSingle();
+          if (data) {
+            currentClient = data;
+            if (Array.isArray(data.favoritos)) {
+              clientFavs.clear();
+              data.favoritos.forEach(id => clientFavs.add(Number(id)));
+              localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(Array.from(clientFavs)));
             }
-          } catch (err) {
-            console.warn('Client refresh error', err);
           }
         }
       }
@@ -3721,52 +3748,41 @@
     }
   }
 
+  function clientEmailFor(usuario) { return `${usuario}@${CLIENT_EMAIL_DOMAIN}`; }
+
   async function handleClientLoginSubmit() {
     const uInput = $('cli-login-user');
     const pInput = $('cli-login-pass');
     const errBox = $('cli-login-error');
     if (!uInput || !pInput) return;
+    const showErr = (msg) => { if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; } };
 
-    const u = (uInput.value || '').trim();
+    const u = (uInput.value || '').trim().toLowerCase();
     const p = (pInput.value || '');
 
-    if (!u || !p) {
-      if (errBox) {
-        errBox.textContent = 'Por favor completa todos los campos.';
-        errBox.style.display = 'block';
-      }
-      return;
-    }
+    if (!u || !p) { showErr('Por favor completa todos los campos.'); return; }
+    if (!/^[a-z0-9._-]{3,30}$/.test(u)) { showErr('Ingresa tu nombre de usuario (solo letras, números, punto, guion o guion bajo).'); return; }
 
-    const hashed = await sha256Salted(p);
     try {
-      const { data, error } = await db.from('clientes')
-        .select('*')
-        .or(`usuario.ilike.${u},contacto.ilike.${u}`)
-        .maybeSingle();
-
-      if (error || !data) {
-        if (errBox) {
-          errBox.textContent = 'Usuario o correo no encontrado. ¿Quieres crear una cuenta?';
-          errBox.style.display = 'block';
-        }
+      const { data, error } = await db.auth.signInWithPassword({ email: clientEmailFor(u), password: p });
+      if (error || !data || !data.session) {
+        await new Promise(r => setTimeout(r, 700));
+        showErr('Usuario o contraseña incorrectos.');
         return;
       }
-
-      if (data.pass_hash !== hashed) {
-        if (errBox) {
-          errBox.textContent = 'Contraseña incorrecta.';
-          errBox.style.display = 'block';
-        }
+      const { data: row } = await db.from('clientes').select('*').eq('auth_id', data.session.user.id).maybeSingle();
+      if (!row) {
+        await db.auth.signOut();
+        showErr('Esta cuenta no tiene perfil de cliente. Crea una cuenta nueva.');
         return;
       }
-
-      currentClient = data;
-      localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(data));
-      if (Array.isArray(data.favoritos)) {
-        data.favoritos.forEach(id => clientFavs.add(Number(id)));
+      currentClient = row;
+      clientFavs.clear();
+      if (Array.isArray(row.favoritos)) {
+        row.favoritos.forEach(id => clientFavs.add(Number(id)));
         localStorage.setItem(CLIENT_FAVS_KEY, JSON.stringify(Array.from(clientFavs)));
       }
+      pInput.value = '';
       closeClientAuthModal();
       updateClientUI();
       if ($('view-client-pedidos')?.classList.contains('active')) {
@@ -3776,10 +3792,7 @@
       }
     } catch (e) {
       console.error(e);
-      if (errBox) {
-        errBox.textContent = 'Error al iniciar sesión: ' + (e.message || 'Inténtalo de nuevo');
-        errBox.style.display = 'block';
-      }
+      showErr('Error al iniciar sesión. Inténtalo de nuevo.');
     }
   }
 
@@ -3789,59 +3802,42 @@
     const contactInput = $('cli-reg-contact');
     const passInput = $('cli-reg-pass');
     const errBox = $('cli-reg-error');
+    const showErr = (msg) => { if (errBox) { errBox.textContent = msg; errBox.style.display = 'block'; } };
 
-    const nombre = (nameInput?.value || '').trim();
+    const nombre = (nameInput?.value || '').trim().slice(0, 60);
     const usuario = (userInput?.value || '').trim().toLowerCase();
-    const contacto = (contactInput?.value || '').trim();
+    const contacto = (contactInput?.value || '').trim().slice(0, 120);
     const pass = (passInput?.value || '');
 
-    if (!nombre || !usuario || !pass) {
-      if (errBox) {
-        errBox.textContent = 'Nombre, usuario y contraseña son obligatorios.';
-        errBox.style.display = 'block';
-      }
-      return;
-    }
-
-    if (usuario.length < 3) {
-      if (errBox) {
-        errBox.textContent = 'El usuario debe tener al menos 3 caracteres.';
-        errBox.style.display = 'block';
-      }
-      return;
-    }
-
-    const hashed = await sha256Salted(pass);
+    if (!nombre || !usuario || !pass) { showErr('Nombre, usuario y contraseña son obligatorios.'); return; }
+    if (!/^[a-z0-9._-]{3,30}$/.test(usuario)) { showErr('El usuario debe tener 3 a 30 caracteres: letras, números, punto, guion o guion bajo.'); return; }
+    if (pass.length < 8) { showErr('La contraseña debe tener al menos 8 caracteres.'); return; }
 
     try {
-      const { data: existing } = await db.from('clientes').select('id').eq('usuario', usuario).maybeSingle();
-      if (existing) {
-        if (errBox) {
-          errBox.textContent = 'Ese nombre de usuario ya está registrado. Elige otro.';
-          errBox.style.display = 'block';
-        }
+      const { data: su, error: suErr } = await db.auth.signUp({ email: clientEmailFor(usuario), password: pass });
+      if (suErr) {
+        if (/registered|exists/i.test(suErr.message || '')) showErr('Ese nombre de usuario ya está registrado. Elige otro.');
+        else showErr('No se pudo crear la cuenta: ' + (suErr.message || 'Inténtalo de nuevo'));
+        return;
+      }
+      if (!su || !su.session) {
+        showErr('No se pudo iniciar la sesión automáticamente. Intenta iniciar sesión con tu usuario y contraseña.');
         return;
       }
 
-      const newId = 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 5);
+      const newId = 'cli_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
       const row = {
         id: newId,
         nombre: nombre,
         usuario: usuario,
         contacto: contacto,
-        pass_hash: hashed,
         favoritos: Array.from(clientFavs),
-        compras_piezas: 0,
-        gramos_comprados: 0,
-        premios_canjeados: 0,
         created_at: new Date().toISOString()
       };
-
       const { data, error } = await db.from('clientes').insert([row]).select().single();
       if (error) throw error;
 
       currentClient = data || row;
-      localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
       closeClientAuthModal();
       updateClientUI();
       if ($('view-client-pedidos')?.classList.contains('active')) {
@@ -3852,15 +3848,12 @@
       alert(`🎉 ¡Bienvenido a Pixelito3D, ${nombre}! Tu cuenta ha sido creada con éxito.`);
     } catch (e) {
       console.error(e);
-      if (errBox) {
-        errBox.textContent = 'Error al registrarse: ' + (e.message || 'Inténtalo de nuevo');
-        errBox.style.display = 'block';
-      }
+      showErr('Error al registrarse: ' + (e.message || 'Inténtalo de nuevo'));
     }
   }
 
   function logoutClient() {
-    localStorage.removeItem(CLIENT_SESSION_KEY);
+    db.auth.signOut().catch(() => {});
     currentClient = null;
     filterOnlyFavs = false;
     clientFavs.clear();
@@ -4024,8 +4017,13 @@
   // ---------- PEDIDOS Y LINKS COMPARTIDOS (?pedido=PIX-...) ----------
   let lastActiveOrderId = null;
   function generateOrderId() {
-    const num = Math.floor(1000 + Math.random() * 9000);
-    return `PIX-${num}`;
+    // 8 caracteres aleatorios criptográficos (~40 bits): el link es el "secreto" del pedido
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const bytes = new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    let out = '';
+    bytes.forEach(b => { out += alphabet[b % alphabet.length]; });
+    return `PIX-${out}`;
   }
 
   async function createOrderFromCart() {
@@ -4052,22 +4050,18 @@
       totalPiezas += item.qty;
       totalGramos += (Number(p.gramos) || 0) * item.qty;
 
+      // Los pedidos son visibles para el cliente: NUNCA llevan costos, horas ni reparto.
       items.push({
         productId: p.id,
         nombre: p.nombre,
-        imagenUrl: p.imagenUrl || '',
         overrideColorId: item.overrideColorId !== undefined ? item.overrideColorId : null,
         colorDesc: c.desc,
         dots: c.dots,
         qty: item.qty,
         precioUnitario: price,
         subtotal: subtotal,
-        costoUnitario: c.costoTotal,
         gramos: Number(p.gramos) || 0,
-        horas: Number(p.horas) || 0,
-        pintura: !!p.pintura,
-        pinturaManual: Number(p.pinturaManual) || 0,
-        splitMine: Number(p.splitMine) || (p.pintura ? 50 : 60)
+        pintura: !!p.pintura
       });
     });
 
@@ -4082,9 +4076,9 @@
       clienteNombre = currentClient.nombre ? `${currentClient.nombre} (@${currentClient.usuario})` : `@${currentClient.usuario}`;
       clienteContacto = `@${currentClient.usuario}${currentClient.contacto ? ' · ' + currentClient.contacto : ''}`;
     } else if (rawManualName) {
-      clienteNombre = rawManualName;
+      clienteNombre = rawManualName.slice(0, 80);
       if (rawManualName.startsWith('@')) {
-        clienteContacto = rawManualName;
+        clienteContacto = rawManualName.slice(0, 120);
       }
     }
 
@@ -4097,7 +4091,7 @@
       cliente_contacto: clienteContacto,
       items: items,
       total_venta: totalVenta,
-      total_costo: totalCosto,
+      total_costo: 0,
       total_piezas: totalPiezas,
       total_gramos: totalGramos,
       estado: 'pendiente',
@@ -4105,10 +4099,8 @@
     };
 
     try {
-      const { data, error } = await db.from('pedidos').insert([row]).select().single();
-      if (!error && data) {
-        return data;
-      }
+      const { error } = await db.from('pedidos').insert([row]);
+      if (error) console.warn('Error saving pedido in Supabase', error);
     } catch (e) {
       console.warn('Error saving pedido in Supabase', e);
     }
@@ -4270,16 +4262,28 @@
     modal.style.display = 'flex';
     const idEl = $('order-view-id');
     const itemsList = $('order-view-items-list');
+    if (!/^[A-Za-z0-9-]{3,24}$/.test(String(orderId || ''))) {
+      if (itemsList) itemsList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--red);">El link del pedido no es válido.</div>';
+      return;
+    }
     if (idEl) idEl.textContent = orderId;
     if (itemsList) itemsList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--ink-soft);">Cargando pedido...</div>';
 
     try {
-      const { data, error } = await db.from('pedidos').select('*').eq('id', orderId).single();
+      let data = null, error = null;
+      if (isAdmin) {
+        const r = await db.from('pedidos').select('*').eq('id', orderId).maybeSingle();
+        data = r.data; error = r.error;
+      } else {
+        const r = await db.rpc('get_pedido', { p_id: orderId });
+        error = r.error;
+        data = Array.isArray(r.data) ? r.data[0] : r.data;
+      }
       if (error || !data) {
         if (itemsList) {
           itemsList.innerHTML = `
             <div style="text-align:center; padding:20px; color:var(--red);">
-              No pudimos encontrar el pedido <b>${orderId}</b>.<br>
+              No pudimos encontrar el pedido <b>${esc(orderId)}</b>.<br>
               <small style="color:var(--ink-soft);">Verifica que el link sea correcto.</small>
             </div>
           `;
@@ -4295,10 +4299,94 @@
     }
   }
 
-  function renderOrderViewModal(order) {
-    currentViewOrder = order;
+  function itemDefaultSplit(p) { return p ? (Number(p.splitMine) || (p.pintura ? 50 : 60)) : 60; }
+
+  // Reconstruye cada artículo con datos del catálogo: el cliente no puede alterar precios ni
+  // meter HTML en nombres. El costo solo se calcula para el admin.
+  function hydrateOrder(order) {
+    const rawItems = Array.isArray(order.items) ? order.items : [];
+    let totalVenta = 0, totalCosto = 0, totalPiezas = 0, totalGramos = 0;
+    const items = rawItems.slice(0, 60).map(it => {
+      const qty = Math.max(1, Math.min(999, parseInt(it.qty, 10) || 1));
+      const p = getProductos().find(x => x.id === Number(it.productId));
+      const ov = (it.overrideColorId === null || it.overrideColorId === undefined) ? undefined : Number(it.overrideColorId);
+      const savedSplit = (Number(it.splitMine) === 50 || Number(it.splitMine) === 60) ? Number(it.splitMine) : null;
+      let out;
+      if (p) {
+        const c = computeProductCost(p, ov);
+        out = {
+          productId: p.id, nombre: p.nombre, imagenUrl: p.imagenUrl || '',
+          overrideColorId: ov === undefined ? null : ov,
+          colorDesc: c.desc, dots: c.dots || [], qty,
+          precioUnitario: getFinalProductSalePrice(p, ov),
+          costoUnitario: isAdmin ? c.costoTotal : 0,
+          gramos: Number(p.gramos) || 0, pintura: !!p.pintura,
+          splitMine: savedSplit !== null ? savedSplit : itemDefaultSplit(p), known: true
+        };
+      } else {
+        out = {
+          productId: it.productId, nombre: String(it.nombre || 'Producto').slice(0, 80), imagenUrl: '',
+          overrideColorId: ov === undefined ? null : ov,
+          colorDesc: String(it.colorDesc || '').slice(0, 80),
+          dots: Array.isArray(it.dots) ? it.dots.slice(0, 6) : [], qty,
+          precioUnitario: Math.max(0, Number(it.precioUnitario) || 0),
+          costoUnitario: 0, gramos: Number(it.gramos) || 0, pintura: !!it.pintura,
+          splitMine: savedSplit !== null ? savedSplit : 60, known: false
+        };
+      }
+      out.subtotal = out.precioUnitario * qty;
+      totalVenta += out.subtotal;
+      totalCosto += out.costoUnitario * qty;
+      totalPiezas += qty;
+      totalGramos += out.gramos * qty;
+      return out;
+    });
+    return Object.assign({}, order, {
+      items,
+      total_venta: Math.round(totalVenta),
+      total_costo: Math.round(totalCosto),
+      total_piezas: totalPiezas,
+      total_gramos: totalGramos,
+      _quotedTotal: Number(order.total_venta) || 0
+    });
+  }
+
+  // Versión de los artículos que se guarda en la base (sin costos)
+  function orderItemsForDb(items) {
+    return (items || []).map(it => ({
+      productId: it.productId, nombre: it.nombre, overrideColorId: it.overrideColorId,
+      colorDesc: it.colorDesc, dots: it.dots, qty: it.qty, precioUnitario: it.precioUnitario,
+      subtotal: it.subtotal, gramos: it.gramos, pintura: it.pintura, splitMine: it.splitMine
+    }));
+  }
+
+  async function setOrderItemSplit(idx, split) {
+    if (!isAdmin || !currentViewOrder || currentViewOrder.estado === 'aprobado') return;
+    const it = currentViewOrder.items[idx];
+    if (!it) return;
+    it.splitMine = split;
+    try {
+      await db.from('pedidos').update({ items: orderItemsForDb(currentViewOrder.items) }).eq('id', currentViewOrder.id);
+    } catch (e) { console.warn('No se pudo guardar el reparto', e); }
+    renderOrderViewModal(currentViewOrder);
+  }
+
+  async function deleteOrderById(id) {
+    if (isAdmin) {
+      const { error } = await db.from('pedidos').delete().eq('id', id);
+      if (error) throw error;
+    } else {
+      const { data, error } = await db.rpc('eliminar_pedido', { p_id: id });
+      if (error) throw error;
+      if (data === false) throw new Error('No tienes permiso para eliminar este pedido.');
+    }
+  }
+
+  function renderOrderViewModal(rawOrder) {
     const modal = $('modal-order-view');
-    if (!modal || !order) return;
+    if (!modal || !rawOrder) return;
+    const order = hydrateOrder(rawOrder);
+    currentViewOrder = order;
 
     const idEl = $('order-view-id');
     const clientEl = $('order-view-client');
@@ -4340,33 +4428,51 @@
     if (itemsList) {
       itemsList.innerHTML = '';
       const items = Array.isArray(order.items) ? order.items : [];
-      items.forEach(it => {
+      items.forEach((it, idx) => {
         const itemRow = document.createElement('div');
-        itemRow.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px 10px; background:var(--card-subtle); border-radius:8px; border:1px solid var(--border);';
-        const dots = (it.dots || []).map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
+        itemRow.style.cssText = 'padding:8px 10px; background:var(--card-subtle); border-radius:8px; border:1px solid var(--border);';
+        const dots = (it.dots || []).map(d => `<span class="color-dot" style="background:${safeColor(d)}"></span>`).join('');
+        const img = safeImg(it.imagenUrl);
+        const canSplit = isAdmin && !isAprobado;
+        const sp = it.splitMine === 50 ? 50 : 60;
+        const splitHTML = (isAdmin) ? `
+          <div class="split-row">
+            <span class="split-lbl">Reparto Seba/Camila:</span>
+            ${canSplit ? `<div class="split-seg">
+              <button type="button" class="order-split-btn ${sp === 60 ? 'active' : ''}" data-idx="${idx}" data-split="60">60/40</button>
+              <button type="button" class="order-split-btn ${sp === 50 ? 'active' : ''}" data-idx="${idx}" data-split="50">50/50</button>
+            </div>` : `<b style="font-size:12px;">${sp}/${100 - sp}</b>`}
+            ${it.known === false ? '<span style="font-size:11px; color:#b45309; font-weight:700;">⚠️ No está en el catálogo: costo desconocido</span>' : ''}
+          </div>` : '';
         itemRow.innerHTML = `
-          <div style="width:40px; height:40px; border-radius:6px; overflow:hidden; background:#ffffff; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:1px solid var(--line);">
-            ${it.imagenUrl 
-              ? `<img src="${it.imagenUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${it.nombre}">`
-              : `<img src="/icon.png" style="width:20px; height:20px; object-fit:contain;" alt="Pixelito3D">`
-            }
-          </div>
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:700; font-size:12.5px; color:var(--ink);">${it.nombre}</div>
-            <div style="font-size:11px; color:var(--ink-soft); display:flex; align-items:center; gap:3px;">
-              <span class="color-dots-group">${dots}</span>
-              <span>${it.colorDesc || 'Base'}</span>
-              ${it.pintura ? ' · 🎨 Pintado' : ''}
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:40px; height:40px; border-radius:6px; overflow:hidden; background:#ffffff; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:1px solid var(--line);">
+              ${img
+                ? `<img src="${esc(img)}" style="width:100%; height:100%; object-fit:cover;" alt="${esc(it.nombre)}">`
+                : `<img src="/icon.png" style="width:20px; height:20px; object-fit:contain;" alt="Pixelito3D">`
+              }
             </div>
-            <div style="font-size:11.5px; font-weight:700; color:var(--blue-dark); margin-top:2px;">
-              ${fmt(it.subtotal)} <span style="font-weight:500; font-size:10.5px; color:var(--ink-soft);">(${fmt(it.precioUnitario)} c/u)</span>
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:700; font-size:12.5px; color:var(--ink);">${esc(it.nombre)}</div>
+              <div style="font-size:11px; color:var(--ink-soft); display:flex; align-items:center; gap:3px;">
+                <span class="color-dots-group">${dots}</span>
+                <span>${esc(it.colorDesc || 'Base')}</span>
+                ${it.pintura ? ' · 🎨 Pintado' : ''}
+              </div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--blue-dark); margin-top:2px;">
+                ${fmt(it.subtotal)} <span style="font-weight:500; font-size:10.5px; color:var(--ink-soft);">(${fmt(it.precioUnitario)} c/u)</span>
+              </div>
+            </div>
+            <div style="font-weight:800; font-size:13px; color:var(--ink); padding:4px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
+              x${Number(it.qty) || 1}
             </div>
           </div>
-          <div style="font-weight:800; font-size:13px; color:var(--ink); padding:4px 8px; background:var(--bg); border:1px solid var(--border); border-radius:6px;">
-            x${it.qty}
-          </div>
+          ${splitHTML}
         `;
         itemsList.appendChild(itemRow);
+      });
+      itemsList.querySelectorAll('.order-split-btn').forEach(b => {
+        b.addEventListener('click', () => setOrderItemSplit(Number(b.dataset.idx), Number(b.dataset.split)));
       });
     }
 
@@ -4387,7 +4493,11 @@
         camiTotal += Math.round(itemGanancia * ((100 - sMine) / 100));
       });
 
+      const priceWarn = (!isAprobado && Math.round(order._quotedTotal) !== Math.round(order.total_venta))
+        ? `<div style="font-size:11.5px; font-weight:700; color:#b45309; background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:6px 8px; margin-bottom:8px;">⚠️ El cliente cotizó ${fmt(order._quotedTotal)}; con los precios actuales del catálogo el total es ${fmt(order.total_venta)}. Se registrará con el precio actual.</div>`
+        : '';
       adminBreakdown.innerHTML = `
+        ${priceWarn}
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
           <div>🏦 Inversión (Costo): <b>${fmt(costo)}</b></div>
           <div>✨ Ganancia Total: <b>${fmt(ganancia)}</b></div>
@@ -4429,7 +4539,7 @@
 
     const deleteBtn = $('btn-delete-current-order');
     if (deleteBtn) {
-      const isOwner = currentClient && (order.cliente_id === currentClient.id || (order.cliente_contacto && order.cliente_contacto.includes(currentClient.usuario)));
+      const isOwner = currentClient && order.cliente_id && order.cliente_id === currentClient.id;
       if (isAdmin || isOwner) {
         deleteBtn.style.display = 'block';
       } else {
@@ -4476,6 +4586,7 @@
           precioVenta: it.precioUnitario,
           costoTotal: it.costoUnitario,
           subtotal: it.subtotal,
+          splitMine: sMine,
           orderId: order.id
         };
       });
@@ -4501,7 +4612,12 @@
         .update({
           estado: 'aprobado',
           aprobado_por: `${adminName} [VID:${ventaId}]`,
-          aprobado_at: nowIso
+          aprobado_at: nowIso,
+          total_venta: order.total_venta,
+          total_costo: order.total_costo,
+          total_piezas: order.total_piezas,
+          total_gramos: order.total_gramos,
+          items: orderItemsForDb(order.items)
         })
         .eq('id', order.id)
         .select()
@@ -4536,7 +4652,6 @@
             if (currentClient && currentClient.id === targetClientId) {
               currentClient.compras_piezas = newPieces;
               currentClient.gramos_comprados = newGrams;
-              localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
               updateClientUI();
             }
           }
@@ -4621,7 +4736,6 @@
             if (currentClient && currentClient.id === targetClientId) {
               currentClient.compras_piezas = newPieces;
               currentClient.gramos_comprados = newGrams;
-              localStorage.setItem(CLIENT_SESSION_KEY, JSON.stringify(currentClient));
               updateClientUI();
             }
           }
@@ -4680,7 +4794,7 @@
         }
       }
 
-      await db.from('pedidos').delete().eq('id', ord.id);
+      await deleteOrderById(ord.id);
       closeOrderViewModal();
 
       if (isAdmin) {
@@ -4723,6 +4837,7 @@
   }
 
   async function loadAdminPedidosFromDB() {
+    if (!isAdmin) { adminPedidosCache = []; updateAdminPedidosCountBadge(); return; }
     try {
       const { data, error } = await db.from('pedidos').select('*').order('created_at', { ascending: false }).limit(50);
       if (!error && Array.isArray(data)) {
@@ -4778,18 +4893,18 @@
         ? `<span style="background:#dcfce7; color:#15803d; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟢 Aprobado</span>`
         : `<span style="background:#fef3c7; color:#92400e; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟡 Pendiente</span>`;
 
-      const itemsTxt = (ord.items || []).map(it => `• ${it.nombre} (${it.colorDesc || 'Base'}) x${it.qty}`).join('<br>');
+      const itemsTxt = (ord.items || []).map(it => `• ${esc(it.nombre)} (${esc(it.colorDesc || 'Base')}) x${Number(it.qty) || 1}`).join('<br>');
 
       card.innerHTML = `
         <div class="venta-head">
           <div style="display:flex; align-items:center; gap:8px;">
-            <strong style="font-size:13.5px; color:var(--blue-dark);">${ord.id}</strong>
+            <strong style="font-size:13.5px; color:var(--blue-dark);">${esc(ord.id)}</strong>
             <span style="font-size:12px; color:var(--ink-soft);">${d}</span>
           </div>
           <div>${statusPill}</div>
         </div>
         <div style="font-size:12.5px; font-weight:700; color:var(--ink); margin:4px 0 2px;">
-          👤 ${ord.cliente_nombre || 'Cliente Web'} ${ord.cliente_contacto ? `· <span style="font-weight:500; color:var(--ink-soft);">${ord.cliente_contacto}</span>` : ''}
+          👤 ${esc(ord.cliente_nombre || 'Cliente Web')} ${ord.cliente_contacto ? `· <span style="font-weight:500; color:var(--ink-soft);">${esc(ord.cliente_contacto)}</span>` : ''}
         </div>
         <div class="venta-items" style="margin:4px 0 8px; font-size:12px; color:var(--ink-soft);">${itemsTxt}</div>
         <div class="venta-foot">
@@ -4869,7 +4984,7 @@
     try {
       const { data, error } = await db.from('pedidos')
         .select('*')
-        .or(`cliente_id.eq.${currentClient.id},cliente_contacto.ilike.%@${currentClient.usuario}%`)
+        .eq('cliente_id', currentClient.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -4905,12 +5020,12 @@
           ? `<span style="background:#dcfce7; color:#15803d; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟢 Confirmado · Sumó para premio</span>`
           : `<span style="background:#fef3c7; color:#92400e; font-weight:800; font-size:11px; padding:3px 8px; border-radius:999px;">🟡 Pendiente de Confirmación</span>`;
 
-        const itemsTxt = (ord.items || []).map(it => `• ${it.nombre} (${it.colorDesc || 'Base'}) x${it.qty}`).join('<br>');
+        const itemsTxt = (ord.items || []).map(it => `• ${esc(it.nombre)} (${esc(it.colorDesc || 'Base')}) x${Number(it.qty) || 1}`).join('<br>');
 
         card.innerHTML = `
           <div class="venta-head">
             <div style="display:flex; align-items:center; gap:8px;">
-              <strong style="font-size:13.5px; color:var(--blue-dark);">${ord.id}</strong>
+              <strong style="font-size:13.5px; color:var(--blue-dark);">${esc(ord.id)}</strong>
               <span style="font-size:12px; color:var(--ink-soft);">${d}</span>
             </div>
             <div>${statusPill}</div>
@@ -4934,7 +5049,7 @@
             try {
               delBtn.disabled = true;
               delBtn.textContent = '⏳';
-              await db.from('pedidos').delete().eq('id', ord.id);
+              await deleteOrderById(ord.id);
               await renderClientOrdersHistory();
             } catch (err) {
               alert('No se pudo eliminar el pedido: ' + (err.message || 'Error desconocido'));
@@ -5604,7 +5719,16 @@
   }
 
   // ---------- Cálculo de costo de producto con color o multicolor dinámico ----------
+  // El público no conoce los costos: solo recibe nombre/hex de colores y precios ya calculados.
   function computeProductCost(p, overrideColorId) {
+    const r = computeProductCostReal(p, overrideColorId);
+    if (p && p._pub) {
+      return Object.assign({}, r, { costoMaterial: 0, costoLuz: 0, costoMaquina: 0, costoPintura: 0, costoTotal: 0, precioKg: 0 });
+    }
+    return r;
+  }
+
+  function computeProductCostReal(p, overrideColorId) {
     let eff;
     if (overrideColorId !== undefined && overrideColorId !== null) {
       eff = computeEffectivePrecioKg({ tipo: 'single', colorId: overrideColorId });
@@ -5636,6 +5760,11 @@
 
   function getEffectiveProductSalePrice(p, overrideColorId) {
     if (!p.precioVenta || p.precioVenta <= 0) return 0;
+    if (p._pub) {
+      const k = (overrideColorId === undefined || overrideColorId === null) ? null : String(overrideColorId);
+      const v = (k !== null && p._pub.precios && p._pub.precios[k] != null) ? p._pub.precios[k] : p.precioVenta;
+      return Math.round(Number(v) || 0);
+    }
     const baseCostObj = computeProductCost(p); // Costo con el color original del producto
     const baseCost = baseCostObj.costoTotal;
 
@@ -5708,29 +5837,113 @@
     };
   }
 
+  // Vista pública del catálogo: solo datos de venta (sin costos, horas ni márgenes)
+  function rowToProductoPublico(r) {
+    return {
+      id: Number(r.id),
+      nombre: r.nombre,
+      imagenUrl: safeImg(r.imagen_url),
+      colorId: r.color_id ? Number(r.color_id) : null,
+      coloresConfig: r.colores_config || null,
+      gramos: Number(r.gramos) || 0,
+      horas: 0,
+      pintura: !!r.pintura,
+      pinturaManual: 0,
+      precioVenta: (r.precio_base === null || r.precio_base === undefined) ? null : Number(r.precio_base),
+      splitMine: 60,
+      descuento: Number(r.descuento) || 0,
+      visible: true,
+      fecha: null,
+      _pub: { precios: r.precios || {} }
+    };
+  }
+
   async function loadProductosFromDB() {
     try {
-      const { data, error } = await db.from('productos').select('*').order('created_at', { ascending: false });
-      productosCache = (!error && data) ? data.map(rowToProducto) : [];
+      if (isAdmin) {
+        const { data, error } = await db.from('productos').select('*').order('created_at', { ascending: false });
+        productosCache = (!error && data) ? data.map(rowToProducto) : [];
+      } else {
+        const { data, error } = await db.from('catalogo_publico').select('*').order('nombre', { ascending: true });
+        productosCache = (!error && data) ? data.map(rowToProductoPublico) : [];
+      }
     } catch (e) { productosCache = []; }
+  }
+
+  // ---------- Sincronización del catálogo público (el público nunca ve costos) ----------
+  let _syncTimer = null;
+  function scheduleCatalogSync() {
+    if (!isAdmin) return;
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(syncCatalogoPublico, 1200);
+  }
+  async function syncCatalogoPublico() {
+    if (!isAdmin) return;
+    try {
+      const now = new Date().toISOString();
+      const prodRows = productosCache.filter(p => p.visible !== false).map(p => {
+        const precios = {};
+        if (p.precioVenta && p.precioVenta > 0) {
+          coloresCache.forEach(c => { precios[String(c.id)] = getEffectiveProductSalePrice(p, c.id); });
+        }
+        return {
+          id: p.id, nombre: p.nombre, imagen_url: p.imagenUrl || null,
+          color_id: p.colorId || null, colores_config: p.coloresConfig || null,
+          gramos: p.gramos || 0, pintura: !!p.pintura, descuento: Number(p.descuento) || 0,
+          precio_base: (p.precioVenta && p.precioVenta > 0) ? Math.round(p.precioVenta) : null,
+          precios, updated_at: now
+        };
+      });
+      if (prodRows.length) {
+        const { error } = await db.from('catalogo_publico').upsert(prodRows);
+        if (error) throw error;
+      }
+      const ids = prodRows.map(r => r.id);
+      let q = db.from('catalogo_publico').delete();
+      q = ids.length ? q.not('id', 'in', `(${ids.join(',')})`) : q.neq('id', -1);
+      const { error: dErr } = await q;
+      if (dErr) throw dErr;
+
+      const colRows = coloresCache.map(c => ({ id: c.id, nombre: c.nombre, hex: c.hex }));
+      if (colRows.length) {
+        const { error } = await db.from('colores_publico').upsert(colRows);
+        if (error) throw error;
+      }
+      const cids = colRows.map(r => r.id);
+      let cq = db.from('colores_publico').delete();
+      cq = cids.length ? cq.not('id', 'in', `(${cids.join(',')})`) : cq.neq('id', -1);
+      const { error: cErr } = await cq;
+      if (cErr) throw cErr;
+    } catch (e) {
+      console.error('No se pudo sincronizar el catálogo público', e);
+    }
   }
 
   function getProductos() { return productosCache; }
 
   async function insertProducto(p) {
-    try { await db.from('productos').insert(productoToRow(p)); } catch (e) { console.error(e); }
+    try {
+      const { error } = await db.from('productos').insert(productoToRow(p));
+      if (error) { console.error(error); alert('No se pudo guardar el producto: ' + error.message); }
+    } catch (e) { console.error(e); }
     productosCache.unshift(p);
+    scheduleCatalogSync();
   }
 
   async function updateProducto(p) {
-    try { await db.from('productos').update(productoToRow(p)).eq('id', p.id); } catch (e) { console.error(e); }
+    try {
+      const { error } = await db.from('productos').update(productoToRow(p)).eq('id', p.id);
+      if (error) { console.error(error); alert('No se pudo actualizar el producto: ' + error.message); }
+    } catch (e) { console.error(e); }
     const idx = productosCache.findIndex(x => x.id === p.id);
     if (idx !== -1) productosCache[idx] = p; else productosCache.unshift(p);
+    scheduleCatalogSync();
   }
 
   async function deleteProducto(id) {
     try { await db.from('productos').delete().eq('id', id); } catch (e) { console.error(e); }
     productosCache = productosCache.filter(p => p.id !== id);
+    scheduleCatalogSync();
   }
 
   let prodBusqueda = '';
@@ -5783,6 +5996,12 @@
     onCartUpdated();
   }
 
+  // Reparto Seba/Camila de un artículo del carrito: lo elegido en la caja o el del producto
+  function cartItemSplit(item, p) {
+    if (item && (item.split === 50 || item.split === 60)) return item.split;
+    return Number(p.splitMine) || (p.pintura ? 50 : 60);
+  }
+
   function computeCartTotals() {
     let totalVenta = 0, totalCosto = 0, tuParte = 0, suParte = 0, count = 0;
     for (const key in cajaCart) {
@@ -5798,7 +6017,7 @@
       const ventaLinea = effectivePrecio * q;
       const costoLinea = c.costoTotal * q;
       const utilidadLinea = Math.max(0, ventaLinea - costoLinea);
-      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
+      const splitSeba = cartItemSplit(item, p);
 
       totalVenta += ventaLinea;
       totalCosto += costoLinea;
@@ -6095,7 +6314,7 @@
                 ${(isAdmin && p.visible === false) ? '<span style="background:#fef3c7; color:#92400e; font-size:10px; font-weight:800; padding:1px 6px; border-radius:4px; border:1px solid #fde68a;">🙈 Oculto para clientes</span>' : ''}
               </div>
               <div class="prod-badges">
-                <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : 'Sin pintar'}</span>
+                <span class="badge ${p.pintura ? 'pintado' : 'sinpintar'}">${p.pintura ? (isAdmin ? `🎨 Con pintura ($${Number(p.pinturaManual)||0})` : '🎨 Pintado a mano') : 'Sin pintar'}</span>
                 ${isColorDifferent ? `<span class="badge" style="background:#e0f2fe; color:#0369a1;">⚖️ Precio adaptado a color</span>` : ''}
                 ${(isAdmin && p.imagenUrl) ? `<button type="button" class="prod-change-photo-link" data-id="${p.id}">Cambiar foto</button>` : ''}
               </div>
@@ -6378,6 +6597,14 @@
           </div>
           <button type="button" class="cart-item-del" data-key="${key}" title="Quitar producto">×</button>
         </div>
+        <div class="split-row">
+          <span class="split-lbl">Reparto Seba/Camila:</span>
+          <div class="split-seg">
+            <button type="button" class="cart-split-btn ${cartItemSplit(item, p) === 60 ? 'active' : ''}" data-key="${key}" data-split="60">60/40</button>
+            <button type="button" class="cart-split-btn ${cartItemSplit(item, p) === 50 ? 'active' : ''}" data-key="${key}" data-split="50">50/50</button>
+          </div>
+          <span class="split-hint">Usa 50/50 si Camila trabajó en la pieza (pintar, armar, etc.).</span>
+        </div>
         <div class="cart-item-bottom">
           <div class="cart-item-controls">
             <button type="button" class="cart-qbtn cart-qty-minus" data-key="${key}">–</button>
@@ -6391,6 +6618,17 @@
         </div>
       `;
       itemsEl.appendChild(row);
+    });
+
+    itemsEl.querySelectorAll('.cart-split-btn').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const k = b.dataset.key;
+        if (cajaCart[k]) {
+          cajaCart[k].split = Number(b.dataset.split) === 50 ? 50 : 60;
+          onCartUpdated();
+        }
+      });
     });
 
     itemsEl.querySelectorAll('.cart-qty-minus').forEach(b => {
@@ -6625,7 +6863,7 @@
       const ventaLinea = effectivePrecio * q;
       const costoLinea = c.costoTotal * q;
       const utilidadLinea = Math.max(0, ventaLinea - costoLinea);
-      const splitSeba = p.splitMine || (p.pintura ? 50 : 60);
+      const splitSeba = cartItemSplit(item, p);
 
       items.push({
         nombre: p.nombre,
@@ -6633,7 +6871,8 @@
         dots: c.dots || [],
         cantidad: q,
         precioUnit: effectivePrecio,
-        costoUnit: Math.round(c.costoTotal)
+        costoUnit: Math.round(c.costoTotal),
+        splitMine: splitSeba
       });
 
       totalCosto += costoLinea;
@@ -6677,6 +6916,7 @@
     };
   }
   async function loadVentasFromDB() {
+    if (!isAdmin) { ventasCache = []; return; }
     try {
       const { data, error } = await db.from('ventas').select('*').order('created_at', { ascending: false });
       ventasCache = (!error && data) ? data.map(rowToVenta) : [];
@@ -6685,7 +6925,10 @@
   function getVentas() { return ventasCache; }
 
   async function insertVenta(v) {
-    try { await db.from('ventas').insert(ventaToRow(v)); } catch (e) { console.error(e); }
+    try {
+      const { error } = await db.from('ventas').insert(ventaToRow(v));
+      if (error) { console.error(error); alert('No se pudo guardar la venta: ' + error.message); }
+    } catch (e) { console.error(e); }
     ventasCache.unshift(v);
   }
   async function deleteVenta(id) {
@@ -6735,6 +6978,7 @@
   }
 
   async function loadMovimientosFromDB() {
+    if (!isAdmin) { movimientosCache = []; return; }
     try {
       const { data, error } = await db.from('movimientos').select('*').order('created_at', { ascending: false });
       movimientosCache = (!error && data) ? data.map(rowToMovimiento) : [];
@@ -7159,18 +7403,18 @@
 
   // ---------- Init ----------
   async function initApp() {
+    // Limpiar restos de sesiones antiguas (guardaban datos sensibles en el navegador)
+    try {
+      localStorage.removeItem('pixelito_admin_session');
+      localStorage.removeItem('pixelito_client_session');
+    } catch (e) {}
     setupPhotoUpload();
     setupAdminAndCartModals();
-    checkExistingAdminSession();
+    await checkExistingAdminSession();
     await checkExistingClientSession();
     updateAdminUI();
     updateClientUI();
-    await loadAjustesFromDB();
-    await loadColoresFromDB();
-    await Promise.all([loadProductosFromDB(), loadVentasFromDB(), loadAdminPedidosFromDB(), loadMovimientosFromDB()]);
-    calcCostos();
-    renderProductos();
-    renderCaja();
+    await loadAllData();
 
     // Comprobar si la app se abrió mediante un link de pedido (?pedido=PIX-...)
     const urlParams = new URLSearchParams(window.location.search);

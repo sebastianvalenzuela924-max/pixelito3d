@@ -1,8 +1,9 @@
-const CACHE_NAME = 'pixelito3d-v4';
+const CACHE_NAME = 'pixelito3d-v5';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/vendor/supabase.js',
   '/icon.png',
   '/favicon.png',
   '/icon-180.png',
