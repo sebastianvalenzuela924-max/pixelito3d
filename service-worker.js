@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pixelito3d-v5';
+const CACHE_NAME = 'pixelito3d-v6';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -29,21 +29,20 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  // Don't cache supabase API requests
-  if (event.request.url.includes('supabase.co')) return;
+  const url = new URL(event.request.url);
+  // Nunca cachear llamadas a Supabase ni otros dominios
+  if (url.origin !== self.location.origin) return;
 
+  // Red primero (siempre la versión más nueva); caché solo si no hay internet
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || fetchPromise;
-    })
+    fetch(event.request)
+      .then((response) => {
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request).then((c) => c || caches.match('/index.html')))
   );
 });
