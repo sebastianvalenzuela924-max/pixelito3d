@@ -6091,14 +6091,8 @@
   // ---------- Carrito de Venta Compartido (Catálogo + Caja) ----------
   let cajaCart = {}; // key: `${productId}__${overrideColorId || 'orig'}` -> { productId, overrideColorId, qty }
   let cajaColorSelected = {};
-  let cajaAccSel = {};   // productId -> { imanes, argolla } elegidos en la lista rápida (admin)
   let cajaOtro = {};     // productId -> { open, precio, qty } para "venta con otro valor"
-  function quickAcc(p) {
-    const a = cajaAccSel[p.id] || {};
-    const im = (a.imanes !== undefined && a.imanes !== (p.imanes || 0)) ? a.imanes : undefined;
-    const ar = (a.argolla !== undefined && a.argolla !== !!p.argolla) ? a.argolla : undefined;
-    return { imanes: im, argolla: ar };
-  }
+  function quickAcc(p) { return { imanes: undefined, argolla: undefined }; } // imanes/argolla vienen del producto (Costos)
   let cajaBusqueda = '';
 
   function getCartItemKey(productId, overrideColorId, opts) {
@@ -6902,9 +6896,6 @@
     filtrados.forEach(p => {
       const activeColorId = (p.id in cajaColorSelected) ? cajaColorSelected[p.id] : undefined;
       const qa = quickAcc(p);
-      const accSel = cajaAccSel[p.id] || {};
-      const selImanes = accSel.imanes !== undefined ? accSel.imanes : (p.imanes || 0);
-      const selArgolla = accSel.argolla !== undefined ? accSel.argolla : !!p.argolla;
       const c = computeProductCost(p, activeColorId, qa);
       const effectivePrecio = getFinalProductSalePrice(p, activeColorId);
       const dotsHTML = c.dots.map(d => `<span class="color-dot" style="background:${d}"></span>`).join('');
@@ -6981,8 +6972,6 @@
         </div>
         <div class="caja-extra">
           <div class="caja-acc" onclick="event.stopPropagation();">
-            <label class="acc-item">🧲 <input type="number" class="caja-imanes" data-id="${p.id}" min="0" step="1" value="${selImanes}"> imanes</label>
-            <label class="acc-item"><input type="checkbox" class="caja-argolla" data-id="${p.id}" ${selArgolla ? 'checked' : ''}> 🔗 argolla</label>
             <button type="button" class="btn-otro-valor ${otroOpen ? 'open' : ''}" data-id="${p.id}">💲 Venta con otro valor</button>
           </div>
           ${otroOpen ? `
@@ -7036,22 +7025,6 @@
         e.stopPropagation();
         const key = btn.dataset.key;
         removeCartItem(key);
-      });
-    });
-
-    // Imanes / argolla de la lista rápida
-    el.querySelectorAll('.caja-imanes').forEach(inp => {
-      inp.addEventListener('change', () => {
-        const id = Number(inp.dataset.id);
-        cajaAccSel[id] = Object.assign({}, cajaAccSel[id], { imanes: Math.max(0, parseInt(inp.value, 10) || 0) });
-        renderCajaQuickList();
-      });
-    });
-    el.querySelectorAll('.caja-argolla').forEach(chk => {
-      chk.addEventListener('change', () => {
-        const id = Number(chk.dataset.id);
-        cajaAccSel[id] = Object.assign({}, cajaAccSel[id], { argolla: chk.checked });
-        renderCajaQuickList();
       });
     });
 
