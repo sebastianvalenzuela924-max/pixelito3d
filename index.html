@@ -1644,6 +1644,82 @@
       </div>
     </div>
 
+    <!-- VENTA A OTRO PRECIO / MANUAL -->
+    <div class="panel" id="mv-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div>
+          <p class="panel-title" style="margin:0;">💲 Venta a otro precio o manual</p>
+          <p class="panel-sub" style="margin:2px 0 0;">Registra una venta que no siguió el precio del catálogo.</p>
+        </div>
+        <button type="button" class="btn-secondary" id="mv-toggle" style="padding:7px 12px; border-radius:8px; white-space:nowrap;">Abrir ▾</button>
+      </div>
+
+      <div id="mv-body" style="display:none; margin-top:14px;">
+        <div class="seg-row">
+          <button type="button" class="seg-btn active" id="mv-tab-producto">📦 Producto guardado</button>
+          <button type="button" class="seg-btn" id="mv-tab-calculadora">🧮 Calculadora</button>
+        </div>
+
+        <!-- Modo 1: producto guardado -->
+        <div id="mv-sec-producto" style="margin-top:10px;">
+          <div class="field">
+            <label for="mv-producto">Producto</label>
+            <div class="input-group"><select id="mv-producto"></select></div>
+          </div>
+          <div class="field">
+            <label for="mv-color-p">Color vendido</label>
+            <div class="input-group"><select id="mv-color-p"></select></div>
+          </div>
+        </div>
+
+        <!-- Modo 2: calculadora -->
+        <div id="mv-sec-calculadora" style="display:none; margin-top:10px;">
+          <div class="field">
+            <label for="mv-nombre">Nombre de la venta</label>
+            <div class="input-group"><input type="text" id="mv-nombre" maxlength="80" placeholder="Ej: Dragón a pedido, Llavero personalizado"></div>
+          </div>
+          <div class="field">
+            <label for="mv-gramos">Gramos de filamento (por unidad)</label>
+            <div class="input-group"><input type="number" id="mv-gramos" step="1" min="0" placeholder="0"><span class="unit">g</span></div>
+          </div>
+          <div class="field">
+            <label for="mv-horas">Horas de impresión (por unidad)</label>
+            <div class="input-group"><input type="number" id="mv-horas" step="0.1" min="0" placeholder="0"><span class="unit">h</span></div>
+          </div>
+          <div class="field">
+            <label for="mv-color-c">Color</label>
+            <div class="input-group"><select id="mv-color-c"></select></div>
+          </div>
+          <div class="field">
+            <label for="mv-pintura">Pintura por unidad (0 si no lleva)</label>
+            <div class="input-group"><span class="unit">$</span><input type="number" id="mv-pintura" step="50" min="0" placeholder="0"><span class="unit">CLP</span></div>
+          </div>
+        </div>
+
+        <!-- Común a los dos modos -->
+        <div class="field">
+          <label for="mv-qty">Cantidad vendida</label>
+          <div class="input-group"><input type="number" id="mv-qty" step="1" min="1" value="1"><span class="unit">u</span></div>
+        </div>
+        <div class="field">
+          <label for="mv-precio">Precio cobrado por unidad</label>
+          <div class="input-group"><span class="unit">$</span><input type="number" id="mv-precio" step="100" min="0" placeholder="0"><span class="unit">CLP</span></div>
+        </div>
+        <p id="mv-precio-hint" style="font-size:11.5px; color:var(--ink-soft); margin:-4px 0 10px;"></p>
+
+        <div class="split-row">
+          <span class="split-lbl">Reparto Seba/Camila:</span>
+          <div class="split-seg">
+            <button type="button" class="mv-split-btn" data-split="60">60/40</button>
+            <button type="button" class="mv-split-btn" data-split="50">50/50</button>
+          </div>
+        </div>
+
+        <div id="mv-summary" style="margin-top:12px;"></div>
+        <button class="primary" id="mv-registrar" style="margin-top:12px; font-size:15px; font-weight:800; padding:12px;" disabled>✅ Registrar venta</button>
+      </div>
+    </div>
+
     <!-- AGREGAR MÁS PRODUCTOS -->
     <div class="panel">
       <p class="panel-title">🔍 Agregar más productos a la venta</p>
@@ -6741,6 +6817,7 @@
   function renderCaja() {
     renderCajaCart();
     renderCajaQuickList();
+    if (typeof mvFillSelects === 'function' && $('mv-body') && $('mv-body').style.display !== 'none') mvFillSelects();
   }
 
   function renderCajaQuickList() {
@@ -6960,6 +7037,213 @@
     $('caja-buscar').value = '';
     cajaBusqueda = '';
     document.querySelector('nav.tabs button[data-tab="ventas"]').click();
+  });
+
+  // ---------- Venta a otro precio / manual (Caja, solo admin) ----------
+  let mvMode = 'producto';   // 'producto' | 'calculadora'
+  let mvSplitChoice = null;  // null = el reparto por defecto del producto/venta
+  let mvPrecioTouched = false; // true si escribiste tú el precio (no se pisa al cambiar de color)
+
+  function mvFillSelects() {
+    const selP = $('mv-producto'), selCp = $('mv-color-p'), selCc = $('mv-color-c');
+    if (!selP || !selCp || !selCc) return;
+    const prevP = selP.value, prevCp = selCp.value, prevCc = selCc.value;
+
+    selP.innerHTML = '';
+    const o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Elige un producto...';
+    selP.appendChild(o0);
+    getProductos().forEach(p => {
+      const o = document.createElement('option'); o.value = String(p.id); o.textContent = p.nombre;
+      selP.appendChild(o);
+    });
+    selP.value = prevP;
+
+    const fillColors = (sel, firstLabel, prev) => {
+      sel.innerHTML = '';
+      const f = document.createElement('option'); f.value = ''; f.textContent = firstLabel;
+      sel.appendChild(f);
+      getColores().forEach(c => {
+        const o = document.createElement('option'); o.value = String(c.id); o.textContent = `${c.nombre} (${fmt(c.precioKg)}/kg)`;
+        sel.appendChild(o);
+      });
+      sel.value = prev;
+    };
+    fillColors(selCp, 'Color original del producto', prevCp);
+    fillColors(selCc, `Color base (${fmt(ajustes.precioKg)}/kg)`, prevCc);
+  }
+
+  // Calcula la venta según el modo; devuelve null si falta información
+  function mvCompute() {
+    const qty = Math.max(1, Math.floor(parseFloat($('mv-qty').value) || 1));
+    const precio = Math.max(0, parseFloat($('mv-precio').value) || 0);
+    let nombre = '', c = null, desg = null, productId = null, defaultSplit = 60, precioNormal = null, falta = '';
+
+    if (mvMode === 'producto') {
+      const p = getProductos().find(x => x.id === Number($('mv-producto').value));
+      if (!p) { falta = 'Elige un producto.'; }
+      else {
+        const ov = $('mv-color-p').value ? Number($('mv-color-p').value) : undefined;
+        c = computeProductCost(p, ov);
+        desg = costDesglose(p, ov);
+        nombre = p.nombre; productId = p.id;
+        defaultSplit = Number(p.splitMine) || (p.pintura ? 50 : 60);
+        precioNormal = getFinalProductSalePrice(p, ov);
+      }
+    } else {
+      nombre = ($('mv-nombre').value || '').trim();
+      const gramos = Math.max(0, parseFloat($('mv-gramos').value) || 0);
+      const horas = Math.max(0, parseFloat($('mv-horas').value) || 0);
+      const pint = Math.max(0, parseFloat($('mv-pintura').value) || 0);
+      const colorId = $('mv-color-c').value ? Number($('mv-color-c').value) : null;
+      const tmp = { gramos, horas, pintura: pint > 0, pinturaManual: pint, colorId, coloresConfig: null };
+      c = computeProductCostReal(tmp, undefined);
+      desg = costDesglose(tmp, undefined);
+      defaultSplit = pint > 0 ? 50 : 60;
+      if (!nombre) falta = 'Escribe el nombre de la venta.';
+      else if (gramos <= 0 && horas <= 0 && pint <= 0) falta = 'Ingresa los gramos, las horas o la pintura para calcular el costo.';
+    }
+    if (!falta && precio <= 0) falta = 'Ingresa el precio cobrado.';
+
+    const split = (mvSplitChoice === 50 || mvSplitChoice === 60) ? mvSplitChoice : defaultSplit;
+    const costoUnit = c ? Math.round(c.costoTotal) : 0;
+    const totalVenta = Math.round(precio * qty);
+    const totalCosto = costoUnit * qty;
+    const utilidad = totalVenta - totalCosto;
+    const base = Math.max(0, utilidad);
+    const tuParte = Math.round(base * split / 100);
+    const suParte = Math.round(base * (100 - split) / 100);
+    return { qty, precio, nombre, c, desg, productId, split, precioNormal, falta, costoUnit, totalVenta, totalCosto, utilidad, tuParte, suParte };
+  }
+
+  function mvRender() {
+    if (!$('mv-summary')) return;
+    const r = mvCompute();
+    document.querySelectorAll('.mv-split-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.split) === r.split));
+
+    const hint = $('mv-precio-hint');
+    if (hint) {
+      if (mvMode === 'producto' && r.precioNormal) {
+        const dif = r.precio - r.precioNormal;
+        hint.textContent = `Precio normal: ${fmt(r.precioNormal)} c/u` + (r.precio > 0 && dif !== 0 ? ` · cobraste ${dif > 0 ? '+' : '-'}${fmt(Math.abs(dif))} por unidad` : '');
+      } else hint.textContent = '';
+    }
+
+    const btn = $('mv-registrar');
+    if (btn) { btn.disabled = !!r.falta; btn.style.opacity = r.falta ? '0.5' : '1'; }
+
+    if (r.falta || !r.c) {
+      $('mv-summary').innerHTML = `<div class="empty" style="padding:10px 0;">${esc(r.falta || 'Completa los datos para ver el cálculo.')}</div>`;
+      return;
+    }
+    const d = r.desg || {};
+    const mult = (k) => (Number(d[k]) || 0) * r.qty;
+    const desgl = desgloseHTML({ filamento: mult('filamento'), luz: mult('luz'), maquina: mult('maquina'), pintura: mult('pintura'), otros: 0, estimado: false });
+    r.nameForSummary = r.nombre;
+    $('mv-summary').innerHTML = `
+      <div class="stat-row">
+        <div class="stat-card blue"><p class="stat-label">Total cobrado</p><p class="stat-value">${fmt(r.totalVenta)}</p></div>
+        <div class="stat-card blue"><p class="stat-label">🏦 Inversión</p><p class="stat-value">${fmt(r.totalCosto)}</p></div>
+      </div>
+      ${desgl}
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat-card green"><p class="stat-label">👤 Seba (${r.split}%)</p><p class="stat-value">${fmt(r.tuParte)}</p></div>
+        <div class="stat-card purple"><p class="stat-label">👩 Camila (${100 - r.split}%)</p><p class="stat-value">${fmt(r.suParte)}</p></div>
+      </div>
+      <p style="font-size:12px; margin:8px 0 0; color:${r.utilidad < 0 ? 'var(--red)' : 'var(--ink-soft)'}; font-weight:${r.utilidad < 0 ? '700' : '500'};">
+        ${r.utilidad < 0 ? `⚠️ Vendiste bajo el costo: pérdida de ${fmt(-r.utilidad)}.` : `Ganancia total: ${fmt(r.utilidad)}`}
+      </p>`;
+  }
+
+  function mvSetMode(mode) {
+    mvMode = mode;
+    mvSplitChoice = null;
+    mvPrecioTouched = false;
+    $('mv-tab-producto').classList.toggle('active', mode === 'producto');
+    $('mv-tab-calculadora').classList.toggle('active', mode === 'calculadora');
+    $('mv-sec-producto').style.display = mode === 'producto' ? 'block' : 'none';
+    $('mv-sec-calculadora').style.display = mode === 'calculadora' ? 'block' : 'none';
+    if ($('mv-precio')) $('mv-precio').value = '';
+    mvRender();
+  }
+
+  // Al elegir producto/color, sugerir el precio normal (se puede cambiar)
+  function mvSuggestPrice() {
+    if (mvMode !== 'producto') return;
+    const p = getProductos().find(x => x.id === Number($('mv-producto').value));
+    if (!p) { $('mv-precio').value = ''; return; }
+    const ov = $('mv-color-p').value ? Number($('mv-color-p').value) : undefined;
+    $('mv-precio').value = getFinalProductSalePrice(p, ov) || '';
+  }
+
+  function mvReset() {
+    ['mv-nombre', 'mv-gramos', 'mv-horas', 'mv-pintura', 'mv-precio'].forEach(id => { if ($(id)) $(id).value = ''; });
+    if ($('mv-qty')) $('mv-qty').value = '1';
+    if ($('mv-producto')) $('mv-producto').value = '';
+    if ($('mv-color-p')) $('mv-color-p').value = '';
+    if ($('mv-color-c')) $('mv-color-c').value = '';
+    mvSplitChoice = null;
+    mvPrecioTouched = false;
+    mvRender();
+  }
+
+  $('mv-toggle')?.addEventListener('click', () => {
+    const body = $('mv-body');
+    const open = body.style.display === 'none';
+    body.style.display = open ? 'block' : 'none';
+    $('mv-toggle').textContent = open ? 'Cerrar ▴' : 'Abrir ▾';
+    if (open) { mvFillSelects(); mvRender(); }
+  });
+  $('mv-tab-producto')?.addEventListener('click', () => mvSetMode('producto'));
+  $('mv-tab-calculadora')?.addEventListener('click', () => mvSetMode('calculadora'));
+  $('mv-producto')?.addEventListener('change', () => { mvSplitChoice = null; mvPrecioTouched = false; mvSuggestPrice(); mvRender(); });
+  $('mv-color-p')?.addEventListener('change', () => { if (!mvPrecioTouched) mvSuggestPrice(); mvRender(); });
+  $('mv-precio')?.addEventListener('input', () => { mvPrecioTouched = true; });
+  ['mv-nombre', 'mv-gramos', 'mv-horas', 'mv-color-c', 'mv-pintura', 'mv-qty', 'mv-precio'].forEach(id => {
+    $(id)?.addEventListener('input', mvRender);
+    $(id)?.addEventListener('change', mvRender);
+  });
+  document.querySelectorAll('.mv-split-btn').forEach(b => {
+    b.addEventListener('click', () => { mvSplitChoice = Number(b.dataset.split) === 50 ? 50 : 60; mvRender(); });
+  });
+
+  $('mv-registrar')?.addEventListener('click', async () => {
+    if (!isAdmin) return;
+    const r = mvCompute();
+    if (r.falta || !r.c) { alert(r.falta || 'Faltan datos.'); return; }
+    if (r.utilidad < 0 && !confirm(`Esta venta queda bajo el costo (pérdida de ${fmt(-r.utilidad)}). ¿Registrarla igual?`)) return;
+
+    const btn = $('mv-registrar');
+    btn.disabled = true;
+    btn.textContent = '⏳ Registrando...';
+    try {
+      const item = {
+        nombre: r.nombre,
+        colorDesc: r.c.desc,
+        dots: r.c.dots || [],
+        cantidad: r.qty,
+        precioUnit: Math.round(r.precio),
+        costoUnit: r.costoUnit,
+        costoDesglose: r.desg,
+        splitMine: r.split,
+        precioEspecial: true
+      };
+      if (r.productId) item.productId = r.productId;
+      await insertVenta({
+        id: Date.now(),
+        fecha: new Date().toLocaleDateString('es-CL'),
+        items: [item],
+        totalVenta: r.totalVenta,
+        totalCosto: r.totalCosto,
+        utilidad: Math.round(r.utilidad),
+        tuParte: r.tuParte,
+        suParte: r.suParte
+      });
+      mvReset();
+      document.querySelector('nav.tabs button[data-tab="ventas"]').click();
+    } finally {
+      btn.textContent = '✅ Registrar venta';
+      mvRender();
+    }
   });
 
   // ---------- Ventas DB & View ----------
@@ -7437,7 +7721,8 @@
         const itemsTxt = (v.items || []).map(i => {
           const dots = (i.dots || []).map(d => `<span class="color-dot" style="background:${d}; margin-right:2px;"></span>`).join('');
           const colTxt = i.colorDesc || i.color || '';
-          return `<span>${dots}<strong>${i.nombre}</strong> (${colTxt}) x${i.cantidad}</span>`;
+          const esp = i.precioEspecial ? ` <span style="color:#b45309; font-weight:700;">· 💲 precio especial ${fmt(i.precioUnit || 0)} c/u</span>` : '';
+          return `<span>${dots}<strong>${esc(i.nombre)}</strong> (${esc(colTxt)}) x${i.cantidad}${esp}</span>`;
         }).join('<br>');
 
         card.innerHTML = `
