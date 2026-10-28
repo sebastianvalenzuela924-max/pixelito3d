@@ -236,3 +236,7 @@ returns boolean language sql stable security definer set search_path = public as
 $$;
 revoke all on function public.usuario_disponible(text) from public;
 grant execute on function public.usuario_disponible(text) to anon, authenticated;
+
+-- Accesorios (imanes y argollas) — migración aplicada
+alter table public.ajustes add column if not exists precio_iman numeric not null default 0, add column if not exists precio_argolla numeric not null default 0;
+alter table public.productos add column if not exists imanes integer not null default 0, add column if not exists argolla boolean not null default false;
