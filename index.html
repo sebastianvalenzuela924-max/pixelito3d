@@ -349,6 +349,16 @@
     border-radius: 6px; font-weight: 600;
   }
 
+  .extra-photos { display:flex; flex-wrap:wrap; gap:8px; }
+  .extra-ph { position:relative; width:72px; height:72px; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:#f8fafc; }
+  .extra-ph img { width:100%; height:100%; object-fit:cover; display:block; }
+  .extra-ph button { position:absolute; top:2px; right:2px; width:20px; height:20px; border-radius:50%; border:none; background:rgba(15,23,42,.8); color:#fff; font-size:12px; line-height:1; cursor:pointer; padding:0; }
+  .extra-add { width:72px; height:72px; border-radius:10px; border:2px dashed #93c5fd; background:#eff6ff; color:#1d4ed8; font-size:11px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+  #c-descripcion { width:100%; border:none; outline:none; background:transparent; font:inherit; resize:vertical; padding:4px 0; }
+  .prod-thumbs { display:flex; gap:6px; padding:8px 12px 0; overflow-x:auto; }
+  .prod-thumbs img { width:44px; height:44px; object-fit:cover; border-radius:8px; border:2px solid transparent; cursor:pointer; flex:0 0 auto; opacity:.75; }
+  .prod-thumbs img.active { border-color:var(--blue,#2563eb); opacity:1; }
+  .prod-desc { font-size:12.5px; color:var(--ink-soft); margin:6px 0 2px; line-height:1.4; white-space:pre-line; }
   .caja-row { flex-wrap: wrap; }
   .caja-extra { flex: 0 0 100%; min-width: 0; }
   .acc-tag { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 6px; border-radius:999px; background:#eef2ff; color:#3730a3; margin-left:3px; }
@@ -1802,6 +1812,18 @@
       </div>
 
 
+      <!-- FOTOS ADICIONALES + DESCRIPCIÓN -->
+      <div class="photo-upload-section" style="margin-top:12px;">
+        <label class="eyebrow" style="margin-bottom:6px;">🖼️ Más fotos del producto <span style="font-weight:500; text-transform:none; letter-spacing:0;">(hasta 4 extra)</span></label>
+        <div id="c-extra-photos" class="extra-photos"></div>
+        <input type="file" id="c-extra-input" accept="image/*" multiple style="display:none;">
+      </div>
+      <div class="field" style="margin-top:12px; display:block;">
+        <label for="c-descripcion" style="display:block; margin-bottom:6px;">📝 Descripción corta (la ven los clientes)</label>
+        <div class="input-group"><textarea id="c-descripcion" maxlength="300" rows="3" placeholder="Ej: Llavero articulado impreso en PLA, ideal para regalo. Mide 6 cm."></textarea></div>
+        <div style="font-size:11px; color:var(--ink-soft); text-align:right;" id="c-desc-count">0/300</div>
+      </div>
+
       <!-- SELECCIÓN DE COLOR EN COSTOS -->
       <div style="margin-top:12px;">
         <label class="eyebrow">Color o mezcla de filamento</label>
@@ -3237,7 +3259,52 @@
 
   // ---------- Gestión de Fotos de Productos ----------
   let currentProductImage = '';
+  let currentExtraImages = [];
+  const MAX_EXTRA_IMAGES = 4;
   let quickUploadProductId = null;
+
+  function renderExtraPhotos() {
+    const box = $('c-extra-photos');
+    if (!box) return;
+    box.innerHTML = '';
+    currentExtraImages.forEach((u, i) => {
+      const d = document.createElement('div');
+      d.className = 'extra-ph';
+      const im = document.createElement('img'); im.src = u; im.alt = 'Foto extra';
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = '×'; b.title = 'Quitar';
+      b.addEventListener('click', () => { currentExtraImages.splice(i, 1); renderExtraPhotos(); });
+      d.appendChild(im); d.appendChild(b); box.appendChild(d);
+    });
+    if (currentExtraImages.length < MAX_EXTRA_IMAGES) {
+      const a = document.createElement('button');
+      a.type = 'button'; a.className = 'extra-add';
+      a.innerHTML = '<span style="font-size:20px;">＋</span><span>Agregar</span>';
+      a.addEventListener('click', () => $('c-extra-input')?.click());
+      box.appendChild(a);
+    }
+  }
+  function setExtraImages(arr) {
+    currentExtraImages = (arr || []).filter(Boolean).slice(0, MAX_EXTRA_IMAGES);
+    renderExtraPhotos();
+  }
+  $('c-extra-input')?.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files || []);
+    for (const f of files) {
+      if (currentExtraImages.length >= MAX_EXTRA_IMAGES) break;
+      try { currentExtraImages.push(await compressImage(f, 700, 700, 0.75)); }
+      catch (err) { console.error(err); alert('No se pudo procesar una de las imágenes.'); }
+    }
+    e.target.value = '';
+    renderExtraPhotos();
+  });
+  $('c-descripcion')?.addEventListener('input', () => {
+    if ($('c-desc-count')) $('c-desc-count').textContent = ($('c-descripcion').value.length) + '/300';
+  });
+  function setDescripcion(t) {
+    if ($('c-descripcion')) $('c-descripcion').value = t || '';
+    if ($('c-desc-count')) $('c-desc-count').textContent = ((t || '').length) + '/300';
+  }
+  renderExtraPhotos();
 
   function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.82) {
     return new Promise((resolve, reject) => {
@@ -5502,6 +5569,7 @@
             id: editingId || Date.now(),
             nombre: c.nombre,
             imagenUrl: c.imagenUrl || '',
+            imagenes: c.imagenes || [], descripcion: c.descripcion || '',
             colorId: c.cConfig.tipo === 'single' ? c.cConfig.colorId : null,
             coloresConfig: JSON.parse(JSON.stringify(c.cConfig)),
             gramos: c.gramos,
@@ -5673,7 +5741,9 @@
 
     return {
       nombre: $('c-nombre')?.value.trim() || 'Producto sin nombre',
-      imagenUrl: currentProductImage || '',
+      imagenUrl: currentProductImage || currentExtraImages[0] || '',
+      imagenes: currentProductImage ? currentExtraImages.slice() : currentExtraImages.slice(1),
+      descripcion: ($('c-descripcion')?.value || '').trim().slice(0, 300),
       gramos,
       horas,
       tienePintura,
@@ -5702,6 +5772,7 @@
     manualPrecioVenta = null;
     $('c-nombre').value = '';
     setProductPhoto('');
+    setExtraImages([]); setDescripcion('');
     $('c-gramos').value = '';
     $('c-horas').value = '';
     $('c-pintura').value = '';
@@ -5745,6 +5816,7 @@
       id: editingId || Date.now(),
       nombre: c.nombre,
       imagenUrl: c.imagenUrl || '',
+      imagenes: c.imagenes || [], descripcion: c.descripcion || '',
       colorId: c.cConfig.tipo === 'single' ? c.cConfig.colorId : null,
       coloresConfig: JSON.parse(JSON.stringify(c.cConfig)),
       gramos: c.gramos,
@@ -5778,6 +5850,7 @@
 
     $('c-nombre').value = p.nombre || '';
     setProductPhoto(p.imagenUrl || '');
+    setExtraImages(p.imagenes || []); setDescripcion(p.descripcion || '');
     $('c-gramos').value = p.gramos || '';
     $('c-horas').value = p.horas || '';
     
@@ -5931,13 +6004,33 @@
   let productosCache = [];
   let prodActiveColors = {};
 
+  // Fotos extra y descripción viajan dentro de colores_config.extra (jsonb existente)
+  function splitExtra(cfg, clean) {
+    if (!cfg || typeof cfg !== 'object') return { cfg: cfg || null, imgs: [], desc: '' };
+    const { extra, ...rest } = cfg;
+    const imgs = (extra && Array.isArray(extra.imgs) ? extra.imgs : []).map(safeImg).filter(Boolean).slice(0, MAX_EXTRA_IMAGES);
+    const desc = extra && typeof extra.desc === 'string' ? extra.desc.slice(0, 300) : '';
+    return { cfg: Object.keys(rest).length ? rest : null, imgs, desc };
+  }
+  function withExtra(p) {
+    const imgs = (p.imagenes || []).slice(0, MAX_EXTRA_IMAGES);
+    const desc = (p.descripcion || '').slice(0, 300);
+    if (!imgs.length && !desc) return p.coloresConfig || null;
+    const base = p.coloresConfig ? Object.assign({}, p.coloresConfig) : { tipo: 'single', colorId: p.colorId || null };
+    base.extra = { imgs, desc };
+    return base;
+  }
+
   function rowToProducto(r) {
+    const ex = splitExtra(r.colores_config);
     return {
+      imagenes: ex.imgs,
+      descripcion: ex.desc,
       id: Number(r.id),
       nombre: r.nombre,
       imagenUrl: r.imagen_url || '',
       colorId: r.color_id ? Number(r.color_id) : null,
-      coloresConfig: r.colores_config || null,
+      coloresConfig: ex.cfg,
       gramos: Number(r.gramos) || 0,
       horas: Number(r.horas) || 0,
       pintura: !!r.pintura,
@@ -5958,7 +6051,7 @@
       nombre: p.nombre,
       imagen_url: p.imagenUrl || null,
       color_id: p.colorId || null,
-      colores_config: p.coloresConfig || null,
+      colores_config: withExtra(p),
       gramos: p.gramos,
       horas: p.horas,
       pintura: p.pintura,
@@ -5975,12 +6068,15 @@
 
   // Vista pública del catálogo: solo datos de venta (sin costos, horas ni márgenes)
   function rowToProductoPublico(r) {
+    const ex = splitExtra(r.colores_config);
     return {
+      imagenes: ex.imgs,
+      descripcion: ex.desc,
       id: Number(r.id),
       nombre: r.nombre,
       imagenUrl: safeImg(r.imagen_url),
       colorId: r.color_id ? Number(r.color_id) : null,
-      coloresConfig: r.colores_config || null,
+      coloresConfig: ex.cfg,
       gramos: Number(r.gramos) || 0,
       horas: 0,
       pintura: !!r.pintura,
@@ -6024,7 +6120,7 @@
         }
         return {
           id: p.id, nombre: p.nombre, imagen_url: p.imagenUrl || null,
-          color_id: p.colorId || null, colores_config: p.coloresConfig || null,
+          color_id: p.colorId || null, colores_config: withExtra(p),
           gramos: p.gramos || 0, pintura: !!p.pintura, descuento: Number(p.descuento) || 0,
           precio_base: (p.precioVenta && p.precioVenta > 0) ? Math.round(p.precioVenta) : null,
           precios, updated_at: now
@@ -6426,7 +6522,7 @@
         <div class="prod-media">
           ${tieneDcto ? `<span class="prod-discount-badge">🔥 ${p.descuento}% DCTO</span>` : ''}
           ${favBtnHTML}
-          <img src="${p.imagenUrl}" alt="${p.nombre}" class="prod-media-img" data-img="${p.imagenUrl}" data-name="${p.nombre}" data-price="${effectivePrecio || 0}" loading="lazy">
+          <img src="${p.imagenUrl}" alt="${p.nombre}" class="prod-media-img" id="pmi-${p.id}" data-img="${p.imagenUrl}" data-name="${p.nombre}" data-price="${effectivePrecio || 0}" loading="lazy">
           <div class="prod-media-tag">
             <span class="color-dots-group">${dotsHTML}</span>
             <span>${c.desc}</span>
@@ -6471,8 +6567,16 @@
         `;
       }
 
+      const galeria = [p.imagenUrl, ...(p.imagenes || [])].filter(Boolean);
+      const thumbsHTML = (galeria.length > 1) ? `
+        <div class="prod-thumbs" data-pid="${p.id}">
+          ${galeria.map((u, i) => `<img src="${esc(u)}" data-src="${esc(u)}" class="${i === 0 ? 'active' : ''}" alt="Foto ${i + 1}" loading="lazy">`).join('')}
+        </div>` : '';
+      const descHTML = p.descripcion ? `<p class="prod-desc">${esc(p.descripcion)}</p>` : '';
+
       card.innerHTML = `
         ${mediaHTML}
+        ${thumbsHTML}
         <div class="prod-body">
           <div class="prod-card-head">
             <div style="flex:1; min-width:0;">
@@ -6492,6 +6596,7 @@
             </div>
           </div>
 
+          ${descHTML}
           ${colorPickerBarHTML}
 
           <!-- CONTROL DE CARRITO EN CATÁLOGO -->
@@ -6593,6 +6698,18 @@
     el.querySelectorAll('.prod-media-img').forEach(img => {
       img.addEventListener('click', () => {
         openLightbox(img.dataset.img, img.dataset.name, 'Pixelito3D', Number(img.dataset.price));
+      });
+    });
+
+    el.querySelectorAll('.prod-thumbs').forEach(strip => {
+      strip.querySelectorAll('img').forEach(t => {
+        t.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const main = document.getElementById('pmi-' + strip.dataset.pid);
+          if (!main) return;
+          main.src = t.dataset.src; main.dataset.img = t.dataset.src;
+          strip.querySelectorAll('img').forEach(x => x.classList.toggle('active', x === t));
+        });
       });
     });
 
