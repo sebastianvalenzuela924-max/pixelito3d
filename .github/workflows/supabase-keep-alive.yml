@@ -1,7 +1,10 @@
 name: Supabase Keep Alive (Pixelito3D)
 
 # El plan gratuito de Supabase pausa el proyecto tras 7 días sin uso.
-# Cada 3 días pega al endpoint raíz de PostgREST para mantenerlo activo (no depende de RLS de ninguna tabla).
+# El endpoint raíz /rest/v1/ ya no acepta la clave pública (devuelve 401 "Only
+# the service_role API key can be used"), y desde que se agregó seguridad con
+# RLS todas las tablas quedaron sin permiso de lectura para anon. Por eso se
+# usa /auth/v1/settings, que sí responde 200 sin credenciales de tabla.
 on:
   schedule:
     - cron: '0 12 */3 * *'
@@ -17,7 +20,7 @@ jobs:
           # Clave pública (anon): es la misma de index.html; la seguridad la dan las reglas RLS
           KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b2Nid25mZ2dsZmtzYnprbmd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNjgzMzgsImV4cCI6MjEwNjY0NDMzOH0.p7k4v4q4ZRHOQBvc_eEQoq7bfKcEP3_HYzxNyhAHJbI
         run: |
-          code=$(curl -s -o respuesta.txt -w "%{http_code}" -X GET "$URL/rest/v1/" \
-            -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          code=$(curl -s -o respuesta.txt -w "%{http_code}" -X GET "$URL/auth/v1/settings" \
+            -H "apikey: $KEY")
           echo "HTTP $code · $(cat respuesta.txt)"
           test "$code" = "200"
